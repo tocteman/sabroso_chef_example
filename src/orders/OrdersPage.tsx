@@ -14,6 +14,7 @@ import OrdersOtherReport from './components/OrdersOtherReport'
 import {viewAtom} from '../services/OrderService'
 import Loader from '../general/components/Loader'
 import { RoughNotation} from "react-rough-notation";
+import { generatePdf } from '../services/OrderReportService'
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
@@ -90,6 +91,11 @@ const OrdersPage = () => {
   }
   const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")
 
+  // const setCurrentMenus = (aMap : Map) => menus.forEach(menu => aMap.set(
+  //             `${menu.main}, ${menu.entree}, ${menu.dessert}`.replace(/\s+,/g , ","), menu.tag
+  //         ))
+
+
 
   return (
     <main className="p-8">
@@ -122,29 +128,37 @@ const OrdersPage = () => {
             </option>
           </select>
         </div>
+        <button onClick={() => generatePdf(
+          ordersByWk(wk[0]),
+          parsedGroups()?.filter(g => g.workspaceId === wk[0].id),
+          mapTheMenus(menus),
+          new Date(TodayPicks()).valueOf()
+        )}
+        className="ml-8 mt-1 main-button">
+          Descargar Reporte
+          </button>
       </div>
-          <div key={wk.id} className="mt-8">
-            {orders && ordersByWk(wk[0]).length > 0 && menus && (
-              <div>
-                <h3 className="text-2xl font-bold my-2">
-                  {wk.name === 'Santa Priscila / Profremar' ? 'Una Empresa' : wk.name}
-                  </h3>
-                {orders && (
-                  <h5 className="mt-2 text-lg font-normal">
-                    <span className="font-bold">
-                      {menuCount(ordersByWk(wk[0]))}
-                      </span> almuerzos.  </h5>
-                )}
-                <OrdersOtherReport
-                  orders={ordersByWk(wk[0])}
-                  parsedGroups={parsedGroups()?.filter(
-                    (g: IParsedGroup) => g.workspaceId === wk[0].id,
-                  )}
-                  currentMenus={mapTheMenus(menus)}
-                />
-              </div>
+      <div key={wk.id} className="mt-8">
+        {orders && ordersByWk(wk[0]).length > 0 && menus && (
+          <div>
+            <h3 className="text-2xl font-bold my-2">
+              {wk.name}
+            </h3>
+            {orders && (
+              <h5 className="mt-2 text-lg font-normal">
+                <span className="font-bold">
+                  {menuCount(ordersByWk(wk[0]))}
+                </span> menús servidos.  </h5>
             )}
+            <OrdersOtherReport
+              orders={ordersByWk(wk[0])}
+              parsedGroups={parsedGroups()?.filter(
+                (g: IParsedGroup) => g.workspaceId === wk[0].id,
+              )}
+              currentMenus={mapTheMenus(menus)} />
           </div>
+        )}
+      </div>
     </main>
   )
 }

@@ -21,6 +21,7 @@ export const initialMenu: IMenu = {
 export interface IMenuPerDay {
   chefId: string;
   entree: string;
+  dessert: string;
   id: string;
   image: string;
   main: string;
@@ -32,6 +33,7 @@ export interface IMenuPerDay {
 export const initialMenuPerDay: IMenuPerDay = {
   chefId: "",
   entree: "",
+  dessert: "",
   id: "",
   image: "",
   main: "",

@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.main-button {
+  @apply mt-4 rounded-lg border-2 border-mostaza-200 bg-gradient-to-b from-red-400 to-red-500 text-xl font-bold px-4 py-2 text-crema-100 text-center hover:border-mostaza-200 shadow-sm hover:from-red-300;
+}

@@ -6,19 +6,21 @@ import format from 'date-fns/format'
 import esLocale from 'date-fns/locale/es'
 import { diasSemana } from '../../utils/DateUtils'
 import getDay from 'date-fns/getDay'
+import { sortByStr } from '../../utils/StringUtils'
 
 const MenuPanel: React.FC = () => {
   const [currentDay, setCurrentDay] = useAtom(CurrentDay)
   const [menusPerDay, setMenusPerDay] = useAtom(MenusPerDay)
 
-  const renderDay = () => Object.entries(menusPerDay)
+  const renderDay = () => menusPerDay?.length > 0 ? 
+    Object.entries(sortByStr(menusPerDay, 'tag')) : []
 
   return (
       <div
-        className={`w-1/2 pl-8 ml-8 ${currentDay > 0 && `h-full min-h-screen pr-8 bg-white border-l-2 border-mostaza-300`}  `}
+        className={`w-full pl-8 ${currentDay > 0 && `h-full min-h-screen pr-8 bg-white border-l-2 border-mostaza-300`}  `}
         >
           <div className="flex flex-col">
-            <div className="mt-16 flex justify-beclassNameeen w-full">
+            <div className="mt-16 flex justify-between w-full">
               <h3 className="text-xl">
                 {currentDay > 0 && (
                   <div>
@@ -56,17 +58,20 @@ const MenuPanel: React.FC = () => {
                       </div>
                       <div className="ml-4 text-lg">
                         <span className="font-bold text-xl"> {v.main} </span> 
-                          <br />
+                        <br />
+                        {v.entree !== 'null' && v.dessert !== 'null' && <div>
                             {v.entree} | {v.dessert}
-                      </div>
+                          </div> }
+                     </div>
                     </div>
                     <hr className="border border-crema-200" />
                   </div>
                 ))}
             </div>
               {currentDay > 0 &&
-              <div className="mt-40">
-                <button className="rounded-2xl border-2 border-mostaza-200 bg-gradient-to-b from-red-400 to-red-500 text-xl font-bold mx-auto block px-6 py-2 text-crema-100 text-center hover:border-mostaza-200 shadow-sm hover:from-red-300 cursor-not-allowed">Añadir Menú</button>
+              <div className="mt-25">
+                <button className="main-button cursor-not-allowed">
+                  Añadir Menú</button>
               </div>
                 }
           </div>

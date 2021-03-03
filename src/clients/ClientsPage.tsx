@@ -55,7 +55,7 @@ const ClientsPage = () => {
                 onClick={() => setCurrentClient(wk)}
               >
                 <h2>
-                  {wk.name === 'Santa Priscila / Profremar' ? 'Una Empresa' : wk.name === 'Los sabrositos' ? 'Universales' : wk.name}
+                  {wk.name}
                  </h2>
               </div>
             ))}

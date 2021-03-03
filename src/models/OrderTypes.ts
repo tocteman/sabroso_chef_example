@@ -26,5 +26,13 @@ export interface IParsedOrderDetails {
 }
 
 export interface IReducedMenu {
+  tag: string;
+  type?: string;
+  quantity: number;
+  groupName: string;
+}
 
+export interface IGroupAndQuantity {
+  groupName: string;
+  quantity: number;
 }
