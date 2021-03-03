@@ -1,5 +1,4 @@
 import React from 'react'
-import tw from 'twin.macro'
 import {
   Formik,
   Form,
@@ -43,10 +42,10 @@ const LoginForm = () => {
           actions.setSubmitting(false);
         }}
       >
-        <Form tw="flex flex-col text-black mt-6 w-full">
+        <Form className="flex flex-col text-black mt-6 w-full">
            <label
             htmlFor="email"
-            tw="mt-2 text-gray-900"
+            className="mt-2 text-gray-900"
             >
              Correo
             </label>
@@ -54,12 +53,12 @@ const LoginForm = () => {
             id="email"
             name="email"
             placeholder="Email"
-            tw="bg-crema-200 focus:bg-crema-100 border-2 border-mostaza-300 rounded-lg shadow my-1 p-2 font-bold text-lg"
+            className="bg-crema-200 focus:bg-crema-100 border-2 border-mostaza-300 rounded-lg shadow my-1 p-2 font-bold text-lg"
             type="email"
             />
            <label
             htmlFor="password"
-            tw="mt-2 text-gray-900"
+            className="mt-2 text-gray-900"
             >
              Contraseña
             </label>
@@ -67,17 +66,17 @@ const LoginForm = () => {
             id="password"
             name="password"
             placeholder="8 caracteres"
-            tw="bg-crema-200 focus:bg-crema-100 border-mostaza-300 border-2 rounded-lg shadow my-1 p-2 font-bold text-lg"
+            className="bg-crema-200 focus:bg-crema-100 border-mostaza-300 border-2 rounded-lg shadow my-1 p-2 font-bold text-lg"
             type="password"
             />
            <button
             type="submit"
-            tw="mt-8 mb-4 rounded-lg bg-mostaza-300 hover:bg-crema-300 shadow mx-auto w-48 py-2 font-bold text-lg"
+            className="mt-8 mb-4 rounded-lg bg-mostaza-300 hover:bg-crema-300 shadow mx-auto w-48 py-2 font-bold text-lg"
             >
               Ingresar
             </button>
             {loginError && 
-            <div tw="text-red-800 my-4 text-center">
+            <div className="text-red-800 my-4 text-center">
               Hubo un error al ingresar, por favor intenta nuevamente.
             </div>
             }

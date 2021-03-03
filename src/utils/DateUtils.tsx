@@ -48,7 +48,7 @@ export const diasSemana: IDiaSemana[] = [
 ]
 
 export const TodayPicks = () => {
-  return format(new Date(2021, 0, 20).valueOf(), 'yyyy-MM-dd') 
+  return format(new Date().valueOf(), 'yyyy-MM-dd') 
 }
 
 

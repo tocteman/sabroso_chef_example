@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import 'twin.macro'
 import useSWR from 'swr'
 import {Fetcher, FilteredFetcher} from '../services/Fetcher'
 import type {IOrder, IOrderDetails} from '../models/OrderTypes'
@@ -9,21 +8,17 @@ import { PicksFilter, TodayPicks, InBetweenDays, dateForFilter } from '../utils/
 import {menuKey} from '../utils/StringUtils'
 import { useAtom, atom } from 'jotai'
 import type {IWorkspace} from '../models/WorkspaceTypes'
-import ClientOrdersTable from './components/ClientOrdersTable'
 import type {IMenu} from '../models/MenuTypes'
 import {useLocalStorage} from '../utils/LocalStorageHook'
-import OrdersReported from './components/OrdersReported'
 import OrdersOtherReport from './components/OrdersOtherReport'
 import {viewAtom} from '../services/OrderService'
 import Loader from '../general/components/Loader'
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
+import { RoughNotation} from "react-rough-notation";
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
   const [view, setView] = useAtom(viewAtom)
-  const [currentOrderFilters, setCurrentOrderFilters] = useAtom(
-    orderFiltersAtom,
-  )
+  const [currentOrderFilters, setCurrentOrderFilters] = useAtom( orderFiltersAtom,)
   const [currentMenuFilters, setCurrentMenuFilters] = useAtom(menusFiltersAtom)
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
@@ -93,34 +88,32 @@ const OrdersPage = () => {
       .forEach((m: IMenu) => mapMenu.set(menuKey(m), m.tag))
     return mapMenu
   }
-
-  const wk = workspaces[8]
-  console.log(wk)
+  const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")
 
 
   return (
-    <main tw="p-8">
-      <div tw="w-1/6">
+    <main className="p-8">
+      <div className="w-1/6">
       <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={300} iterations={1}>
-      <h1 tw="text-3xl font-bold my-8">Órdenes</h1>
+      <h1 className="text-3xl font-bold my-8">Órdenes</h1>
       </RoughNotation>
       </div>
-      <div tw="flex">
-        <div tw="flex flex-col border-mostaza-300 rounded">
-          <label tw="text-sm uppercase">fecha</label>
+      <div className="flex">
+        <div className="flex flex-col border-mostaza-300 rounded">
+          <label className="text-sm uppercase">fecha</label>
           <input
             type="date"
-            tw="p-2 bg-crema-100 text-xl font-bold appearance-none border-mostaza-200  border-2 rounded shadow-sm focus:bg-white"
+            className="p-2 bg-crema-100 text-xl font-bold appearance-none border-mostaza-200  border-2 rounded shadow-sm focus:bg-white"
             value={prev}
             onChange={(e) => {
               setDate(e.target.value)
             }}
           />
         </div>
-        <div tw="flex flex-col ml-8">
-          <label tw="text-sm uppercase">presentación</label>
+        <div className="flex flex-col ml-8">
+          <label className="text-sm uppercase">presentación</label>
             <select onChange={(e) => setView(e.target.value) }
-              tw="border-mostaza-200 border-2 p-2 bg-crema-100 text-xl  rounded shadow-sm focus:bg-white uppercase font-bold">
+              className="border-mostaza-200 border-2 p-2 bg-crema-100 text-xl  rounded shadow-sm focus:bg-white uppercase font-bold">
             <option value="cocina" >
               COCINA
             </option>
@@ -130,22 +123,22 @@ const OrdersPage = () => {
           </select>
         </div>
       </div>
-          <div key={wk.id} tw="mt-8">
-            {orders && ordersByWk(workspaces[8]).length > 0 && menus && (
+          <div key={wk.id} className="mt-8">
+            {orders && ordersByWk(wk[0]).length > 0 && menus && (
               <div>
-                <h3 tw="text-2xl font-bold my-2">
+                <h3 className="text-2xl font-bold my-2">
                   {wk.name === 'Santa Priscila / Profremar' ? 'Una Empresa' : wk.name}
                   </h3>
                 {orders && (
-                  <h5 tw="mt-2 text-lg font-normal">
-                    <span tw="font-bold">
-                      {menuCount(ordersByWk(wk))}
+                  <h5 className="mt-2 text-lg font-normal">
+                    <span className="font-bold">
+                      {menuCount(ordersByWk(wk[0]))}
                       </span> almuerzos.  </h5>
                 )}
                 <OrdersOtherReport
-                  orders={ordersByWk(wk)}
+                  orders={ordersByWk(wk[0])}
                   parsedGroups={parsedGroups()?.filter(
-                    (g: IParsedGroup) => g.workspaceId === wk.id,
+                    (g: IParsedGroup) => g.workspaceId === wk[0].id,
                   )}
                   currentMenus={mapTheMenus(menus)}
                 />

@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react'
-import "twin.macro"
 import type {IGroup, IParsedGroup, IMappedGroup, IGroupsByService} from 'src/models/GroupTypes'
 import type {IWorkspace} from 'src/models/WorkspaceTypes'
 import type {IOrder, IOrderDetails, IParsedOrderDetails} from '../../models/OrderTypes'
@@ -71,16 +70,16 @@ const OrdersReported: React.FC<{orders: IOrder[], parsedGroups: IParsedGroup[]}>
   return (
     <div>
       {groupsByService().map((gsn: IGroupsByService) => (
-        <div tw="py-2" key={`${gsn.groupsIds[0]}`}>
-          <h4 tw="font-bold text-xl">
+        <div className="py-2" key={`${gsn.groupsIds[0]}`}>
+          <h4 className="font-bold text-xl">
             {groupedOrders(ordersByDate(), gsn).length > 0 && gsn.serviceName}
           </h4>
           {groupedOrders(ordersByDate(), gsn).map(([ovk, ovv]) => (
-            <div tw="flex flex-col" key={ovk}>
-              <div tw="pr-4 font-bold">
+            <div className="flex flex-col" key={ovk}>
+              <div className="pr-4 font-bold">
                 {parsedGroups.filter((g) => g.id == ovk)[0]?.name}
               </div>
-              <div tw="flex flex-col">
+              <div className="flex flex-col">
                 {ovv.map((sovv: IParsedOrderDetails) => (
                   <div>
                     {sovv.meal} {sovv.quantity} {sovv.tag}

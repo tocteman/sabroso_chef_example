@@ -1,6 +1,5 @@
 import React from 'react'
-import "twin.macro"
-import {atom, PrimitiveAtom, WritableAtom, useAtom, get, set} from 'jotai'
+import {atom, PrimitiveAtom, WritableAtom, useAtom } from 'jotai'
 import type {ISliceRange} from 'src/models/UiTypes'
 import ChevronLeft from '../../svgs/ChevronLeft'
 import ChevronRight from '../../svgs/ChevronRight'
@@ -28,16 +27,16 @@ const Paginator:React.FC<{count:number, atomRef:WritableAtom<any, any>}> = ({cou
   const displayed = () => sliced.to < count ? sliced.to : count
 
   return (
-    <div tw="flex items-center justify-between my-4 font-bold text-lg w-3/4">
-      <div tw="flex items-baseline">
-        <div tw="w-8 cursor-pointer hover:text-red-500" onClick={() => handleSlicePrev()}>
+    <div className="flex items-center justify-beclassNameeen my-4 font-bold text-lg w-3/4">
+      <div className="flex items-baseline">
+        <div className="w-8 cursor-pointer hover:text-red-500" onClick={() => handleSlicePrev()}>
           <ChevronLeft/>
         </div>
-        <div tw="w-8 cursor-pointer hover:text-red-500" onClick={() => handleSliceNext()}>
+        <div className="w-8 cursor-pointer hover:text-red-500" onClick={() => handleSliceNext()}>
           <ChevronRight/>
         </div>
       </div>
-        <div tw="font-normal text-sm">{`${displayed()} / ${count}`}</div>
+        <div className="font-normal text-sm">{`${displayed()} / ${count}`}</div>
     </div>
   )
 }

@@ -12,8 +12,10 @@ module.exports = {
         },
         crema: {
           100: '#fffdfd',
+          125: '#fffcec',
           150: '#fff8f7',
           200: '#fffad6',
+          250: '#ffead3',
           300: '#f9f1b1 '
         },
         mostaza: {

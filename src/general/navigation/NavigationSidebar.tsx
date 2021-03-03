@@ -1,5 +1,4 @@
 import React from 'react'
-import 'twin.macro'
 import { Link } from 'react-router-dom'
 import Logo from '../../assets/images/sabroso_chica.png'
 interface INavOption {
@@ -16,13 +15,13 @@ const NavigationSidebar = () => {
   ]
   return (
     <div>
-      <div tw="w-3/4 mt-8 p-4 flex flex-col mx-auto block justify-center items-center">
+      <div className="w-3/4 mt-8 p-4 flex flex-col mx-auto block justify-center items-center">
       <img src={Logo}/>
       </div>
-    <div tw="flex flex-col px-8 pt-4">
+    <div className="flex flex-col px-8 pt-4">
       {navOptions.map((navOption: INavOption) => (
       <Link to={navOption.linkUrl}
-        tw="my-1 p-2 text-lg bg-crema-100 font-bold border-2 border-crema-300 hover:border-mostaza-300 cursor-pointer border-solid hover:bg-white rounded hover:shadow-sm"
+        className="my-1 p-2 text-lg bg-crema-100 font-bold border-2 border-crema-300 hover:border-mostaza-300 cursor-pointer border-solid hover:bg-white rounded hover:shadow-sm"
         key={navOption.text}>
         {navOption.text}
       </Link>

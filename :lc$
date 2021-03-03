@@ -30,12 +30,12 @@ export interface IMenuPerDay {
 }
 
 export const initialMenuPerDay: IMenuPerDay = {
-  chefId: "",
-  entree: "",
-  id: "",
-  image: "",
-  main: "",
-  menuDate: "",
-  tag: "",
-  type: ""
+  chefId:"",
+  entree:"",
+  id:"",
+  image:"",
+  main:"",
+  menuDate:"",
+  tag:"",
+  type:""
 }

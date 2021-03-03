@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import type {IGroup, IParsedGroup, IMappedGroup, IGroupsByService} from 'src/models/GroupTypes'
-import "twin.macro"
 import type {IOrder, IOrderDetails, IParsedOrderDetails} from '../../models/OrderTypes'
 import {useAtom} from 'jotai'
 import {viewAtom} from '../../services/OrderService'
@@ -8,31 +7,30 @@ import {viewAtom} from '../../services/OrderService'
 const OrdersOtherReport:React.FC<{orders: IOrder[], parsedGroups: IParsedGroup[], currentMenus: Map<string, string>}> 
   = ({orders, parsedGroups, currentMenus}) => {
   const [view] = useAtom(viewAtom)  
-   
+    console.log(parsedGroups) 
     const groupByGroupAndTag = (groupedOrders: IOrder[] = orders) => {
-    const finalparse:any[] = []
-    groupedOrders
-    .map(order => ({...order, details: JSON.parse(order.details)}))
-    .filter(order => order.status !== 'CANCELED')
-    .forEach((po:IOrder) => {
-      po.details.length>1 ?
-        po.details.forEach((detail:IOrderDetails) =>
-          finalparse.push(mapDetails(po, detail))
-        ) :
-        finalparse.push(mapDetails(po, po.details[0]))
-    })
-    console.log(finalparse)
-    return finalparse
-    .reduce ((rmenus, menu) => rmenus[menu.tag] ?
-      rmenus = {
-        ...rmenus,
-        [menu.tag]: addToRMenu(rmenus[menu.tag], menu)
-      } :
-      rmenus = {
-        ...rmenus,
-        [menu.tag]: addMenuFirstTime(menu)
-      }
-     ,{})
+      const finalparse:any[] = []
+      groupedOrders
+      .map(order => ({...order, details: JSON.parse(order.details)}))
+      .filter(order => order.status !== 'CANCELED')
+      .forEach((po:IOrder) => {
+        po.details.length>1 ?
+          po.details.forEach((detail:IOrderDetails) =>
+            finalparse.push(mapDetails(po, detail))
+          ) :
+          finalparse.push(mapDetails(po, po.details[0]))
+      })
+      return finalparse
+      .reduce ((rmenus, menu) => rmenus[menu.tag] ?
+        rmenus = {
+          ...rmenus,
+          [menu.tag]: addToRMenu(rmenus[menu.tag], menu)
+        } :
+        rmenus = {
+          ...rmenus,
+          [menu.tag]: addMenuFirstTime(menu)
+        }
+       ,{})
   }
 
 
@@ -91,54 +89,71 @@ const OrdersOtherReport:React.FC<{orders: IOrder[], parsedGroups: IParsedGroup[]
   return (
     <div>
       {view === 'reparto' &&
-      <div tw="grid grid-cols-2 gap-3 items-start divide-x-2 divide-mostaza-200">
-      <table tw="table-auto text-lg mt-4 pr-8">
-        <thead tw="pb-2 text-center">
-          {ogn().map((o: string) => (
-            <th tw="pr-4 pb-2 text-center">{o}</th>
+      <div className="felx flex-col divide-x-2 divide-mostaza-200">
+      <table className="table-auto text-lg mt-4 pr-8">
+        <thead className="pb-2 text-center">
+          <tr>
+          {ogn().map((o: string, index: number) => (
+          <th className="pr-4 pb-2 text-center" key={`${o}-${index}`}>
+            {o}
+            </th>
           ))}
+          </tr>
         </thead>
         <tbody>
           {grouped().map(([tag, menuArray]) => (
-            <tr tw="border-b border-mostaza-200" key={tag}>
-              <td tw="pr-4 font-bold text-center pb-1">~ {tag} ~</td>
+            <tr className="border-b border-mostaza-200" key={tag}>
+              <td className="pr-4 font-bold text-center pb-1">
+                ~ {tag !== 'null' ? `${tag}` : ``} ~
+                </td>
               {menuArray.map((groupDetails, index) => (
-                <td tw="pr-4 text-center" key={`${index}key`}>{groupDetails.quantity === 0 ? '-' : groupDetails.quantity}</td>
+                <td className="pr-4 text-center" key={`${index}key`}>
+                  {groupDetails.quantity === 0 ? '-' : groupDetails.quantity}
+                  </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
-      <div tw="pl-8 mt-12 text-lg">
+      <div className="pl-8 mt-12 text-lg">
         {revertMap(currentMenus).map(([key, value]) => (
-          <div key={value} tw="flex mb-2">
-            <div tw="pr-2 font-bold">~ {key} ~</div>
-              <div tw="flex divide-x divide-mostaza-200">
+          <div key={value} className="flex mb-2">
+            <div className="pr-2 font-bold">~ {key} ~</div>
+              <div className={`flex 
+                ${value.split(', ').length > 2 ? ` divide-x divide-mostaza-200` : ``}`}>
                 {value.split(', ').map((k, i) => (
                 <div key={`${k}-${i}`} 
-                  tw="first:font-bold first:pr-2 px-2">
-                  {k}
+                  className="first:font-bold first:pr-2 px-2">
+                  {k.includes('null') ? '' : k}
                   </div>
                   ))}
               </div>
-            <div tw="font-bold">:: {quantities().filter(qs => qs.tag === key)[0]?.quantities}</div>
+                <div className="font-bold">
+                  :: {quantities().filter(qs => qs.tag === key)[0]?.quantities}
+                  </div>
           </div>
         ))}
       </div>
+     </div>
+     }
 
-      </div>}
-        { view === 'cocina' &&
+
+     { view === 'cocina' &&
       <div>
-      <div tw="my-8 flex divide-x divide-mostaza-200">
+      <div className="my-8 flex divide-x divide-mostaza-200">
         {revertMap(currentMenus).map(([key, value]) => (
-          <div key={value} tw="">
-            <div tw="text-center text-3xl font-bold">{quantities().filter(qs => qs.tag === key)[0]?.quantities}</div>
-              <div tw="px-8 text-center text-xl">
+          <div key={value} className="">
+            <div className="text-center text-3xl font-bold">
+              {quantities().filter(qs => qs.tag === key)[0]?.quantities}
+            </div>
+            <div className="px-8 text-center text-xl">
                 {value.split(', ').map((k, i) => (
-                <div key={`${k}-${i}`} tw="first:font-bold">{k}</div>
+              <div key={`${k}-${i}`} className="first:font-bold">
+                {k.includes('null') ? '' : k}
+              </div>
                   ))}
               </div>
-            <div tw="text-2xl font-bold text-center">~ {key.includes('null') ? '': key.slice(0,1)} ~</div>
+            <div className="text-2xl font-bold text-center">~ {key.includes('null') ? '': key.slice(0,1)} ~</div>
           </div>
         ))}
 

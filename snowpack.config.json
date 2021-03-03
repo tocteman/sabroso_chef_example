@@ -1,13 +1,10 @@
-{
-  "extends": "@snowpack/app-scripts-react",
-  "install": [
-    "@emotion/react",
-    "@emotion/styled",
-    "tailwindcss/dist/base.min.css"
-  ],
+module.exports = {
+  "mount": { "source": "/" },
   "plugins": [
+   ["@snowpack/plugin-build-script", { "cmd": "postcss", "input": [".css"], "output": [".css"]  }],
     "@snowpack/plugin-babel",
     "@snowpack/plugin-dotenv",
     "@snowpack/plugin-webpack"
   ]
 }
+
