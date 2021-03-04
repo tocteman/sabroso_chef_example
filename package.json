@@ -13,6 +13,7 @@
     "@types/loadable__component": "^5.13.1",
     "@types/react-router-dom": "^5.1.7",
     "ahooks": "^2.9.6",
+    "autoprefixer": "^10.2.4",
     "axios": "^0.21.1",
     "date-fns": "^2.16.1",
     "formik": "^2.2.6",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@snowpack/app-scripts-react": "^1.12.6",
+    "@snowpack/plugin-build-script": "^2.1.0",
     "@snowpack/plugin-dotenv": "^2.0.5",
     "@snowpack/plugin-react-refresh": "^2.3.7",
     "@snowpack/plugin-typescript": "^1.1.0",

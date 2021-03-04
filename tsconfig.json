@@ -9,7 +9,7 @@
     /* paths - If you configure Snowpack import aliases, add them here. */
     "paths": {},
     /* noEmit - Snowpack builds (emits) files, not tsc. */
-    "noEmit": true,
+    "noEmit": false,
     /* Additional Options */
     "strict": false,
     "skipLibCheck": true,
