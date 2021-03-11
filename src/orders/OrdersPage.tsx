@@ -19,7 +19,7 @@ import { generatePdf } from '../services/OrderReportService'
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
   const [view, setView] = useAtom(viewAtom)
-  const [currentOrderFilters, setCurrentOrderFilters] = useAtom( orderFiltersAtom,)
+  const [currentOrderFilters, setCurrentOrderFilters] = useAtom( orderFiltersAtom)
   const [currentMenuFilters, setCurrentMenuFilters] = useAtom(menusFiltersAtom)
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
@@ -35,8 +35,8 @@ const OrdersPage = () => {
   )
   useEffect(() => {
     const dateStrings: string = InBetweenDays([prev, next])
-    setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
     setCurrentMenuFilters([PicksFilter(cu.chefId, 'chefId', '=')])
+    setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
   }, [])
 
     if (!workspaces) return <Loader/>
@@ -101,15 +101,15 @@ const OrdersPage = () => {
     <main className="p-8">
       <div className="w-1/6">
       <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={300} iterations={1}>
-      <h1 className="text-3xl font-bold my-8">Órdenes</h1>
+      <h1 className="my-8 text-3xl font-bold">Órdenes</h1>
       </RoughNotation>
       </div>
       <div className="flex">
-        <div className="flex flex-col border-mostaza-300 rounded">
+        <div className="flex flex-col rounded border-mostaza-300">
           <label className="text-sm uppercase">fecha</label>
           <input
             type="date"
-            className="p-2 bg-crema-100 text-xl font-bold appearance-none border-mostaza-200  border-2 rounded shadow-sm focus:bg-white"
+            className="p-2 text-xl font-bold border-2 rounded appearance-none bg-crema-100 border-mostaza-200 shadow-sm focus:bg-white"
             value={prev}
             onChange={(e) => {
               setDate(e.target.value)
@@ -119,7 +119,7 @@ const OrdersPage = () => {
         <div className="flex flex-col ml-8">
           <label className="text-sm uppercase">presentación</label>
             <select onChange={(e) => setView(e.target.value) }
-              className="border-mostaza-200 border-2 p-2 bg-crema-100 text-xl  rounded shadow-sm focus:bg-white uppercase font-bold">
+              className="p-2 text-xl font-bold uppercase border-2 rounded border-mostaza-200 bg-crema-100 shadow-sm focus:bg-white">
             <option value="cocina" >
               COCINA
             </option>
@@ -134,14 +134,14 @@ const OrdersPage = () => {
           mapTheMenus(menus),
           new Date(TodayPicks()).valueOf()
         )}
-        className="ml-8 mt-1 main-button">
+        className="mt-1 ml-8 main-button">
           Descargar Reporte
           </button>
       </div>
       <div key={wk.id} className="mt-8">
         {orders && ordersByWk(wk[0]).length > 0 && menus && (
           <div>
-            <h3 className="text-2xl font-bold my-2">
+            <h3 className="my-2 text-2xl font-bold">
               {wk.name}
             </h3>
             {orders && (

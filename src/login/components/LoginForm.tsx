@@ -27,12 +27,8 @@ const LoginForm = () => {
         onSubmit={(values, actions) => {
           loginRequest({email: values.email, password: values.password})
           .then((res:any) => {
-            // localStorage.setItem('accessToken', res.data.token)
-            // localStorage.setItem('user', res.data.collaborator)
-            // set('user', res.data.collaborator)
             setToken(res.data.token)
             setUser(res.data.collaborator)
-            // setCurrentUser(res.data.collaborator) 
             history.push('')
           })
           .catch((err:any)=> {
