@@ -10,7 +10,7 @@ import { useAtom, atom } from 'jotai'
 import type {IWorkspace} from '../models/WorkspaceTypes'
 import type {IMenu} from '../models/MenuTypes'
 import {useLocalStorage} from '../utils/LocalStorageHook'
-import OrdersOtherReport from './components/OrdersOtherReport'
+import ReportTable from './components/ReportTable'
 import {viewAtom} from '../services/OrderService'
 import Loader from '../general/components/Loader'
 import { RoughNotation} from "react-rough-notation";
@@ -119,7 +119,7 @@ const OrdersPage = () => {
         <div className="flex flex-col ml-8">
           <label className="text-sm uppercase">presentación</label>
             <select onChange={(e) => setView(e.target.value) }
-              className="std-input uppercase">
+              className="uppercase std-input">
             <option value="cocina" >
               COCINA
             </option>
@@ -150,7 +150,7 @@ const OrdersPage = () => {
                   {menuCount(ordersByWk(wk[0]))}
                 </span> menús servidos.  </h5>
             )}
-            <OrdersOtherReport
+            <ReportTable
               orders={ordersByWk(wk[0])}
               parsedGroups={parsedGroups()?.filter(
                 (g: IParsedGroup) => g.workspaceId === wk[0].id,

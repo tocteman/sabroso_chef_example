@@ -11,6 +11,10 @@ export interface IOrder {
     workspaceId: string;
 }
 
+export interface IGrouppedObj {
+  [key:string]: IGroupAndQuantity[]
+}
+
 export interface IOrderDetails {
   id: string;
   details: string;
@@ -36,3 +40,9 @@ export interface IGroupAndQuantity {
   groupName: string;
   quantity: number;
 }
+
+export interface ITagAndQuantity {
+  tag: string;
+  quantities: number;
+}
+
