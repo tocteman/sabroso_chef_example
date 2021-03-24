@@ -9,30 +9,30 @@ export const groupByGroupAndTag = (
   groupedOrders: IOrder[],
   parsedGroups: IParsedGroup[],
   currentMenus: Map<string, string>
-  ) => {
-    const finalparse:any[] = []
-    groupedOrders
+) => {
+  const finalparse:any[] = []
+  groupedOrders
     .map(order => ({...order, details: JSON.parse(order.details)}))
     .filter(order => order.status !== 'CANCELED')
     .forEach((po:IOrder) => {
       po.details.length> 1 ?
-        po.details.forEach((detail:IOrderDetails) =>
-          finalparse.push(mapDetails(po, detail, parsedGroups, currentMenus))
-        ) :
-        finalparse.push(mapDetails(po, po.details[0], parsedGroups, currentMenus))
+      po.details.forEach((detail:IOrderDetails) =>
+        finalparse.push(mapDetails(po, detail, parsedGroups, currentMenus))
+      ) :
+      finalparse.push(mapDetails(po, po.details[0], parsedGroups, currentMenus))
     })
-    return finalparse
+  return finalparse
     .reduce ((rmenus, menu) => rmenus[menu.tag] ?
-      rmenus = {
-        ...rmenus,
-        [menu.tag]: addToRMenu(rmenus[menu.tag], menu)
-      } :
-      rmenus = {
-        ...rmenus,
-        [menu.tag]: addMenuFirstTime(menu, parsedGroups)
-      }
-     ,{})
- }
+    rmenus = {
+      ...rmenus,
+      [menu.tag]: addToRMenu(rmenus[menu.tag], menu)
+    } :
+    rmenus = {
+      ...rmenus,
+      [menu.tag]: addMenuFirstTime(menu, parsedGroups)
+    }
+      ,{})
+}
 
 
 const mapDetails = (order:any, details:IOrderDetails, groups: IParsedGroup[], currentMenus: Map<string, string>) => ({

@@ -82,13 +82,13 @@ const OrdersPage = () => {
   const mapTheMenus = (menusToMap: IMenu[]) => {
     const mapMenu = new Map()
     menusToMap
-      .filter(
-        (m: IMenu) =>
+      .filter((m: IMenu) =>
           m.menuDate.slice(0, 10) == dateForFilter(next).slice(0, 10),
       )
       .forEach((m: IMenu) => mapMenu.set(menuKey(m), m.tag))
     return mapMenu
   }
+
   const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")
 
   // const setCurrentMenus = (aMap : Map) => menus.forEach(menu => aMap.set(
@@ -109,7 +109,7 @@ const OrdersPage = () => {
           <label className="text-sm uppercase">fecha</label>
           <input
             type="date"
-            className="p-2 text-xl font-bold border-2 rounded appearance-none bg-crema-100 border-mostaza-200 shadow-sm focus:bg-white"
+            className="std-input"
             value={prev}
             onChange={(e) => {
               setDate(e.target.value)
@@ -119,7 +119,7 @@ const OrdersPage = () => {
         <div className="flex flex-col ml-8">
           <label className="text-sm uppercase">presentación</label>
             <select onChange={(e) => setView(e.target.value) }
-              className="p-2 text-xl font-bold uppercase border-2 rounded border-mostaza-200 bg-crema-100 shadow-sm focus:bg-white">
+              className="std-input uppercase">
             <option value="cocina" >
               COCINA
             </option>
