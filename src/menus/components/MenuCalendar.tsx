@@ -43,18 +43,18 @@ const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
       <div className="flex">
         <div
           onClick={() => setCurrentMonth(currentMonth - 1)}
-          className="cursor-pointer w-4 pt-1 mr-2 hover:text-red-500"
+          className="w-4 pt-1 mr-2 cursor-pointer hover:text-red-500"
         >
           <ChevronLeft />
         </div>
-        <h3 className="font-bold text-xl text-center mb-2">
+        <h3 className="mb-2 text-xl font-bold text-center">
           {format(new Date(2021, currentMonth, 1).valueOf(), 'MMMM yyyy', {
             locale: esLocale,
           })}
         </h3>
         <div
           onClick={() => setCurrentMonth(currentMonth + 1)}
-          className="cursor-pointer w-4 pt-1 ml-2 hover:text-red-500"
+          className="w-4 pt-1 ml-2 cursor-pointer hover:text-red-500"
         >
           <ChevronRight />
         </div>
@@ -62,19 +62,19 @@ const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
         <div className="grid grid-cols-7">
           {diasSemana.map((dia: IDiaSemana) => (
             <span
-              className="text-sm text-center my-2 font-light"
+              className="my-2 text-sm font-light text-center"
               key={dia.weekDayName}
             >
               {dia.weekDayName.slice(0, 1)}
             </span>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-xl">
+        <div className="text-xl text-center grid grid-cols-7 gap-1">
           {currentDays.map((day) => (
             <div
               key={day.valueOf()}
               className={`border-crema-200 py-4 px-2 border-2 border-solid bg-white hover:bg-white border-transparent hover:border-mostaza-300 cursor-pointer rounded hover:shadow-sm  
-              col-start-${(getDay(day) + 1).toString() || `6`}
+              col-start-${`${(getDay(day) + 1)}` || `6`}
               ${mpd(day)?.length >= 3 ?
                   `bg-crema-200 border-mostaza-300 ` :
                   mpd(day)?.length >= 1 ?
@@ -84,7 +84,9 @@ const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
               onClick={() => {
 
                 setCurrentDay(day.valueOf());
+                console.log({day})
                 console.log(mpd(day))
+                console.log(getDay(day))
                 setMenusPerDay(mpd(day))
               }}
             >

@@ -15,14 +15,17 @@ import {viewAtom} from '../services/OrderService'
 import Loader from '../general/components/Loader'
 import { RoughNotation} from "react-rough-notation";
 import { generatePdf } from '../services/OrderReportService'
+import { CurrentMenuType, MenuTypes } from '../services/MenuService'
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
   const [view, setView] = useAtom(viewAtom)
+  
   const [currentOrderFilters, setCurrentOrderFilters] = useAtom( orderFiltersAtom)
   const [currentMenuFilters, setCurrentMenuFilters] = useAtom(menusFiltersAtom)
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
+
 
   const { data: workspaces} = useSWR( ['workspaces'], Fetcher)
   const { data: orders} = useSWR(
@@ -33,10 +36,14 @@ const OrdersPage = () => {
     ['menus', FilterEncodeString(currentMenuFilters)],
     FilteredFetcher
   )
+
+  const [currentMenuType, setCurrentMenuType] = useAtom(CurrentMenuType)
+
   useEffect(() => {
     const dateStrings: string = InBetweenDays([prev, next])
     setCurrentMenuFilters([PicksFilter(cu.chefId, 'chefId', '=')])
     setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
+    setCurrentMenuType(MenuTypes.find(mt => mt.code === 'LUNCH'))
   }, [])
 
     if (!workspaces) return <Loader/>
@@ -68,7 +75,7 @@ const OrdersPage = () => {
   const menuCount = (parsedOrders: IOrder[]) =>
     parsedOrders
       .map((o: IOrder) =>
-        JSON.parse(o.details).map((detalle: IOrderDetails) => detalle.quantity),
+        JSON.parse(o.details).map((d: IOrderDetails) => d.quantity),
       )
       .flat()
       .reduce((rquant: number, quant: number) => rquant + Number(quant), 0)
@@ -91,10 +98,15 @@ const OrdersPage = () => {
 
   const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")
 
-  // const setCurrentMenus = (aMap : Map) => menus.forEach(menu => aMap.set(
-  //             `${menu.main}, ${menu.entree}, ${menu.dessert}`.replace(/\s+,/g , ","), menu.tag
-  //         ))
+  const setMenuType = (menuCode: string) => {
+    console.log(menuCode)
+    console.log(MenuTypes.find(mt => mt.code===menuCode))
+    menuCode === 'ALL' ? 
+      setCurrentMenuType('ALL') :
+      setCurrentMenuType(MenuTypes.find(mt => mt.code===menuCode)[0])
 
+  }
+    
 
 
   return (
@@ -127,6 +139,22 @@ const OrdersPage = () => {
               REPARTO
             </option>
           </select>
+        </div>
+        <div className="flex flex-col ml-8">
+          <label className="text-sm uppercase">Tipo de Menú</label>
+          <select onChange={(e) => setMenuType(e.target.value)}
+            className="uppercase std-input">
+            {MenuTypes.map(mt => (
+              <option value={mt.code}>
+                {mt.name}
+              </option>
+            ))}
+            <option value={"ALL"}>Todos</option>
+            
+          </select>
+        </div>
+        <div>
+          <label className="text-sm uppercase">Tipo de Servicio</label>
         </div>
         <button onClick={() => generatePdf(
           ordersByWk(wk[0]),

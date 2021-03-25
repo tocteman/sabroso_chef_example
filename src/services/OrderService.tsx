@@ -2,6 +2,7 @@ import React from 'react'
 import { atom } from 'jotai'
 import type { IGroupAndQuantity, IGrouppedObj, IOrder, IOrderDetails, IReducedMenu } from '../models/OrderTypes'
 import type {IParsedGroup} from '../models/GroupTypes'
+import {replaceMenuStr} from '../utils/StringUtils'
 
 export const viewAtom = atom<String>('cocina') 
 
@@ -35,10 +36,10 @@ const extractOrderDetails = (groupedOrders: IOrder[], parsedGroups: IParsedGroup
     return finalparse
   }
 
-const mapDeliveryDetails = (order:IOrder, detalle:IOrderDetails, groups: IParsedGroup[], currentMenus: Map<string, string>) =>  {
+const mapDeliveryDetails = (order:IOrder, details:IOrderDetails, groups: IParsedGroup[], currentMenus: Map<string, string>) =>  {
     return {
-      tag:currentMenus.get(detalle.details.replace(/\s+,/g , ",")),
-      quantity: detalle.quantity,
+      tag:currentMenus.get(replaceMenuStr(details)),
+      quantity: details.quantity,
       groupName: groups.filter(group => order.groupId === group.id)[0]?.name,
     }
   }

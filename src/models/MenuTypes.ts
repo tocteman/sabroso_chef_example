@@ -8,6 +8,15 @@ export interface IMenu {
     type?: string
 }
 
+export interface IMenuType {
+  code: string;
+  name: string;
+  maxHourTime: number;
+}
+
+
+
+
 export const initialMenu: IMenu = {
     id: "",
     entree: "",

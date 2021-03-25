@@ -4,7 +4,9 @@
     "build": "snowpack build",
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
+    "s3deploy": "npm run build && aws s3 sync --acl public-read --sse --delete ./build/ s3://sabroso-proveedor",
+    "s3deploy-canary": "npm run build && aws s3 sync --acl public-read --sse --delete ./build/ s3://sabroso-proveedor-canary"
   },
   "dependencies": {
     "@headlessui/react": "^0.3.1",

@@ -20,7 +20,8 @@ export interface IOrderDetails {
   details: string;
   tag?: string;
   quantity: number;
-  total: string
+  total: string;
+  type: string;
 }
 
 export interface IParsedOrderDetails {

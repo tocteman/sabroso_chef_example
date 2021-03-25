@@ -8,8 +8,6 @@ export const mealsFiltersAtom = atom<Filter[]>([])
 export const menusFiltersAtom = atom<Filter[]>([])
 export const clientsFiltersAtom = atom<Filter[]>([])
 export const proposalsFiltersAtom = atom<Filter[]>([])
-
-
 export const FilterEncodeString = (currentAtomValue:any) => {
   const filters = currentAtomValue
   if (filters.length > 0) {

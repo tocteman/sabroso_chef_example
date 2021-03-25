@@ -9,6 +9,7 @@ import type {IGroupAndQuantity, IOrder} from '../models/OrderTypes'
 import type {IParsedGroup} from '../models/GroupTypes'
 import { LocalHourFix } from '../utils/DateUtils'
 import esLocale from 'date-fns/locale/es'
+import {replaceMenuStr} from '../utils/StringUtils.jsx'
 
 export const generatePdf = (
   groupedOrders: IOrder[],
@@ -116,7 +117,7 @@ export const generatePdf = (
     })
   }
 
-  const menustr = (menuString) => menuString.replace(/\s+,/g, ",")
+  const menustr = (detail) => replaceMenuStr(detail)
   
 
   const relateTagAndMenu = (orders:IOrder[], currentMenus) => {
@@ -129,7 +130,7 @@ export const generatePdf = (
         parsedOrder.details.length>0 ?
           parsedOrder.details.forEach(detail =>
             finalparse.push({
-              tag: currentMenus.get(menustr(`${detail.details}`)),
+              tag: currentMenus.get(menustr(detail)),
               menuName:menustr(`${detail.details}`)
             })
           ) :
