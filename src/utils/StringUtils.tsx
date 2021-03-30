@@ -11,8 +11,8 @@ export const Capitalize = (str: string) => {
 
 export const menuKey = (menu: IMenu) => 
    (menu.type === 'BREAKFAST' || menu.type === 'DINNER') ?
-   menuStr(`${menu.main}, ${menu.entree}, ${menu.dessert}`) :
-   singleMealMenu(menu.main)
+   singleMealMenu(menu.main) :
+   menuStr(`${menu.main}, ${menu.entree}, ${menu.dessert}`)
 
 export const menuStr = (menuString:string) =>
      menuString

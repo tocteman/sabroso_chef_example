@@ -15,7 +15,7 @@ import {viewAtom} from '../services/OrderService'
 import Loader from '../general/components/Loader'
 import { RoughNotation} from "react-rough-notation";
 import { generatePdf } from '../services/OrderReportService'
-import { CurrentMenuType, MenuTypes } from '../services/MenuService'
+import { CurrentMenuType, CurrentServiceType, MenuTypes } from '../services/MenuService'
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
@@ -26,10 +26,9 @@ const OrdersPage = () => {
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
 
-
   const { data: workspaces} = useSWR( ['workspaces'], Fetcher)
-  const { data: orders} = useSWR(
-    ['orders', FilterEncodeString(currentOrderFilters)], FilteredFetcher
+  const { data: orders} = useSWR(FilterEncodeString(currentOrderFilters) !== "" ? 
+    ['orders', FilterEncodeString(currentOrderFilters)] : null, FilteredFetcher
   )
   const { data: groups} = useSWR(['groups'], Fetcher)
   const { data: menus} = useSWR(
@@ -38,12 +37,12 @@ const OrdersPage = () => {
   )
 
   const [currentMenuType, setCurrentMenuType] = useAtom(CurrentMenuType)
+  const [currentServiceType, setCurrentServiceType] = useAtom(CurrentServiceType)
 
   useEffect(() => {
     const dateStrings: string = InBetweenDays([prev, next])
     setCurrentMenuFilters([PicksFilter(cu.chefId, 'chefId', '=')])
     setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
-    setCurrentMenuType(MenuTypes.find(mt => mt.code === 'LUNCH'))
   }, [])
 
     if (!workspaces) return <Loader/>
@@ -61,30 +60,32 @@ const OrdersPage = () => {
   }
 
   const parsedGroups = (groupsByWk: IGroup[] = groups) => {
-    const filteredGroups = groupsByWk.filter(
-      (g: IGroup) => g.configurations.length > 5,
-    )
-    return filteredGroups.map((g: IGroup) => ({
+    // const filteredGroups = groupsByWk.filter(
+    //   (g: IGroup) => g.configurations.length > 5,
+    // )
+    console.log(
+      groupsByWk.map(gt => JSON.parse(gt.configurations)[0].serviceType))
+    return groupsByWk.map((g: IGroup) => ({
       id: g.id,
       workspaceId: g.workspaceId,
       name: g.name,
-      serviceType: JSON.parse(g.configurations)[0]?.serviceType,
+      serviceType: JSON.parse(g.configurations)[0]?.serviceType
     }))
   }
 
   const menuCount = (parsedOrders: IOrder[]) =>
     parsedOrders
-      .map((o: IOrder) =>
-        JSON.parse(o.details).map((d: IOrderDetails) => d.quantity),
-      )
+      .map((o: IOrder) => o.details.map(d => d.quantity))
       .flat()
       .reduce((rquant: number, quant: number) => rquant + Number(quant), 0)
 
-  const ordersByWk = (wk: IWorkspace, selectedOrders: IOrder[] = orders) =>
+  const ordersByWk = (wk: IWorkspace, selectedOrders = orders) => 
     selectedOrders
+      .map(o => ({...o, details: JSON.parse(o.details)}))
       .filter((o: IOrder) => o.status !== 'CANCELED')
-      .filter((order: IOrder) => order.workspaceId === wk.id)
-
+      .filter(o => o.workspaceId === wk.id)
+      .filter(o => currentMenuType === 'ALL' ?  true : o.details[0].type === currentMenuType) 
+    
 
   const mapTheMenus = (menusToMap: IMenu[]) => {
     const mapMenu = new Map()
@@ -92,22 +93,21 @@ const OrdersPage = () => {
       .filter((m: IMenu) =>
           m.menuDate.slice(0, 10) == dateForFilter(next).slice(0, 10),
       )
+      .filter(m => currentMenuType === 'ALL' ?  true : m.type === currentMenuType) 
       .forEach((m: IMenu) => mapMenu.set(menuKey(m), m.tag))
     return mapMenu
   }
 
-  const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")
 
-  const setMenuType = (menuCode: string) => {
-    console.log(menuCode)
-    console.log(MenuTypes.find(mt => mt.code===menuCode))
-    menuCode === 'ALL' ? 
-      setCurrentMenuType('ALL') :
-      setCurrentMenuType(MenuTypes.find(mt => mt.code===menuCode)[0])
+  const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")[0]
 
-  }
-    
+  const ServiceTypes = () => 
+    Array.from(new Set(
+      parsedGroups()
+      .map(pg => pg.serviceType.name))
+    )
 
+  console.log(ServiceTypes())
 
   return (
     <main className="p-8">
@@ -142,8 +142,13 @@ const OrdersPage = () => {
         </div>
         <div className="flex flex-col ml-8">
           <label className="text-sm uppercase">Tipo de Menú</label>
-          <select onChange={(e) => setMenuType(e.target.value)}
-            className="uppercase std-input">
+          <select onChange={(e) => setCurrentMenuType(e.target.value)}
+            className="uppercase std-input"
+            defaultValue={
+              currentMenuType === 'ALL' ?  "Todos" :
+                MenuTypes.filter(mt => currentMenuType === mt.code)[0].code
+          }
+            >
             {MenuTypes.map(mt => (
               <option value={mt.code}>
                 {mt.name}
@@ -153,12 +158,29 @@ const OrdersPage = () => {
             
           </select>
         </div>
-        <div>
+        <div className="flex flex-col ml-8">
           <label className="text-sm uppercase">Tipo de Servicio</label>
+          <select onChange={(e) => setCurrentServiceType(e.target.value)}
+            className="uppercase std-input" 
+            defaultValue={
+              currentServiceType === 'ALL' ? "Todos" :
+              ServiceTypes().filter(st => currentServiceType === st)[0]
+            }
+          >
+            {ServiceTypes()
+              .map(st => (
+              <option key={`st-${st}`} value={st}>
+                {st}
+              </option>
+            ))}
+            <option value={"ALL"}>Todos</option>
+            
+          </select>
+
         </div>
         <button onClick={() => generatePdf(
-          ordersByWk(wk[0]),
-          parsedGroups()?.filter(g => g.workspaceId === wk[0].id),
+          ordersByWk(wk),
+          parsedGroups()?.filter(g => g.workspaceId === wk.id),
           mapTheMenus(menus),
           new Date(TodayPicks()).valueOf()
         )}
@@ -167,7 +189,7 @@ const OrdersPage = () => {
           </button>
       </div>
       <div key={wk.id} className="mt-8">
-        {orders && ordersByWk(wk[0]).length > 0 && menus && (
+        {orders && ordersByWk(wk).length > 0 && menus && (
           <div>
             <h3 className="my-2 text-2xl font-bold">
               {wk.name}
@@ -175,14 +197,15 @@ const OrdersPage = () => {
             {orders && (
               <h5 className="mt-2 text-lg font-normal">
                 <span className="font-bold">
-                  {menuCount(ordersByWk(wk[0]))}
-                </span> menús servidos.  </h5>
+                  {menuCount(ordersByWk(wk))}
+                </span> comidas.  </h5>
             )}
             <ReportTable
-              orders={ordersByWk(wk[0])}
+              orders={ordersByWk(wk)}
               parsedGroups={parsedGroups()?.filter(
-                (g: IParsedGroup) => g.workspaceId === wk[0].id,
+                (g: IParsedGroup) => g.workspaceId === wk.id,
               )}
+              menus={menus.filter(m => m.menuDate.slice(0, 10) == dateForFilter(next).slice(0,10))}
               currentMenus={mapTheMenus(menus)} />
           </div>
         )}

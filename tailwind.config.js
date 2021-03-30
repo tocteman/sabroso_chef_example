@@ -1,10 +1,10 @@
 module.exports = {
-   purge: {
-     content: ['./src/**/*.html', './src/**/*.tsx'],
-     options: {
-       safelist: ['col-start-1', 'col-start-2', 'col-start-3', 'col-start-4', 'col-start-5', 'col-start-7', 'col-start-0']
-     }
-   },
+   // purge: {
+   //   content: ['./src/**/*.html', './src/**/*.tsx'],
+   //   options: {
+   //     safelist: ['col-start-1', 'col-start-2', 'col-start-3', 'col-start-4', 'col-start-5', 'col-start-7', 'col-start-0']
+   //   }
+   // },
   theme: {
     fontFamily: {
       "sans": ["'Source Sans Pro'", "sans-serif"],

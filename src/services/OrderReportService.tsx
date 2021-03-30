@@ -124,7 +124,6 @@ export const generatePdf = (
     console.log(currentMenus)
    const finalparse = []
     orders
-    .map(o => ({...o, details: JSON.parse(o.details)}))
     .filter(order => order.status !== 'CANCELED')
     .forEach(parsedOrder => {
         parsedOrder.details.length>0 ?

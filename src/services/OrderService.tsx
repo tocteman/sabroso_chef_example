@@ -6,6 +6,9 @@ import {replaceMenuStr} from '../utils/StringUtils'
 
 export const viewAtom = atom<String>('cocina') 
 
+// export const groupByGroupAndTag = (groupedOrders, parsedGroups, menus) => {
+  
+// }
 
 export const groupByGroupAndTag: (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], currentMenus: Map<string, string>) => IGrouppedObj
   = (groupedOrders, parsedGroups, currentMenus) => {
@@ -21,7 +24,6 @@ const extractOrderDetails = (groupedOrders: IOrder[], parsedGroups: IParsedGroup
     const finalparse:any[] = []
     groupedOrders
     .filter(order => order.status !== 'CANCELED')
-    .map((o: IOrder) => ({...o, details: JSON.parse(o.details)}))
     .forEach((po:IOrder) => { 
       po.details.length> 1 ?
         po.details.forEach((detail:IOrderDetails) =>
@@ -33,6 +35,9 @@ const extractOrderDetails = (groupedOrders: IOrder[], parsedGroups: IParsedGroup
           mapDeliveryDetails(po, po.details[0], parsedGroups, currentMenus)
         )
     }) 
+    console.log({groupedOrders})
+    console.log({currentMenus})
+    console.log({finalparse})
     return finalparse
   }
 

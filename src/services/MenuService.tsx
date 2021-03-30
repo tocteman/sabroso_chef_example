@@ -15,5 +15,6 @@ export const CurrentMenu = atom<IMenu>(initialMenu)
 export const CurrentMonth = atom<number>(0)
 export const CurrentDay = atom<number>(0)
 export const MenusPerDay = atom<IMenuPerDay[]>([initialMenuPerDay])
-export const CurrentMenuType = atom<IMenuType|String>(MenuTypes.find(mt => mt.code === 'LUNCH'))
+export const CurrentMenuType = atom<string>("LUNCH")
+export const CurrentServiceType =atom<string>("Vianda")
 

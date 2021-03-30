@@ -29,10 +29,10 @@ const MealsPage = () => {
 
   return (
     <div className="flex">
-      <div className="p-8 w-1/2">
+      <div className="w-1/2 p-8">
         <div className="w-1/3">
           <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={400} iterations={1}>
-            <h2 className="text-3xl font-bold my-8">Comidas</h2>
+            <h2 className="my-8 text-3xl font-bold">Comidas</h2>
           </RoughNotation>
         </div>
         <div className="flex">
@@ -59,18 +59,18 @@ const MealsPage = () => {
           <MealList meals={sortByStr(desserts, 'name')} mealType={cmt} atomRef={DessertSlice} />
         )}
 
-         <button className="main-button cursor-not-allowed">
+         <button className="cursor-not-allowed main-button">
            Añadir Plato
          </button>
       </div>
 
-      <div className="w-1/2 min-h-screen relative">
+      <div className="relative w-1/2 min-h-screen">
         <Transition
           show={currentMeal.id.length > 1}
           enter="transition transform duration-500"
           enterFrom="translate-x-1/3"
         >
-          <div className="min-h-screen inset-0">
+          <div className="inset-0 min-h-screen">
           <MealPanel menus={menus} />
         </div>
         </Transition>

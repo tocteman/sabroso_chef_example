@@ -11,8 +11,10 @@ const ReportTable:React.FC<{
   orders: IOrder[], 
   parsedGroups: IParsedGroup[], 
   currentMenus: Map<string, string>
-}> = ({orders, parsedGroups, currentMenus}) => {
-    const [view] = useAtom(viewAtom)  
+  menus
+}> = ({orders, parsedGroups, currentMenus, menus}) => {
+ console.log({menus}) 
+  const [view] = useAtom(viewAtom)  
 
   const revertMap: (aMap: Map<string, string>) => [string, string][]
     = (aMap) => {
@@ -41,6 +43,7 @@ const ReportTable:React.FC<{
       quantities: tagValue.reduce((rtotal:number, val:IGroupAndQuantity) => rtotal + val.quantity, 0)
     })
     )
+
 
 
   return (

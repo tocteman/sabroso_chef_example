@@ -2,7 +2,7 @@ export interface IOrder {
     id: string;
     groupId: string;
     memberId: string;
-    details: any;
+    details: IOrderDetails[];
     orderDate: string;
     subtotal: string;
     total: string;
