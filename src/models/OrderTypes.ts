@@ -18,7 +18,7 @@ export interface IGrouppedObj {
 export interface IOrderDetails {
   id: string;
   details: string;
-  tag?: string;
+  tag: string;
   quantity: number;
   total: string;
   type: string;
@@ -27,10 +27,10 @@ export interface IOrderDetails {
 export interface IParsedOrderDetails {
   meal: string;
   quantity: number;
-  tag?: string
+  tag: string
 }
 
-export interface IReducedMenu {
+export interface IReducedOrder {
   tag: string;
   type?: string;
   quantity: number;

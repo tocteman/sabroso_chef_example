@@ -84,9 +84,6 @@ const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
               onClick={() => {
 
                 setCurrentDay(day.valueOf());
-                console.log({day})
-                console.log(mpd(day))
-                console.log(getDay(day))
                 setMenusPerDay(mpd(day))
               }}
             >

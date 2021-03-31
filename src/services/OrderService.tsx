@@ -1,73 +1,58 @@
 import React from 'react'
 import { atom } from 'jotai'
-import type { IGroupAndQuantity, IGrouppedObj, IOrder, IOrderDetails, IReducedMenu } from '../models/OrderTypes'
+import type { IGroupAndQuantity, IGrouppedObj, IOrder, IOrderDetails, IReducedOrder } from '../models/OrderTypes'
 import type {IParsedGroup} from '../models/GroupTypes'
-import {replaceMenuStr} from '../utils/StringUtils'
+import type {IMenu} from 'src/models/MenuTypes'
 
 export const viewAtom = atom<String>('cocina') 
 
-// export const groupByGroupAndTag = (groupedOrders, parsedGroups, menus) => {
-  
-// }
 
-export const groupByGroupAndTag: (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], currentMenus: Map<string, string>) => IGrouppedObj
-  = (groupedOrders, parsedGroups, currentMenus) => {
-    const extracted =  extractOrderDetails(groupedOrders, parsedGroups, currentMenus)
-    return extracted .reduce ((rmenus, menu) => rmenus[menu.tag] ?
-        rmenus = { ...rmenus, [menu.tag]: addToRMenu(rmenus[menu.tag], menu) }
+export const groupByGroupAndTag: (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], menus: IMenu[]) => IGrouppedObj
+  = (groupedOrders, parsedGroups, menus) => 
+  extractOrderDetails(groupedOrders, parsedGroups, menus)
+  .reduce((grouped, od) => 
+    grouped[od.tag] ?
+      grouped = { 
+        ...grouped, 
+        [od.tag]: addToGrouped(grouped[od.tag], od) }
       :
-        rmenus = { ...rmenus, [menu.tag]: addMenuFirstTime(menu, parsedGroups)}
-     , {})
- }
+      grouped = { 
+        ...grouped, 
+        [od.tag]: parsedGroups.map(g => ({
+          groupName: g.name,
+          quantity: (g.name === od.groupName) ? od.quantity : 0,
+        }))
+      }
+    , {})
 
-const extractOrderDetails = (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], currentMenus: Map<string, string>) => {
-    const finalparse:any[] = []
+const extractOrderDetails = (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], menus: IMenu[]) => 
     groupedOrders
-    .filter(order => order.status !== 'CANCELED')
-    .forEach((po:IOrder) => { 
-      po.details.length> 1 ?
-        po.details.forEach((detail:IOrderDetails) =>
-          finalparse.push(
-            mapDeliveryDetails(po, detail, parsedGroups, currentMenus)
-          )
-        ) : 
-        finalparse.push(
-          mapDeliveryDetails(po, po.details[0], parsedGroups, currentMenus)
-        )
-    }) 
-    console.log({groupedOrders})
-    console.log({currentMenus})
-    console.log({finalparse})
-    return finalparse
-  }
+    .filter(o => o.status !== 'CANCELED')
+    .map(o => o.details.length > 1 ?
+      o.details.map(d => mapDeliveryDetails(o, d, parsedGroups)) :
+      [mapDeliveryDetails(o, o.details[0], parsedGroups)]
+    )
+    .flat()
+    
 
-const mapDeliveryDetails = (order:IOrder, details:IOrderDetails, groups: IParsedGroup[], currentMenus: Map<string, string>) =>  {
-    return {
-      tag:currentMenus.get(replaceMenuStr(details)),
+const mapDeliveryDetails = (order:IOrder, details:IOrderDetails, groups: IParsedGroup[], ) =>  ({
+      tag: details.tag,
       quantity: details.quantity,
       groupName: groups.filter(group => order.groupId === group.id)[0]?.name,
-    }
-  }
+  })
 
-const addToRMenu = (rmenus:IGroupAndQuantity[],  menu:IReducedMenu) => {
-    const theIndex = rmenus.findIndex(group => 
-      menu.groupName === group.groupName)
+const addToGrouped = (grouped:IGroupAndQuantity[], o:IReducedOrder) => {
+    const theIndex = grouped.findIndex(group => 
+      o.groupName === group.groupName)
     theIndex >= 0 ?
-        rmenus[theIndex] = {
-          groupName: menu.groupName,
-          quantity: rmenus[theIndex].quantity + menu.quantity
+        grouped[theIndex] = {
+          groupName: o.groupName,
+          quantity: grouped[theIndex].quantity + o.quantity
       } :
-      rmenus = [
-        ...rmenus,
-        {groupName: menu.groupName, quantity: menu.quantity}
+      grouped = [
+        ...grouped,
+        {groupName: o.groupName, quantity: o.quantity}
       ]
-    return rmenus
+    return grouped
   }
 
-  const addMenuFirstTime = (menu:IReducedMenu, groups: IParsedGroup[]) => {
-    const groupNamed = groups.map(g => ({
-      groupName: g.name,
-      quantity: (g.name === menu.groupName) ? menu.quantity : 0,
-    }))
-    return groupNamed
-  }

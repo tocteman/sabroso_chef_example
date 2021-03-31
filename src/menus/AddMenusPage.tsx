@@ -24,39 +24,35 @@ const AddMenusPage = () => {
     .some(id => id === history.location.pathname.slice(-1)[0])
 
   const GetIn = (props) => 
-        <Transition
-            show= {props.shouldEnter}
-            enter="transition transform duration-500"
-            enterFrom="translate-x-1/3"
-            enterTo=""
-          >
-          {props.children}
-        </Transition>
+  <Transition
+    show= {props.shouldEnter}
+    enter="transition transform duration-500"
+    enterFrom="translate-x-1/3"
+    enterTo=""
+  >
+    {props.children}
+  </Transition>
 
-
-  console.log(ExampleData.map(e => e.id))
-  console.log(history.location.pathname.slice(-1)[0])
-
-  return (
-    <div className="flex flex-col p-8">
-      <Switch>
-        <Route exact path={`${path}/:id`}>
+    return (
+      <div className="flex flex-col p-8">
+        <Switch>
+          <Route exact path={`${path}/:id`}>
             <CronogramaItem/>
 
-        </Route>
-      </Switch>
-      <div className="w-2/3 my-4">
-        {!includesId() && ExampleData.map(e => 
-        <Link to={`${trimAddr(url)}/${e.id}`} 
-          key={`${e.id}`}>
-          <CronogramaSummaryItem 
-            name={e.name}
-            progress={e.progress}
-          />
-        </Link>
-        )}
+          </Route>
+        </Switch>
+        <div className="w-2/3 my-4">
+          {!includesId() && ExampleData.map(e => 
+          <Link to={`${trimAddr(url)}/${e.id}`} 
+            key={`${e.id}`}>
+            <CronogramaSummaryItem 
+              name={e.name}
+              progress={e.progress}
+            />
+          </Link>
+          )}
+        </div>
       </div>
-    </div>
   )
 }
 

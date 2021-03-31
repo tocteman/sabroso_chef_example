@@ -4,7 +4,7 @@ import {Fetcher, FilteredFetcher} from '../services/Fetcher'
 import type {IOrder, IOrderDetails} from '../models/OrderTypes'
 import type {IGroup, IParsedGroup} from '../models/GroupTypes'
 import { orderFiltersAtom, FilterEncodeString, menusFiltersAtom } from '../services/FilterService'
-import { PicksFilter, TodayPicks, InBetweenDays, dateForFilter } from '../utils/DateUtils'
+import { PicksFilter, TodayPicks, InBetweenDays, dateForFilter, parsed } from '../utils/DateUtils'
 import {menuKey} from '../utils/StringUtils'
 import { useAtom, atom } from 'jotai'
 import type {IWorkspace} from '../models/WorkspaceTypes'
@@ -59,19 +59,24 @@ const OrdersPage = () => {
     setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
   }
 
-  const parsedGroups = (groupsByWk: IGroup[] = groups) => {
-    // const filteredGroups = groupsByWk.filter(
-    //   (g: IGroup) => g.configurations.length > 5,
-    // )
-    console.log(
-      groupsByWk.map(gt => JSON.parse(gt.configurations)[0].serviceType))
-    return groupsByWk.map((g: IGroup) => ({
-      id: g.id,
-      workspaceId: g.workspaceId,
-      name: g.name,
-      serviceType: JSON.parse(g.configurations)[0]?.serviceType
-    }))
-  }
+  const parsedGroups = (groupsByWk: IGroup[] = groups) => 
+    mappedGroups()
+    .filter(g => currentServiceType === 'ALL' ? true : g.serviceType.name === currentServiceType)
+
+  const mappedGroups = (groupsByWk: IGroup[] = groups) => 
+    groupsByWk
+      .filter(g => g.configurations.length > 5)
+      .map((g: IGroup) => ({
+        id: g.id,
+        workspaceId: g.workspaceId,
+        name: g.name,
+        serviceType: JSON.parse(g.configurations)[0]?.serviceType
+      }))
+
+
+  const filteredGroups = () => parsedGroups()
+      .filter(g => currentServiceType === 'ALL' ? true :
+        currentServiceType === g.serviceType?.name)
 
   const menuCount = (parsedOrders: IOrder[]) =>
     parsedOrders
@@ -85,8 +90,8 @@ const OrdersPage = () => {
       .filter((o: IOrder) => o.status !== 'CANCELED')
       .filter(o => o.workspaceId === wk.id)
       .filter(o => currentMenuType === 'ALL' ?  true : o.details[0].type === currentMenuType) 
-    
-
+      .filter(o => filteredGroups().map(g => g.id).includes(o.groupId))
+      
   const mapTheMenus = (menusToMap: IMenu[]) => {
     const mapMenu = new Map()
     menusToMap
@@ -98,16 +103,34 @@ const OrdersPage = () => {
     return mapMenu
   }
 
+  
 
   const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")[0]
 
   const ServiceTypes = () => 
     Array.from(new Set(
-      parsedGroups()
-      .map(pg => pg.serviceType.name))
+      mappedGroups()
+      .map(g => g.serviceType.name))
     )
 
-  console.log(ServiceTypes())
+  const pdfGen = (wk) => {
+    const currentGroups = parsedGroups()?.filter(g => g.workspaceId === wk.id)
+    const currentDate = parsed(next).valueOf()
+    const currentMenus = menus
+                        .filter(m => currentMenuType === 'ALL' ? true : m.type === currentMenuType)
+    if (currentServiceType === 'ALL') {
+      Array.from(new Set(currentGroups.map(g => g.serviceType.name)))
+        .forEach(gst => {
+          const stGroups = currentGroups.filter(g => g.serviceType.name === gst)
+          const stGroupsIds = stGroups.map(g => g.id)
+          const stOrders = ordersByWk(wk).filter(o => stGroupsIds.includes(o.groupId))
+          if (stOrders.length > 0 ) return generatePdf(stOrders, stGroups, currentMenus, currentDate)
+        })
+    } else {
+      return generatePdf (ordersByWk(wk), currentGroups, currentMenus, currentDate)
+    }
+  }
+
 
   return (
     <main className="p-8">
@@ -178,28 +201,25 @@ const OrdersPage = () => {
           </select>
 
         </div>
-        <button onClick={() => generatePdf(
-          ordersByWk(wk),
-          parsedGroups()?.filter(g => g.workspaceId === wk.id),
-          mapTheMenus(menus),
-          new Date(TodayPicks()).valueOf()
-        )}
-        className="mt-1 ml-8 main-button">
+        <button onClick={() => pdfGen(wk)}
+          className={`mt-1 ml-8 main-button ${menuCount(ordersByWk(wk)) === 0 ? ` opacity-50 cursor-not-allowed ` : ` cursor-pointer `}`}>
           Descargar Reporte
           </button>
       </div>
       <div key={wk.id} className="mt-8">
-        {orders && ordersByWk(wk).length > 0 && menus && (
+        {orders && ordersByWk(wk) && menus && (
           <div>
             <h3 className="my-2 text-2xl font-bold">
               {wk.name}
             </h3>
-            {orders && (
+          {orders && menuCount(ordersByWk(wk)) > 0 ? (
               <h5 className="mt-2 text-lg font-normal">
                 <span className="font-bold">
                   {menuCount(ordersByWk(wk))}
-                </span> comidas.  </h5>
-            )}
+                </span> comidas.
+              </h5>
+          ) : (<h5 className="mt-2 text-lg font-normal">Aún no has recibido pedidos.</h5>)
+          }
             <ReportTable
               orders={ordersByWk(wk)}
               parsedGroups={parsedGroups()?.filter(

@@ -31,7 +31,6 @@ const ClientsPage = () => {
 
   const parsedServicesTypes = (proposal) => JSON.parse(proposal.servicesTypes)
   
-  console.log(proposals)
   if (!workspaces || workspacesFetchError) return <Loader />
   if (!proposals) return <Loader />
   return (
@@ -39,7 +38,7 @@ const ClientsPage = () => {
       <div className="w-1/2 p-8">
         <div className="w-1/3">
           <RoughNotation strokeWidth={2} type="underline" color={'#fc8e5f'} show={true} animationDuration={400} iterations={1}>
-            <h2 className="text-3xl font-bold my-8">Clientes</h2>
+            <h2 className="my-8 text-3xl font-bold">Clientes</h2>
           </RoughNotation>
         </div>
         {workspaces &&
@@ -51,7 +50,7 @@ const ClientsPage = () => {
             .map((wk: IWorkspace) => (
               <div
                 key={wk.id}
-                className="my-1 border-2 border-crema-300 bg-white hover:bg-white p-2 rounded hover:border-mostaza-300 max-w-sm cursor-pointer hover:shadow-sm text-lg"
+                className="max-w-sm p-2 my-1 text-lg bg-white border-2 rounded cursor-pointer border-crema-300 hover:bg-white hover:border-mostaza-300 hover:shadow-sm"
                 onClick={() => setCurrentClient(wk)}
               >
                 <h2>
@@ -67,16 +66,16 @@ const ClientsPage = () => {
       >
         {currentClient && <div>
 
-          <div className="text-2xl font-bold mt-8">
+          <div className="mt-8 text-2xl font-bold">
                   {currentClient.name === 'Santa Priscila / Profremar' ? 'Una Empresa' : currentClient.name === 'Los sabrositos' ? 'Universales' : currentClient.name}
           </div>
-            <hr className="border border-crema-200 my-2"/>
+            <hr className="my-2 border border-crema-200"/>
         </div>
           }
         {currentClient && proposals.filter(p => p.workspaceId === currentClient.id).map(p => (
         <div key={p.id} className="mt-4">
           { parsedServicesTypes(p).map((pst, index) => (
-          <div key={pst.name} className="my-4 flex items-center text-xl divide-x divide-mostaza-200">
+          <div key={pst.name} className="flex items-center my-4 text-xl divide-x divide-mostaza-200">
             {index === 0 && <div className="w-12 pr-2"><img src={Vianda}/></div>}
             {index === 1 && <div className="w-12 pr-2"><img src={Plato}/></div>}
               <div className="px-2 font-bold">

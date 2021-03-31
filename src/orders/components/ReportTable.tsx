@@ -13,7 +13,6 @@ const ReportTable:React.FC<{
   currentMenus: Map<string, string>
   menus
 }> = ({orders, parsedGroups, currentMenus, menus}) => {
- console.log({menus}) 
   const [view] = useAtom(viewAtom)  
 
   const revertMap: (aMap: Map<string, string>) => [string, string][]
@@ -29,7 +28,7 @@ const ReportTable:React.FC<{
   const grouped: () => [string, IGroupAndQuantity[]][] 
     = () => 
       Object.entries(
-        groupByGroupAndTag(orders, parsedGroups, currentMenus)
+        groupByGroupAndTag(orders, parsedGroups, menus)
       ).sort((a, b) => a[0].charCodeAt(0) - b[0].charCodeAt(0))
 
   const groupNamesHeader: () => string[]

@@ -10,11 +10,13 @@ import type {IParsedGroup} from '../models/GroupTypes'
 import { LocalHourFix } from '../utils/DateUtils'
 import esLocale from 'date-fns/locale/es'
 import {replaceMenuStr} from '../utils/StringUtils.jsx'
+import type {IMenu} from '../models/MenuTypes.js'
+import {MenuTypes} from '../services/MenuService'
 
 export const generatePdf = (
   groupedOrders: IOrder[],
   parsedGroups: IParsedGroup[],
-  currentMenus: Map<string, string>,
+  currentMenus: IMenu[],
   currentDate: number
 ) => {
   const mapped = new Map( 
@@ -39,6 +41,7 @@ export const generatePdf = (
   doc.addImage(img, 'png', 15, 10, 30, 12)
   doc.setFont('SourceSansPro', 'bold')
   doc.text(format(currentDate + LocalHourFix, 'EEEE, dd MMMM yyyy', {locale: esLocale}), 15, 35)
+  doc.text(`:: ${theTypes(parsedGroups, currentMenus)}`, 145, 35)
   doc.setFontSize(12)
   doc.setFont('SourceSansPro', 'bold')
   retrieveGeneralTable(doc, mapped, currentMenus, parsedGroups)
@@ -53,7 +56,7 @@ export const generatePdf = (
   doc.roundedRect(15, 150, 170, 70, 2, 2, 'FD')
   // // @ts-ignore
   doc.text("Recibido _____________________________", 15, 240)
-  doc.save(`ReporteSabroso_${format(currentDate + LocalHourFix, 'dd/MMM', {locale: esLocale})}.pdf`)
+  doc.save(`ReporteSabroso_${theTypes(parsedGroups, currentMenus)}${format(currentDate + LocalHourFix, 'dd/MMM', {locale: esLocale})}.pdf`)
     return doc
   }
 
@@ -86,17 +89,36 @@ export const generatePdf = (
     })
   }
 
-  const generateAutoTableBody = (map:any) => {
-    const newBody = []
-    map.forEach((v, k)=> {
-      const newRow = []
-      newRow.push(k)
-      v.forEach((value, index:number) => (index+1) % 2 === 0 && newRow.push(value))
-      newRow.push(newRow.slice(1).reduce((rtotal, order)=> rtotal + order, 0))
-      newBody.push(newRow)
-    })
-    return newBody.sort((a,b)=> a[0].charCodeAt(0) - b[0].charCodeAt(0))
-  }
+  const generateAutoTableBody = (mapped:any) => 
+   Array.from(mapped, ([tag, summary]) => ({tag, summary}))
+     .map(row => [ row.tag, row.summary.map(v => 
+         (typeof v === 'number') && (v > 0 ? v : 0)
+       ).filter(v => (v === 0) ? true : v).flat()
+     ])
+     .map(row => row.flat())
+     .map(row => ([...row, row.slice(1).reduce((rtotal, o) => rtotal + o, 0)]))
+    .sort((a,b)=> a[0].charCodeAt(0) - b[0].charCodeAt(0))
+  
+  const generateAutoTable = (mapped: any) => 
+    Array.from(mapped, ([tag, summary]) => ({tag, summary}))
+    .map(row => [
+      row.tag, 
+      row.summary
+      .map((item ,index) => ((index + 1) % 2 === 0 ) && 
+        (item > 0) && {gn: row.summary[index -1], value: item})
+      .filter(i => i)
+    ].flat()
+  )
+
+  const theTypes = (groups, menus) => {
+    const menuTypes = Array.from(new Set(menus
+      .filter(m => m.type?.length > 1)
+      .map(m => MenuTypes.filter(mt => mt.code === m.type)[0]?.name)
+    ))
+    const printedMenuType = menuTypes.length > 1 ? "General" : menuTypes[0]
+    const printedServiceType = groups[0]?.serviceType.name
+    return `${printedMenuType}--${printedServiceType}`
+   }
 
   const retrieveTagAndMenuTable = (docRef, orders, currentMenus) => {
     return autoTable(docRef, {
@@ -117,48 +139,17 @@ export const generatePdf = (
     })
   }
 
-  const menustr = (detail) => replaceMenuStr(detail)
-  
-
-  const relateTagAndMenu = (orders:IOrder[], currentMenus) => {
-    console.log(currentMenus)
-   const finalparse = []
+  const relateTagAndMenu = (orders:IOrder[], currentMenus) => 
     orders
-    .filter(order => order.status !== 'CANCELED')
-    .forEach(parsedOrder => {
-        parsedOrder.details.length>0 ?
-          parsedOrder.details.forEach(detail =>
-            finalparse.push({
-              tag: currentMenus.get(menustr(detail)),
-              menuName:menustr(`${detail.details}`)
-            })
-          ) :
-        finalparse.push({
-          tag: currentMenus.get(menustr(parsedOrder.details[0].details)),
-          menuName: menustr(parsedOrder.details[0].details)
-        })
-      })
-    return finalparse
+    .filter(o => o.status !== 'CANCELED')
+    .map(o => o.details.length > 1 ?
+      o.details.map(d => ({tag: d.tag, menuName: replaceMenuStr(d)})) : 
+        [{tag: o.details[0].tag, menuName:replaceMenuStr(o.details[0])}]
+      )
+    .flat()
     .reduce((rmenus, menu) =>
       rmenus = {...rmenus, [menu.tag]: menu.menuName}
-     , {})
-  }
-
-  const generateAutoTable = (map:any) => {
-    const t = []
-    map.forEach((summary, tag) => {
-      const newRow = [tag]
-      summary.forEach((item, index) => {
-        if ((index + 1) % 2 === 0) {
-          if (item > 0) { newRow.push(
-            { gn: summary[index-1], value: item}
-          ) }
-        }
-      }) 
-      t.push(newRow)
-    })
-    return t
-  }
+    , {})
 
   const retrieveTotal = (m) => {
     let total = 0
@@ -178,7 +169,11 @@ export const generatePdf = (
       .map(g => g.name)
     const rows = printFoodRows(t, goodGroups)
     const head = ['Menú', ...goodGroups.sort(), 'Total']
-    return  { head: [head], body: rows }
+    const theTable = {
+      head: [head],
+      body: rows
+    }
+    return theTable
   }
 
   const printFoodRows = (t, goodGroups) => {
@@ -196,12 +191,10 @@ export const generatePdf = (
         tr.slice(0,1)[0],
         ...goodVals,
         tr.slice(1).reduce((qty, g)=> qty + g.value, 0)
-      ]
+      ].reduce((row, v) => v === 0 ? [...row, "-"] : [...row, v] ,[])
       f.push(goodRow)
     })
     //@ts-ignore
     return f.sort((a:any, b:any) => (a[0] > b[0]) - (a[0] < b[0]))
   }
-
-
 

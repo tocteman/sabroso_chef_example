@@ -2,6 +2,7 @@ import React from 'react'
 import format from 'date-fns/format'
 import esLocale from 'date-fns/locale/es'
 import type { Filter } from '../models/FilterTypes'
+import parse from 'date-fns/parse'
 
 export const LocalHourFix = 21600000
 21600000
@@ -10,7 +11,6 @@ export const PicksFilter = (valueString: string, fieldString:string, operator:st
     value: valueString,
     operator: operator
   })
-
 
 export const InBetweenDays = (dateStrings: string[]) => {
   const newDateStrings =  dateStrings
@@ -51,4 +51,6 @@ export const TodayPicks = () => {
   return format(new Date().valueOf(), 'yyyy-MM-dd') 
 }
 
+export const parsed = (dateString: string, fmt ="yyyy-MM-dd")  =>
+  parse(dateString, fmt, new Date())
 
