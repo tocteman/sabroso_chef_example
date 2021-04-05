@@ -31,6 +31,7 @@ const ClientsPage = () => {
 
   const parsedServicesTypes = (proposal) => JSON.parse(proposal.servicesTypes)
   
+  console.log(proposals)
   if (!workspaces || workspacesFetchError) return <Loader />
   if (!proposals) return <Loader />
   return (
@@ -93,3 +94,4 @@ const ClientsPage = () => {
 }
 
 export default ClientsPage
+

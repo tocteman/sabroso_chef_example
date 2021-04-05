@@ -5,17 +5,19 @@ import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import ExampleData from './ExampleData'
 import CronogramaWeeklyColumn from './CronogramaWeeklyColumn'
 
-const CronogramaItem = () => {
-  let {id} = useParams()
-  const [weeks, setWeeks] = useState(
-{
+
+const initialWeeks =  {
    1: {number: 1, status: "inactive"},
    2: {number: 2, status: "inactive"}, 
    3:  {number: 3, status: "inactive"},
    4:  {number: 4, status: "inactive"}
 }
 
-  )
+
+const CronogramaItem = () => {
+  let {id} = useParams()
+
+  const [weeks, setWeeks] = useState(initialWeeks)
 
   const history = useHistory()
   
@@ -54,7 +56,7 @@ const CronogramaItem = () => {
       <div className="flex rounded border-crema-200">
         {Object.entries(weeks).map(([k, v])=> (
           <div onClick={w => setWeeks({
-            ...weeks,
+            ...initialWeeks,
             [`${k}`] : {number: v.number, status: "active" }
           })}>
           <CronogramaWeeklyColumn 

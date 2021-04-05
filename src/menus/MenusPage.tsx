@@ -40,7 +40,7 @@ const MenusPage = () => {
   return (
     <div className="">
       <div className="flex">
-        <div className="w-1/2 mr-8 ml-8 mt-8 flex flex-col pr-8">
+        <div className="flex flex-col w-1/2 pr-8 mt-8 ml-8 mr-8">
           <div className="w-1/3">
             <RoughNotation
               type="underline"
@@ -50,7 +50,7 @@ const MenusPage = () => {
               animationDuration={400}
               iterations={1}
             >
-              <h2 className="text-3xl font-bold my-8">Menús</h2>
+              <h2 className="my-8 text-3xl font-bold">Menús</h2>
             </RoughNotation>
           </div>
          <MenuCalendar menus={menus}/>
@@ -62,7 +62,7 @@ const MenusPage = () => {
           enterTo=""
             className="w-1/2"
         >
-            <MenuPanel />
+            <MenuPanel meals={meals} />
         </Transition>
       </div>
     </div>

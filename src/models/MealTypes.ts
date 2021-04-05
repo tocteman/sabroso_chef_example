@@ -11,6 +11,19 @@ export interface IMeal {
     type: string;
 }
 
+export interface ICompositeMenu {
+    entree: string;
+    main: string;
+    dessert: string
+}
+
+
+export const initialCompositeMenu: ICompositeMenu = {
+    entree: "",
+    main: "",
+    dessert: ""
+}
+
 export const initialMeal: IMeal = {
     id: "",
     chefId: "",

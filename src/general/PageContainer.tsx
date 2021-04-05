@@ -5,8 +5,8 @@ import Topbar from './navigation/Topbar'
 
 const PageContainer = () => {
   return (
-    <div className="bg-crema-100 min-h-screen flex font-sans">
-      <aside className="bg-crema-125 w-1/6 border-r-2 border-mostaza-300">
+    <div className="flex min-h-screen font-sans bg-crema-100">
+      <aside className="w-1/6 border-r-2 bg-crema-150 border-mostaza-300">
         <NavigationSidebar/>
       </aside>
       <main className="w-5/6 overflow-x-hidden">

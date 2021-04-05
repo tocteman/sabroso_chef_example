@@ -1,16 +1,20 @@
 import React from 'react'
 import { atom, useAtom } from 'jotai'
-import { CurrentDay,  MenusPerDay } from '../../services/MenuService'
+import { CurrentDay,  DisplayPanel,  MenusPerDay } from '../../services/MenuService'
 import CloseIcon from '../../svgs/CloseIcon'
 import format from 'date-fns/format'
 import esLocale from 'date-fns/locale/es'
 import { diasSemana } from '../../utils/DateUtils'
 import getDay from 'date-fns/getDay'
 import { sortByStr } from '../../utils/StringUtils'
+import NewMenuPanel from './NewMenuPanel'
+import type {IMeal} from '../../models/MealTypes'
 
-const MenuPanel: React.FC = () => {
+
+const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [currentDay, setCurrentDay] = useAtom(CurrentDay)
   const [menusPerDay, setMenusPerDay] = useAtom(MenusPerDay)
+  const [displayPanel, setDisplayPanel] = useAtom(DisplayPanel)
 
   const renderDay = () => menusPerDay?.length > 0 ? 
     Object.entries(sortByStr(menusPerDay, 'tag')) : []
@@ -20,7 +24,7 @@ const MenuPanel: React.FC = () => {
         className={`w-full pl-8 ${currentDay > 0 && `h-full min-h-screen pr-8 bg-white border-l-2 border-mostaza-300`}  `}
         >
           <div className="flex flex-col">
-            <div className="mt-16 flex justify-between w-full">
+            <div className="flex justify-between w-full mt-8">
               <h3 className="text-xl">
                 {currentDay > 0 && (
                   <div>
@@ -39,7 +43,7 @@ const MenuPanel: React.FC = () => {
               </h3>
               {currentDay > 0 && (
                 <div
-                  className="cursor-pointer text-black hover:text-red-500 w-6"
+                  className="w-6 text-black cursor-pointer hover:text-red-500"
                   onClick={() => setCurrentDay(0)}
                 >
                   <CloseIcon />
@@ -48,16 +52,16 @@ const MenuPanel: React.FC = () => {
             </div>
               {currentDay > 0 && 
               <hr className="mt-2 border border-mostaza-200" />}
-            <div className="mt-4">
+            <div className="mt-2">
               {currentDay > 0 &&
                 renderDay().map(([k, v], i) => (
                   <div key={`${v.main}-${i}`}>
-                    <div className="my-2 flex items-center rounded hover:bg-crema-100 p-2 cursor-not-allowed border-2 border-transparent hover:border-crema-200">
-                      <div className="text-xl font-bold">
+                    <div className="flex items-center px-2 my-1 border-2 border-transparent rounded cursor-not-allowed hover:bg-crema-100 hover:border-crema-200">
+                      <div className="font-bold">
                         ~ {v.tag.includes('null') ? '' : v.tag.slice(0, 1)} ~
                       </div>
-                      <div className="ml-4 text-lg">
-                        <span className="font-bold text-xl"> {v.main} </span> 
+                      <div className="ml-4">
+                        <span className="font-bold"> {v.main} </span> 
                         <br />
                         {v.entree !== 'null' && v.dessert !== 'null' && <div>
                             {v.entree} | {v.dessert}
@@ -70,8 +74,16 @@ const MenuPanel: React.FC = () => {
             </div>
               {currentDay > 0 &&
               <div className="mt-25">
-                <button className="main-button cursor-not-allowed">
-                  Añadir Menú</button>
+                { !displayPanel &&
+                  <button className="main-button" 
+                    onClick={() => setDisplayPanel(true)}>
+                    Añadir Menús +
+                  </button>
+                }
+                { displayPanel &&
+                <NewMenuPanel meals={meals}/>
+                }
+
               </div>
                 }
           </div>

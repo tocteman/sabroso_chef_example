@@ -18,3 +18,5 @@ export const MenusPerDay = atom<IMenuPerDay[]>([initialMenuPerDay])
 export const CurrentMenuType = atom<string>("LUNCH")
 export const CurrentServiceType =atom<string>("Vianda")
 
+
+export const DisplayPanel =atom<boolean>(false)

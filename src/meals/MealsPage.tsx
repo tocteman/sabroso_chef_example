@@ -23,9 +23,9 @@ const MealsPage = () => {
   if (!meals || mealsFetchError) return <Loader />
   if (!menus || menuError) return <Loader />
 
-  const mains = meals && meals.filter((meal: IMeal, index: number) => meal.type === 'MAIN')
-  const entrees = meals && meals.filter((meal: IMeal) => meal.type === 'ENTREE')
-  const desserts = meals && meals.filter((meal: IMeal) => meal.type === 'DESSERT')
+  const mains = meals && meals.filter((m: IMeal) => m.type === 'MAIN')
+  const entrees = meals && meals.filter((m: IMeal) => m.type === 'ENTREE')
+  const desserts = meals && meals.filter((m: IMeal) => m.type === 'DESSERT')
 
   return (
     <div className="flex">
