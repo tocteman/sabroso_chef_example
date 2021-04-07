@@ -116,8 +116,8 @@ const OrdersPage = () => {
   const pdfGen = (wk) => {
     const currentGroups = parsedGroups()?.filter(g => g.workspaceId === wk.id)
     const currentDate = parsed(next).valueOf()
-    const currentMenus = menus
-                        .filter(m => currentMenuType === 'ALL' ? true : m.type === currentMenuType)
+    const currentMenus = menus.filter(m => 
+      currentMenuType === 'ALL' ? true : m.type === currentMenuType)
     if (currentServiceType === 'ALL') {
       Array.from(new Set(currentGroups.map(g => g.serviceType.name)))
         .forEach(gst => {
@@ -130,7 +130,6 @@ const OrdersPage = () => {
       return generatePdf (ordersByWk(wk), currentGroups, currentMenus, currentDate)
     }
   }
-
 
   return (
     <main className="p-8">

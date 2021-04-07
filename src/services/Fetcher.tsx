@@ -14,10 +14,16 @@ const redirecter = () => {
 export const FilteredFetcher = (url: string, filterString:string) => {
   return InterceptedAxios()
     .get(`${url}?${filterString}`)
-    // .get(`${url}?${filterString}`)
     .then(res => res.data)
     .catch(err => console.log(err)
   )
+}
+
+
+export const PosterPromise = (url: string, data) => {
+  console.log({data})
+  return InterceptedAxios()
+    .put(`${apiUrl}/${url}`, data)
 }
   
 
@@ -39,8 +45,6 @@ const logouter = (history: any) => {
   localStorage.clear()
   location.replace('/login')
   historyHook.replace('/login')
-  
-  // return <Redirect to="/login"/>
 }
 
 

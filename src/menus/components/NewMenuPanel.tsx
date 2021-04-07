@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import CloseIcon from '../../svgs/CloseIcon'
 import {useAtom} from 'jotai'
-import {CurrentDay, DisplayPanel} from '../../services/MenuService'
+import {CurrentDay, DisplayPanel, menusPost, menusPostPromises, validateNewMenus} from '../../services/MenuService'
 import type {IMeal} from '../../models/MealTypes'
 import NewMealForm from './NewMealForm'
 import {LunchMenu, NewMenuMap, NewMenuObj} from '../../services/MealService'
@@ -9,14 +9,18 @@ import {MenuTypes} from '../../services/MenuService'
 import { v4 as uuidv4 } from 'uuid';
 import {IMenu, initialMenu} from '../../models/MenuTypes'
 import format from 'date-fns/format'
+import {useLocalStorage} from '../../utils/LocalStorageHook'
+import DuplicateIcon from '../../svgs/DuplicateIcon'
 
 const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
+  const [cu] = useLocalStorage('user', '')
   const [displayPanel, setDisplayPanel] = useAtom(DisplayPanel)
   const [newMenuMap, setNewMenuMap] = useAtom(NewMenuMap)
   const [showDropdown, setShowDropdown] = useState(false)
   
   const [currentDay] = useAtom(CurrentDay)
   const toggleDropdown = () => setShowDropdown(true) 
+  const [duplicable, setDuplicable] = useState(true)
 
   const addMenu = (mt) => {
     const menuId = uuidv4()
@@ -28,6 +32,21 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
       id: menuId
     }))
   }
+ 
+  const duplicateLunch = () => {
+    const lunch = almuerzos()[0].menu
+    const menuId = uuidv4()
+    setDuplicable(false)
+    setNewMenuMap(newMenuMap.set(menuId, {
+      ...lunch,
+      type: "LUNCH",
+      id: menuId,
+      menuDate: format(currentDay, 'yyyy-MM-dd'),
+      main: "",
+      tag: ""
+    }))
+    setTimeout(() => setDuplicable(true), 160)
+  }
 
   const mappedMenus = () => Array.from(newMenuMap, ([id, menu]) => ({id, menu}))
 
@@ -38,55 +57,50 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const cenas = () => mappedMenus()
         .filter(m => m.menu.type === 'DINNER')
 
-  const duplicateLunch = () => {
-    const lunch = almuerzos()[0].menu
-    const primerosAlmuerzos = almuerzos()
-    console.log({primerosAlmuerzos})
-    const menuId = uuidv4()
-    const newMap = new Map(newMenuMap)
-    newMap.set(menuId, {
-      ...lunch,
-      id: menuId,
-      tag: "",
-      main: "",
-    })
-    setNewMenuMap(newMenuMap.set(menuId, {...lunch, id: menuId, tag: "", main: ""}))
-    console.log({newMenuMap})
-    const newAlmuerzos = almuerzos()
-    console.log({newAlmuerzos})
-   // setNewMenuMap(newMap)
-
-  }
-
+  const publishMenus = () => {
+    const menus: IMenu[] = Array.from(newMenuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
+    const validation = validateNewMenus(menus)
+    if (validation.ok === false) {
+      console.log(validation.msg); 
+      return false
+    }
+    if (validation.ok) {
+      console.log(validation.msg)
+      menusPost( menusPostPromises(menus, cu.id))
+    }   
+  } 
+ 
   return (
-
   <div className="p-4 border-2 rounded shadow-sm bg-crema-125 border-mostaza-200">
     <div className="flex items-center justify-between">
-      <div className="text-lg">
-        Añadir Menús
-      </div> 
-      <div className="w-6 cursor-pointer"
-        onClick={()=>setDisplayPanel(false)}
-      >
+      <div className="flex items-center">
+        <div className="text-lg">
+          Añadir Menús
+        </div> 
+        <div className="flex">
+          <div className="px-2 py-1 text-3xl font-bold cursor-pointer hover:bg-white" onClick={()=> setShowDropdown(true)}>
+            +
+          </div>
+          {showDropdown && (
+            <div className="absolute z-10 mx-6 my-2 border rounded shadow-sm bg-crema-150 border-mostaza-200 ">
+              {MenuTypes.map(mt => (
+                <div className="p-2 cursor-pointer hover:bg-white"
+                  key={`mt--${mt.name}`}
+                  onClick={()=> addMenu(mt)}>
+                  {mt.name}
+                </div>)
+              )}
+
+            </div>)
+        }
+      </div>
+
+      </div>
+      <div className="w-6 cursor-pointer" onClick={()=>setDisplayPanel(false)} >
         <CloseIcon/>
       </div>
     </div>
-    <div className="flex">
-      <div className="px-2 py-1 text-3xl font-bold cursor-pointer hover:bg-white" onClick={()=> setShowDropdown(true)}>
-        +
-      </div>
-    {showDropdown && (
-      <div className="p-2 border rounded border-mostaza-200 ">
-        {MenuTypes.map(mt => (
-          <div className="cursor-pointer hover:bg-white" key={`mt--${mt.name}`} onClick={()=> addMenu(mt)}>
-            {mt.name}
-          </div>)
-        )}
-
-      </div>)
-    }
-   </div>
-   { desayunos().length > 0 && 
+       { desayunos().length > 0 && 
    <div>
      <div className="py-1 text-xl font-bold">Desayunos</div>
      {desayunos()
@@ -103,11 +117,18 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
     }
 { almuerzos().length > 0 && 
    <div>
+     <div className="flex items-center">
+
      <div className="py-1 text-xl font-bold">Almuerzos</div>
+    <button className={`${duplicable ? `text-black`: `text-gray-700`} w-6 h-6 cursor-pointer ml-2 hover:text-gray-800` } onClick={() => duplicateLunch()}>
+      <DuplicateIcon/>
+    </button>
+     </div>
      {almuerzos()
-        .map(m => (
+        .map((m, i) => (
           <div key={m.id} className="flex">
             <div>
+            {i > 0 && <hr className="mt-3 mb-2 border-1 border-mostaza-300"/>}
             <NewMealForm
               meals={meals.filter(m=> m.type==='MAIN')}
               type="lunch"
@@ -133,15 +154,22 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
     }
 { cenas().length > 0 && 
    <div>
-     Cenas
+     <div className="py-1 text-xl font-bold">Cenas</div>
      {cenas()
         .map(m => (
-          <div key={m.id}>{m.id}</div>
+          <div key={m.id}>
+            <NewMealForm
+              meals={meals.filter(m => m.type === 'MAIN')}
+              type="dinner"
+              menuId={m.id}
+              key={`${m.id}-main`}
+            />
+          </div>
         ))}
       </div>
     }
+    {newMenuMap.size > 0 && <button className="my-4 main-button" onClick={() => publishMenus()}>Publicar</button>}
 
-    {almuerzos().length > 0 && <button onClick={() => duplicateLunch()}>duplicar almuerzo</button>}
 
   </div>
   ) 

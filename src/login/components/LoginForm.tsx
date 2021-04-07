@@ -8,7 +8,6 @@ import { loginRequest } from '../../services/AuthService'
 import {Link, useHistory} from 'react-router-dom'
 import {useAtom} from 'jotai'
 import {currentUserAtom} from '../../services/CurrentUser'
-// import {useLocalStorageState} from 'ahooks'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
 
 const LoginForm = () => {
@@ -38,7 +37,7 @@ const LoginForm = () => {
           actions.setSubmitting(false);
         }}
       >
-        <Form className="flex flex-col text-black mt-6 w-full">
+        <Form className="flex flex-col w-full mt-6 text-black">
            <label
             htmlFor="email"
             className="mt-2 text-gray-900"
@@ -49,7 +48,7 @@ const LoginForm = () => {
             id="email"
             name="email"
             placeholder="Email"
-            className="bg-crema-200 focus:bg-crema-100 border-2 border-mostaza-300 rounded-lg shadow my-1 p-2 font-bold text-lg"
+            className="p-2 my-1 text-lg font-bold border-2 rounded-lg shadow bg-crema-200 focus:bg-crema-100 border-mostaza-300"
             type="email"
             />
            <label
@@ -62,17 +61,17 @@ const LoginForm = () => {
             id="password"
             name="password"
             placeholder="8 caracteres"
-            className="bg-crema-200 focus:bg-crema-100 border-mostaza-300 border-2 rounded-lg shadow my-1 p-2 font-bold text-lg"
+            className="p-2 my-1 text-lg font-bold border-2 rounded-lg shadow bg-crema-200 focus:bg-crema-100 border-mostaza-300"
             type="password"
             />
            <button
             type="submit"
-            className="mt-8 mb-4 rounded-lg bg-mostaza-300 hover:bg-crema-300 shadow mx-auto w-48 py-2 font-bold text-lg"
+            className="w-48 py-2 mx-auto mt-8 mb-4 text-lg font-bold rounded-lg shadow bg-mostaza-300 hover:bg-crema-300"
             >
               Ingresar
             </button>
             {loginError && 
-            <div className="text-red-800 my-4 text-center">
+            <div className="my-4 text-center text-red-800">
               Hubo un error al ingresar, por favor intenta nuevamente.
             </div>
             }
