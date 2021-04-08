@@ -6,6 +6,10 @@
   @apply px-4 py-2 mt-4 text-lg font-bold text-center border-2 rounded-lg border-mostaza-200 bg-gradient-to-b from-red-400 to-red-500 text-crema-100 hover:border-mostaza-200 shadow-sm hover:from-red-300;
 }
 
+.secondary-button {
+  @apply px-4 py-2 mt-4 text-lg font-bold text-center border-2 rounded-lg border-mostaza-300 bg-gradient-to-b from-mostaza-200 to-mostaza-300 text-black hover:border-mostaza-200 shadow-sm hover:from-white hover:to-mostaza-200
+}
+
 .std-input {
   @apply p-2 text-xl font-bold border-2 rounded appearance-none bg-crema-100 border-mostaza-200 shadow-sm focus:bg-white
 }

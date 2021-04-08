@@ -1,21 +1,23 @@
 import React from 'react'
 import {useAtom} from 'jotai'
 import type {IMeal} from '../../models/MealTypes';
-import {NewMenuMap} from '../../services/MealService';
+import {MenuMap} from '../../services/MealService';
 import DataListInput from "react-datalist-input";
 
 const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
-  const [newMenuMap, setNewMenuMap] = useAtom(NewMenuMap)
+  const [newMenuMap, setNewMenuMap] = useAtom(MenuMap)
   // const currentMeals = () => meals.map(m => m.name)
   const currentMeals = () => meals.map((m, i) => ({key: `${i}-${m.name}`, value: m.name, label: m.name}))
+  const [menuMap] = useAtom(MenuMap)
   const [currentInput, setCurrentInput] = React.useState("")
   const getSpec = () => meals[0].type.toLowerCase()
-  const getValue = () => newMenuMap.get(menuId)[`${getSpec()}`] || ""
+  const getValue = () => menuMap.get(menuId)[`${getSpec()}`] || ""
   const setText = (mealName: string) => {
   const newMap = new Map(newMenuMap)
     newMap.set(menuId, {...newMap.get(menuId), [`${getSpec()}`]: mealName})
     return setNewMenuMap(newMap)
   }
+  const getTag = () => menuMap.get(menuId)['tag'] || ""
 
   const printLabel = () =>{ 
     if (getSpec() === 'entree')  { return "Entrada"}
@@ -26,8 +28,8 @@ const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
   const tagOptions = ["A", "B", "C", "D", "N"]
 
   const selectTag = (tag:string) => {
-    const newMap = new Map(newMenuMap)
-    newMap.set(menuId, {...newMap.get(menuId), tag})
+    const newMap = new Map(menuMap)
+    newMap.set(menuId, {...menuMap.get(menuId), tag})
     return setNewMenuMap(newMap)
   }
 
@@ -53,7 +55,7 @@ const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
       <label className="text-sm tracking-widest text-gray-400 uppercase">
         Etiqueta
       </label>
-      <select className="font-normal meal-input" onChange={e => selectTag(e.target.value)}>
+      <select className="font-normal meal-input" onChange={e => selectTag(e.target.value)} value={getTag()}>
         <option>--</option>
         {tagOptions.map((t, i) => (<option key={`${t}-${i}`}>{t}</option>))}
     </select>

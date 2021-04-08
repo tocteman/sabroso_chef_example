@@ -3,8 +3,8 @@ import CloseIcon from '../../svgs/CloseIcon'
 import {useAtom} from 'jotai'
 import {CurrentDay, DisplayNewMenuPanel, menusPost, menusPostPromises, validateNewMenus} from '../../services/MenuService'
 import type {IMeal} from '../../models/MealTypes'
-import MenuForm from './NewMealForm'
-import {LunchMenu, NewMenuMap, NewMenuObj} from '../../services/MealService'
+import MenuForm from './MenuForm'
+import {LunchMenu, MenuMap, NewMenuObj} from '../../services/MealService'
 import {MenuTypes} from '../../services/MenuService'
 import { v4 as uuidv4 } from 'uuid';
 import {IMenu, initialMenu} from '../../models/MenuTypes'
@@ -15,7 +15,7 @@ import DuplicateIcon from '../../svgs/DuplicateIcon'
 const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [cu] = useLocalStorage('user', '')
   const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
-  const [newMenuMap, setNewMenuMap] = useAtom(NewMenuMap)
+  const [menuMap, setMenuMap] = useAtom(MenuMap)
   const [showDropdown, setShowDropdown] = useState(false)
   
   const [currentDay] = useAtom(CurrentDay)
@@ -25,7 +25,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const addMenu = (mt) => {
     const menuId = uuidv4()
     setShowDropdown(false)
-    setNewMenuMap(newMenuMap.set(menuId, {
+    setMenuMap(menuMap.set(menuId, {
       ...initialMenu, 
       type: mt.code,
       menuDate: format(currentDay, 'yyyy-MM-dd'),
@@ -37,7 +37,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
     const lunch = almuerzos()[0].menu
     const menuId = uuidv4()
     setDuplicable(false)
-    setNewMenuMap(newMenuMap.set(menuId, {
+    setMenuMap(menuMap.set(menuId, {
       ...lunch,
       type: "LUNCH",
       id: menuId,
@@ -48,7 +48,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
     setTimeout(() => setDuplicable(true), 160)
   }
 
-  const mappedMenus = () => Array.from(newMenuMap, ([id, menu]) => ({id, menu}))
+  const mappedMenus = () => Array.from(menuMap, ([id, menu]) => ({id, menu}))
 
   const desayunos = () => mappedMenus()
         .filter(m => m.menu.type === 'BREAKFAST')
@@ -58,7 +58,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
         .filter(m => m.menu.type === 'DINNER')
 
   const publishMenus = () => {
-    const menus: IMenu[] = Array.from(newMenuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
+    const menus: IMenu[] = Array.from(menuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
     const validation = validateNewMenus(menus)
     if (validation.ok === false) {
       console.log(validation.msg); 
@@ -96,7 +96,8 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
       </div>
 
       </div>
-      <div className="w-6 cursor-pointer" onClick={()=>setDisplayPanel(false)} >
+      <div className="w-6 cursor-pointer" 
+           onClick={()=>setDisplayPanel(false)} >
         <CloseIcon/>
       </div>
     </div>
@@ -108,7 +109,6 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
           <div key={m.id}>
             <MenuForm
               meals={meals.filter(m=> m.type==='MAIN')}
-              type="breakfast"
               menuId={m.id}
             />
           </div>
@@ -131,19 +131,16 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
             {i > 0 && <hr className="mt-3 mb-2 border-1 border-mostaza-300"/>}
             <MenuForm
               meals={meals.filter(m=> m.type==='MAIN')}
-              type="lunch"
               menuId={m.id}
               key={`${m.id}-main`}
             />
             <MenuForm
               meals={meals.filter(m=> m.type==='ENTREE')}
-              type="lunch"
               menuId={m.id}
               key={`${m.id}-entree`}
             />
             <MenuForm
               meals={meals.filter(m=> m.type==='DESSERT')}
-              type="lunch"
               menuId={m.id}
               key={`${m.id}-dessert`}
             />
@@ -160,7 +157,6 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
           <div key={m.id}>
             <MenuForm
               meals={meals.filter(m => m.type === 'MAIN')}
-              type="dinner"
               menuId={m.id}
               key={`${m.id}-main`}
             />
@@ -168,7 +164,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
         ))}
       </div>
     }
-    {newMenuMap.size > 0 && <button className="my-4 main-button" onClick={() => publishMenus()}>Publicar</button>}
+    {menuMap.size > 0 && <button className="my-4 main-button" onClick={() => publishMenus()}>Publicar</button>}
 
 
   </div>

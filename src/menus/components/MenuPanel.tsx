@@ -1,6 +1,6 @@
 import React from 'react'
 import { atom, useAtom } from 'jotai'
-import { CurrentDay,  DisplayNewMenuPanel,  MenusPerDay } from '../../services/MenuService'
+import { CurrentDay,  DisplayEditMenuPanel,  DisplayNewMenuPanel,  MenusPerDay } from '../../services/MenuService'
 import CloseIcon from '../../svgs/CloseIcon'
 import format from 'date-fns/format'
 import esLocale from 'date-fns/locale/es'
@@ -9,12 +9,24 @@ import getDay from 'date-fns/getDay'
 import { sortByStr } from '../../utils/StringUtils'
 import NewMenuPanel from './NewMenuPanel'
 import type {IMeal} from '../../models/MealTypes'
+import EditMenuPanel from './EditMenuPanel'
+import {EditedMenuMap, MenuMap} from '../../services/MealService'
+import type {IMenu} from '../../models/MenuTypes'
 
 
 const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [currentDay, setCurrentDay] = useAtom(CurrentDay)
   const [menusPerDay, setMenusPerDay] = useAtom(MenusPerDay)
   const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
+  const [dispayEditPanel, setEditDisplayPanel] = useAtom(DisplayEditMenuPanel)
+  const [menuMap, setMenuMap] = useAtom(MenuMap)
+  
+  const editMenu = (menu:IMenu) => {
+    menuMap.set(menu.id, menu) 
+    setMenuMap(menuMap)
+    console.log({menuMap})
+    setEditDisplayPanel(menu)
+  }
 
   const renderDay = () => menusPerDay?.length > 0 ? 
     Object.entries(sortByStr(menusPerDay, 'tag')) : []
@@ -56,18 +68,25 @@ const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
               {currentDay > 0 &&
                 renderDay().map(([k, v], i) => (
                   <div key={`${v.main}-${i}`}>
-                    <div className="flex items-center px-2 my-1 border-2 border-transparent rounded cursor-not-allowed hover:bg-crema-100 hover:border-crema-200">
+                    {dispayEditPanel.id !== v.id && <div onClick={() => editMenu(v)}
+                      className="flex items-center px-2 my-1 border-2 border-transparent rounded cursor-pointer hover:bg-crema-100 hover:border-crema-200">
                       <div className="font-bold">
                         ~ {v.tag.includes('null') ? '' : v.tag.slice(0, 1)} ~
                       </div>
                       <div className="ml-4">
                         <span className="font-bold"> {v.main} </span> 
                         <br />
-                        {v.entree !== 'null' && v.dessert !== 'null' && <div>
+                        {v.entree && v.entree !== 'null' && v.dessert !== 'null' && <div>
                             {v.entree} | {v.dessert}
                           </div> }
                      </div>
-                    </div>
+                    </div>}
+                  {dispayEditPanel.id === v.id &&
+                  <div className="my-2">
+                    <EditMenuPanel menu={v}
+                      meals={meals}/>
+                  </div>
+                  }
                     <hr className="border border-crema-200" />
                   </div>
                 ))}
