@@ -19,6 +19,7 @@ export const DinnerMenu = atom<string>("")
 export const LunchMenu = atom<ICompositeMenu>(initialCompositeMenu)
 
 export const NewMenuMap = atom<Map<string, IMenu>>(new Map())
+export const EditedMenuMap = atom<Map<string, IMenu>>(new Map())
 export const NewMenuObj = atom<{[id:string]: IMenu}>({})
 
 export const selectedMeal = atom<string>("")

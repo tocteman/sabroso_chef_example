@@ -1,6 +1,6 @@
 import React from 'react'
 import { atom, useAtom } from 'jotai'
-import { CurrentDay,  DisplayPanel,  MenusPerDay } from '../../services/MenuService'
+import { CurrentDay,  DisplayNewMenuPanel,  MenusPerDay } from '../../services/MenuService'
 import CloseIcon from '../../svgs/CloseIcon'
 import format from 'date-fns/format'
 import esLocale from 'date-fns/locale/es'
@@ -14,7 +14,7 @@ import type {IMeal} from '../../models/MealTypes'
 const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [currentDay, setCurrentDay] = useAtom(CurrentDay)
   const [menusPerDay, setMenusPerDay] = useAtom(MenusPerDay)
-  const [displayPanel, setDisplayPanel] = useAtom(DisplayPanel)
+  const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
 
   const renderDay = () => menusPerDay?.length > 0 ? 
     Object.entries(sortByStr(menusPerDay, 'tag')) : []

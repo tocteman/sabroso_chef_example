@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import CloseIcon from '../../svgs/CloseIcon'
 import {useAtom} from 'jotai'
-import {CurrentDay, DisplayPanel, menusPost, menusPostPromises, validateNewMenus} from '../../services/MenuService'
+import {CurrentDay, DisplayNewMenuPanel, menusPost, menusPostPromises, validateNewMenus} from '../../services/MenuService'
 import type {IMeal} from '../../models/MealTypes'
-import NewMealForm from './NewMealForm'
+import MenuForm from './NewMealForm'
 import {LunchMenu, NewMenuMap, NewMenuObj} from '../../services/MealService'
 import {MenuTypes} from '../../services/MenuService'
 import { v4 as uuidv4 } from 'uuid';
@@ -14,7 +14,7 @@ import DuplicateIcon from '../../svgs/DuplicateIcon'
 
 const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [cu] = useLocalStorage('user', '')
-  const [displayPanel, setDisplayPanel] = useAtom(DisplayPanel)
+  const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
   const [newMenuMap, setNewMenuMap] = useAtom(NewMenuMap)
   const [showDropdown, setShowDropdown] = useState(false)
   
@@ -106,7 +106,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
      {desayunos()
         .map(m => (
           <div key={m.id}>
-            <NewMealForm
+            <MenuForm
               meals={meals.filter(m=> m.type==='MAIN')}
               type="breakfast"
               menuId={m.id}
@@ -129,19 +129,19 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
           <div key={m.id} className="flex">
             <div>
             {i > 0 && <hr className="mt-3 mb-2 border-1 border-mostaza-300"/>}
-            <NewMealForm
+            <MenuForm
               meals={meals.filter(m=> m.type==='MAIN')}
               type="lunch"
               menuId={m.id}
               key={`${m.id}-main`}
             />
-            <NewMealForm
+            <MenuForm
               meals={meals.filter(m=> m.type==='ENTREE')}
               type="lunch"
               menuId={m.id}
               key={`${m.id}-entree`}
             />
-            <NewMealForm
+            <MenuForm
               meals={meals.filter(m=> m.type==='DESSERT')}
               type="lunch"
               menuId={m.id}
@@ -158,7 +158,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
      {cenas()
         .map(m => (
           <div key={m.id}>
-            <NewMealForm
+            <MenuForm
               meals={meals.filter(m => m.type === 'MAIN')}
               type="dinner"
               menuId={m.id}

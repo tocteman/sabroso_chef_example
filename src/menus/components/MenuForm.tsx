@@ -4,7 +4,7 @@ import type {IMeal} from '../../models/MealTypes';
 import {NewMenuMap} from '../../services/MealService';
 import DataListInput from "react-datalist-input";
 
-const NewMenuForm: React.FC<{meals: IMeal[], type: string, menuId}> = ({meals, type, menuId}) => {
+const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
   const [newMenuMap, setNewMenuMap] = useAtom(NewMenuMap)
   // const currentMeals = () => meals.map(m => m.name)
   const currentMeals = () => meals.map((m, i) => ({key: `${i}-${m.name}`, value: m.name, label: m.name}))
@@ -12,9 +12,8 @@ const NewMenuForm: React.FC<{meals: IMeal[], type: string, menuId}> = ({meals, t
   const getSpec = () => meals[0].type.toLowerCase()
   const getValue = () => newMenuMap.get(menuId)[`${getSpec()}`] || ""
   const setText = (mealName: string) => {
-    const newMap = new Map(newMenuMap)
+  const newMap = new Map(newMenuMap)
     newMap.set(menuId, {...newMap.get(menuId), [`${getSpec()}`]: mealName})
-    console.log({newMap})
     return setNewMenuMap(newMap)
   }
 
@@ -64,4 +63,4 @@ const NewMenuForm: React.FC<{meals: IMeal[], type: string, menuId}> = ({meals, t
   ) 
 }
 
-export default NewMenuForm
+export default MenuForm

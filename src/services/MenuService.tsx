@@ -20,7 +20,8 @@ export const MenusPerDay = atom<IMenuPerDay[]>([initialMenuPerDay])
 export const CurrentMenuType = atom<string>("LUNCH")
 export const CurrentServiceType =atom<string>("Vianda")
 
-export const DisplayPanel =atom<boolean>(false)
+export const DisplayNewMenuPanel =atom<boolean>(false)
+export const DisplayEditMenuPanel = atom<boolean>(false)
 
 export const menusPostPromises = (menus: IMenu[], chefId: string) => 
     menus
