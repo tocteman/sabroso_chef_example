@@ -19,13 +19,9 @@ export const FilteredFetcher = (url: string, filterString:string) => {
   )
 }
 
+export const PosterPromise = (url: string, data) => 
+   InterceptedAxios().put(`${apiUrl}/${url}`, data)
 
-export const PosterPromise = (url: string, data) => {
-  console.log({data})
-  return InterceptedAxios()
-    .put(`${apiUrl}/${url}`, data)
-}
-  
 
 export const Fetcher = (url:string, history:any) => {
   return InterceptedAxios().get(url)

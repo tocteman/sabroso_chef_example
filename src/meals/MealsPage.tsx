@@ -3,25 +3,39 @@ import useSWR from 'swr'
 import { useAtom, atom } from 'jotai'
 import { mealsFiltersAtom, FilterEncodeString } from '../services/FilterService'
 import {FilteredFetcher, Fetcher} from '../services/Fetcher'
-import type {IMeal} from 'src/models/MealTypes'
+import {IMeal, initialMeal} from '../models/MealTypes'
 import MealList from './components/MealList'
 import MealPanel from './components/MealPanel'
-import {MainSlice, EntreeSlice, DessertSlice} from '../services/MealService'
+import {MainSlice, EntreeSlice, DessertSlice, DisplayAddMealPanel, MealMap} from '../services/MealService'
 import Loader from '../general/components/Loader'
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import { CurrentMeal } from '../services/MealService'
 import { Transition  } from '@headlessui/react'
 import { sortByStr } from '../utils/StringUtils'
+import MealForm from './components/MealForm'
+import AddMealPanel from './components/AddMealPanel'
+import { v4 as uuidv4 } from 'uuid';
 
 const MealsPage = () => {
   const { data: meals, error: mealsFetchError } = useSWR(['meals'], Fetcher)
   const { data: menus, error: menuError } = useSWR(['menus'], Fetcher)
   const [cmt, setCurrentMealType] = useState('Fuertes')
   const mealTypes = ['Fuertes', 'Entradas', 'Postres']
-  const [currentMeal] = useAtom(CurrentMeal)
+  const [currentMeal, setCurrentMeal] = useAtom(CurrentMeal)
+  const [addMealPanel, setAddMealPanel] = useAtom(DisplayAddMealPanel)
+  const [mealMap, setMealMap] = useAtom(MealMap)
 
   if (!meals || mealsFetchError) return <Loader />
   if (!menus || menuError) return <Loader />
+
+  const showPanel = () => {
+    const mealId = uuidv4()
+    setMealMap(mealMap.set(mealId, {
+      ...initialMeal,
+      id: mealId
+    }))
+    setCurrentMeal(initialMeal)
+    return setAddMealPanel(true)}
 
   const mains = meals && meals.filter((m: IMeal) => m.type === 'MAIN')
   const entrees = meals && meals.filter((m: IMeal) => m.type === 'ENTREE')
@@ -59,20 +73,29 @@ const MealsPage = () => {
           <MealList meals={sortByStr(desserts, 'name')} mealType={cmt} atomRef={DessertSlice} />
         )}
 
-         <button className="cursor-not-allowed main-button">
+        <button className="main-button" onClick={() => showPanel()}>
            Añadir Plato
          </button>
       </div>
 
       <div className="relative w-1/2 min-h-screen">
         <Transition
+          show={addMealPanel}
+          enter="transition transform duration-500"
+          enterFrom="translate-x-1/3"
+        >
+          <div className="inset-0 min-h-screen">
+            {addMealPanel === true && <AddMealPanel/>}
+          </div>
+        </Transition>
+        <Transition
           show={currentMeal.id.length > 1}
           enter="transition transform duration-500"
           enterFrom="translate-x-1/3"
         >
           <div className="inset-0 min-h-screen">
-          <MealPanel menus={menus} />
-        </div>
+            {currentMeal.id.length > 0&& <MealPanel menus={menus}/>}
+          </div>
         </Transition>
       </div>
 

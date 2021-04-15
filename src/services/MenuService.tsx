@@ -32,7 +32,6 @@ export const menusPostPromises = (menus: IMenu[], chefId: string) =>
 export const menusPost = (menus: Promise<AxiosResponse<any>>[]) => 
   Promise.all(menus)
     .then(res => {
-      mutate('/menus')
       return res
     })
   .catch(err => console.log(err))
@@ -51,6 +50,7 @@ export const buildMenuForm = (menuData: IMenu, chefId:string) => {
   f.append('chefId', chefId)
   return f 
 }
+
 
 export const validateNewMenus = (menus: IMenu[]) => {
   const resp = (ok: boolean, msg: string) => ({ok, msg})

@@ -2,7 +2,7 @@ import React from 'react'
 import {DisplayEditMenuPanel} from '../../services/MenuService'
 import { useAtom } from 'jotai'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
-import {EditedMenuMap} from '../../services/MealService'
+import {MenuMap} from '../../services/MealService'
 import {IMenu, initialMenu} from '../../models/MenuTypes'
 import CloseIcon from '../../svgs/CloseIcon'
 import MenuForm from './MenuForm'
@@ -11,7 +11,7 @@ import type {IMeal} from '../../models/MealTypes'
 const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => {
   const [cu] = useLocalStorage('user', '')
   const [displayPanel, setDisplayPanel] = useAtom(DisplayEditMenuPanel)
-  const [editedMenuMap, setEditedMenuMap] = useAtom(EditedMenuMap)
+  const [editedMenuMap, setEditedMenuMap] = useAtom(MenuMap)
 
 
     

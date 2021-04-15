@@ -16,6 +16,7 @@ import Loader from '../general/components/Loader'
 import { RoughNotation} from "react-rough-notation";
 import { generatePdf } from '../services/OrderReportService'
 import { CurrentMenuType, CurrentServiceType, MenuTypes } from '../services/MenuService'
+import {CurrentWorkspace} from '../services/WorkspaceService'
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
@@ -25,6 +26,7 @@ const OrdersPage = () => {
   const [currentMenuFilters, setCurrentMenuFilters] = useAtom(menusFiltersAtom)
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
+
 
   const { data: workspaces} = useSWR( ['workspaces'], Fetcher)
   const { data: orders} = useSWR(FilterEncodeString(currentOrderFilters) !== "" ? 
@@ -38,6 +40,8 @@ const OrdersPage = () => {
 
   const [currentMenuType, setCurrentMenuType] = useAtom(CurrentMenuType)
   const [currentServiceType, setCurrentServiceType] = useAtom(CurrentServiceType)
+
+  const [currentWorkspace, setCurrentWorkspace] = useAtom(CurrentWorkspace)
 
   useEffect(() => {
     const dateStrings: string = InBetweenDays([prev, next])
@@ -84,11 +88,11 @@ const OrdersPage = () => {
       .flat()
       .reduce((rquant: number, quant: number) => rquant + Number(quant), 0)
 
-  const ordersByWk = (wk: IWorkspace, selectedOrders = orders) => 
+  const ordersByWk = (wkId:string, selectedOrders = orders) => 
     selectedOrders
       .map(o => ({...o, details: JSON.parse(o.details)}))
       .filter((o: IOrder) => o.status !== 'CANCELED')
-      .filter(o => o.workspaceId === wk.id)
+      .filter(o => o.workspaceId === currentWorkspace)
       .filter(o => currentMenuType === 'ALL' ?  true : o.details[0].type === currentMenuType) 
       .filter(o => filteredGroups().map(g => g.id).includes(o.groupId))
       
@@ -103,9 +107,10 @@ const OrdersPage = () => {
     return mapMenu
   }
 
+
   
 
-  const wk = workspaces.filter((w:IWorkspace) => w.id === "c03e25dc-dc48-44a0-850d-32126416fb6d")[0]
+
 
   const ServiceTypes = () => 
     Array.from(new Set(
@@ -113,8 +118,8 @@ const OrdersPage = () => {
       .map(g => g.serviceType.name))
     )
 
-  const pdfGen = (wk) => {
-    const currentGroups = parsedGroups()?.filter(g => g.workspaceId === wk.id)
+  const pdfGen = (wkid:string) => {
+    const currentGroups = parsedGroups()?.filter(g => g.workspaceId === wkid)
     const currentDate = parsed(next).valueOf()
     const currentMenus = menus.filter(m => 
       currentMenuType === 'ALL' ? true : m.type === currentMenuType)
@@ -123,20 +128,31 @@ const OrdersPage = () => {
         .forEach(gst => {
           const stGroups = currentGroups.filter(g => g.serviceType.name === gst)
           const stGroupsIds = stGroups.map(g => g.id)
-          const stOrders = ordersByWk(wk).filter(o => stGroupsIds.includes(o.groupId))
+          const stOrders = ordersByWk(wkid).filter(o => stGroupsIds.includes(o.groupId))
           if (stOrders.length > 0 ) return generatePdf(stOrders, stGroups, currentMenus, currentDate)
         })
     } else {
-      return generatePdf (ordersByWk(wk), currentGroups, currentMenus, currentDate)
+      return generatePdf (ordersByWk(wkid), currentGroups, currentMenus, currentDate)
     }
   }
 
+  console.log(ordersByWk(currentWorkspace))
+  console.log(menuCount(ordersByWk(currentWorkspace)) > 0 )
+
   return (
     <main className="p-8">
-      <div className="w-1/6">
-      <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={300} iterations={1}>
-      <h1 className="my-8 text-3xl font-bold">Órdenes</h1>
-      </RoughNotation>
+      <div className="flex justify-between">
+        <div className="w-1/6">
+          <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={300} iterations={1}>
+          <h1 className="my-8 text-3xl font-bold">Órdenes</h1>
+          </RoughNotation>
+        </div>
+        <div>
+        <button onClick={() => pdfGen(currentWorkspace)}
+          className={`mt-1 main-button ${menuCount(ordersByWk(currentWorkspace)) === 0 ? ` opacity-50 cursor-not-allowed ` : ` cursor-pointer `}`}>
+          Descargar Reporte
+          </button>
+        </div>
       </div>
       <div className="flex">
         <div className="flex flex-col rounded border-mostaza-300">
@@ -172,7 +188,7 @@ const OrdersPage = () => {
           }
             >
             {MenuTypes.map(mt => (
-              <option value={mt.code}>
+              <option value={mt.code} key={`option-${mt.code}`}>
                 {mt.name}
               </option>
             ))}
@@ -196,33 +212,45 @@ const OrdersPage = () => {
               </option>
             ))}
             <option value={"ALL"}>Todos</option>
-            
           </select>
-
         </div>
-        <button onClick={() => pdfGen(wk)}
-          className={`mt-1 ml-8 main-button ${menuCount(ordersByWk(wk)) === 0 ? ` opacity-50 cursor-not-allowed ` : ` cursor-pointer `}`}>
-          Descargar Reporte
-          </button>
+        <div className="flex flex-col ml-8">
+          <label className="text-sm uppercase">Clientes</label>
+          <select onChange={(e) => setCurrentWorkspace(e.target.value)}
+            className="uppercase std-input" 
+            defaultValue={
+              workspaces?.filter(wk => currentWorkspace === wk.id)[0] || ""
+            }
+          >
+            <option value={""}>-</option>
+            {workspaces
+              .map(wk => (
+              <option key={`workspace-${wk.id}`} value={wk.id}>
+                {wk.name}
+              </option>
+            ))}
+            <option value={"ALL"}>Todos</option>
+          </select>
+        </div>
       </div>
-      <div key={wk.id} className="mt-8">
-        {orders && ordersByWk(wk) && menus && (
+      <div key={currentWorkspace} className="mt-8">
+        {orders && ordersByWk(currentWorkspace) && menus && (
           <div>
             <h3 className="my-2 text-2xl font-bold">
-              {wk.name}
+              {workspaces.filter(wk => wk.id === currentWorkspace)[0]?.name}
             </h3>
-          {orders && menuCount(ordersByWk(wk)) > 0 ? (
+          {orders && menuCount(ordersByWk(currentWorkspace)) > 0 ? (
               <h5 className="mt-2 text-lg font-normal">
                 <span className="font-bold">
-                  {menuCount(ordersByWk(wk))}
+                  {menuCount(ordersByWk(currentWorkspace))}
                 </span> comidas.
               </h5>
           ) : (<h5 className="mt-2 text-lg font-normal">Aún no has recibido pedidos.</h5>)
           }
             <ReportTable
-              orders={ordersByWk(wk)}
+              orders={ordersByWk(currentWorkspace)}
               parsedGroups={parsedGroups()?.filter(
-                (g: IParsedGroup) => g.workspaceId === wk.id,
+                (g: IParsedGroup) => g.workspaceId === currentWorkspace,
               )}
               menus={menus.filter(m => m.menuDate.slice(0, 10) == dateForFilter(next).slice(0,10))}
               currentMenus={mapTheMenus(menus)} />

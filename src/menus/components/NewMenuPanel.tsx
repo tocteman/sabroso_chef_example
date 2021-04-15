@@ -4,19 +4,24 @@ import {useAtom} from 'jotai'
 import {CurrentDay, DisplayNewMenuPanel, menusPost, menusPostPromises, validateNewMenus} from '../../services/MenuService'
 import type {IMeal} from '../../models/MealTypes'
 import MenuForm from './MenuForm'
-import {LunchMenu, MenuMap, NewMenuObj} from '../../services/MealService'
+import {LunchMenu, MenuMap} from '../../services/MealService'
 import {MenuTypes} from '../../services/MenuService'
 import { v4 as uuidv4 } from 'uuid';
 import {IMenu, initialMenu} from '../../models/MenuTypes'
 import format from 'date-fns/format'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
 import DuplicateIcon from '../../svgs/DuplicateIcon'
+import {ToastState} from '../../services/UiService'
+import {mutate} from 'swr'
+import { FilterEncodeString, menusFiltersAtom } from '../../services/FilterService'
 
 const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [cu] = useLocalStorage('user', '')
+  const [, setToastState] = useAtom(ToastState)
   const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [currentMenuFilters] = useAtom(menusFiltersAtom)
   
   const [currentDay] = useAtom(CurrentDay)
   const toggleDropdown = () => setShowDropdown(true) 
@@ -61,12 +66,20 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
     const menus: IMenu[] = Array.from(menuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
     const validation = validateNewMenus(menus)
     if (validation.ok === false) {
-      console.log(validation.msg); 
+      setToastState({status: "error", message: validation.msg})
       return false
     }
     if (validation.ok) {
-      console.log(validation.msg)
       menusPost( menusPostPromises(menus, cu.id))
+        .then(()=> {
+          mutate(['menus', FilterEncodeString(currentMenuFilters)])
+          setToastState({status: "ok", message:"Has publicado los menús"})
+          setMenuMap(new Map())
+        })
+        .catch(err =>{
+          setToastState({status: "error", message: "Hubo un problema, por favor intenta de nuevo"})
+         console.log({err}) 
+        })
     }   
   } 
  

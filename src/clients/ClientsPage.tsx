@@ -31,7 +31,6 @@ const ClientsPage = () => {
 
   const parsedServicesTypes = (proposal) => JSON.parse(proposal.servicesTypes)
   
-  console.log(proposals)
   if (!workspaces || workspacesFetchError) return <Loader />
   if (!proposals) return <Loader />
   return (
@@ -75,7 +74,7 @@ const ClientsPage = () => {
           }
         {currentClient && proposals.filter(p => p.workspaceId === currentClient.id).map(p => (
         <div key={p.id} className="mt-4">
-          { parsedServicesTypes(p).map((pst, index) => (
+          { p.servicesTypes.map((pst, index) => (
           <div key={pst.name} className="flex items-center my-4 text-xl divide-x divide-mostaza-200">
             {index === 0 && <div className="w-12 pr-2"><img src={Vianda}/></div>}
             {index === 1 && <div className="w-12 pr-2"><img src={Plato}/></div>}
