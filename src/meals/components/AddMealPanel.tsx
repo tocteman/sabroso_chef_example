@@ -15,27 +15,25 @@ const AddMealPanel = () => {
   const [mealMap, setMealMap] =  useAtom(MealMap)
   const [, setToastState] = useAtom(ToastState)
 
-  const publishMeals = () => {
+  const validateAndPublishMeals = () => {
     const meals: IMeal[] = Array.from(mealMap, ([id, meal]) => ({id, meal})).map(m => m.meal)
     const validation = validateNewMeals(meals)
-    if (validation.ok === false) {
-      console.log("validatedFalse")
-      setToastState({status: "error", message: validation.msg})
-      return false
+    return validation.ok === true ?
+      postMeals(meals) :
+      showPublishError(validation)
     }
-    if (validation.ok) {
-      console.log("validated ok")
-      mealsPost(mealsPostPromises(meals, cu.id))
-        .then(()=> {
-          setToastState({status: "ok", message: "Has publicado las comidas"})
-          setMealMap(new Map()) 
-        })
-        .catch(err => {
-          setToastState({status: "error", message: "Por favor intenta de nuevo."})
-        })
-    }
+  
+  const showPublishError = (validation) => 
+    setToastState({status: "error", message: validation.msg})
 
-  }
+  const postMeals = (meals) => 
+    mealsPost(mealsPostPromises(meals, cu.id))
+      .then(()=> {
+        setToastState({status: "ok", message: "Has publicado las comidas"})
+        setMealMap(new Map()) 
+        setDisplayPanel(false)
+      })
+      .catch(err => setToastState({status: "error", message: err}) )
 
   return (
     <div className={`min-h-screen p-8 ml-8 bg-crema-125 border-mostaza-200 border-l-2 shadow-sm`}>
@@ -51,7 +49,7 @@ const AddMealPanel = () => {
         </div>
         <MealForm />
         <button className="secondary-button"
-          onClick={() => publishMeals()}>
+          onClick={() => validateAndPublishMeals()}>
           Publicar Comidas
         </button>
       </div>

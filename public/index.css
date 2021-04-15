@@ -7,7 +7,7 @@
 }
 
 .secondary-button {
-  @apply px-4 py-2 mt-4 text-lg font-bold text-center border-2 rounded-lg border-mostaza-300 bg-gradient-to-b from-mostaza-200 to-mostaza-300 text-black hover:border-mostaza-200 shadow-sm hover:from-white hover:to-mostaza-200
+  @apply px-4 py-1 mt-4 font-bold text-center border-2 rounded-lg border-mostaza-300 bg-gradient-to-b from-mostaza-200 to-mostaza-300 text-black hover:border-mostaza-200 shadow-sm hover:from-white hover:to-mostaza-200
 }
 
 .std-input {

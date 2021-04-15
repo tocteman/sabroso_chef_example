@@ -10,7 +10,7 @@ import { sortByStr } from '../../utils/StringUtils'
 import NewMenuPanel from './NewMenuPanel'
 import type {IMeal} from '../../models/MealTypes'
 import EditMenuPanel from './EditMenuPanel'
-import {EditedMenuMap, MenuMap} from '../../services/MealService'
+import { MenuMap} from '../../services/MealService'
 import type {IMenu} from '../../models/MenuTypes'
 
 
@@ -22,9 +22,9 @@ const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   
   const editMenu = (menu:IMenu) => {
-    menuMap.set(menu.id, menu) 
-    setMenuMap(menuMap)
-    console.log({menuMap})
+    const map = new Map()
+    map.set(menu.id, menu) 
+    setMenuMap(map)
     setEditDisplayPanel(menu)
   }
 

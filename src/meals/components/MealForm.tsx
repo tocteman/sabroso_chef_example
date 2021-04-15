@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {useAtom} from 'jotai'
 import {DisplayAddMealPanel, MealMap, CurrentMeal, DisplayEditMealPanel} from '../../services/MealService'
 import CloseIcon from '../../svgs/CloseIcon'
@@ -11,20 +11,32 @@ const MealForm = () => {
   const [currentMeal, setCurrentMeal] = useAtom(CurrentMeal)
   const [editPanel, setEditPanel] = useAtom(DisplayEditMealPanel)
 
-  const setName = (name:string) => {
-    const key = mealMap.keys().next().value
-    const current = mealMap.get(key)
-    const newMap = new Map()
-    newMap.set(key,{ ...current, name })
-    setMealMap(newMap)
-  } 
 
-  const setType = (code:string) => {
-    const key = mealMap.keys().next().value
-    const current = mealMap.get(key)
-    const newMap = new Map()
-    newMap.set(key,{ ...current, type: code })
-    setMealMap(newMap)
+  const [name, setName] = useState("")
+  const [type, setType] = useState("")
+  const [description, setDescription] = useState("")
+  const [kcal, setKcal] = useState(0)
+
+  const isEdit = () => currentMeal.id.length > 0 ? true : false
+
+  const props = () => ["name", "type", "description", "kcal"]
+
+  const setInitialValues = () => {
+    setName(currentMeal.name)
+    setType(currentMeal.type)
+    setDescription(currentMeal.description)
+    setKcal(currentMeal.kcal)
+    props().forEach(p =>  setProp(p, currentMeal[p]))
+  }
+
+  const setBlankValues = () => 
+    props().forEach(p => p === "kcal" ? setProp("kcal", 0) : setProp(p, ""))
+ 
+  const setProp = (prop:string, value:string|number) => {
+    const mealKey = mealMap.keys().next().value
+    const current = mealMap.get(mealKey)
+    mealMap.set(mealKey,{ ...current, [prop]: value})
+    setMealMap(mealMap)
   }
 
   const mealTypes = [
@@ -33,21 +45,16 @@ const MealForm = () => {
     {name: "Postre", code: "DESSERT"}
   ]
 
-  const isEdit = () => currentMeal.id.length > 0 ? true : false
+  const disableEdit = () =>{
+    setMealMap(new Map())
+    currentMeal.id.length > 0  ? 
+      setEditPanel(false) :
+      setCurrentMeal(initialMeal); 
+  }   
 
-  const getInitialName = () => isEdit() ?  currentMeal.name : ""
-
-  const getInitialType = () => isEdit() ? currentMeal.type : ""
-
-  const getInitialKcal = () => isEdit() ?  currentMeal.kcal : ""
-
-  const getInitialDescription = () => isEdit() ? currentMeal.description : ""
-
-  const disableEdit = () => currentMeal.id.length > 0 ?
-      setEditPanel(false)
-    : setCurrentMeal(initialMeal); 
-  
-  
+  useEffect(() => {
+    isEdit() === true && setInitialValues()
+  }, [])
 
   return (
     <div className={` ${displayPanel && `slide-in-fwd-right`}` }>
@@ -58,8 +65,9 @@ const MealForm = () => {
           </label>
           <input className="my-1 meal-input"
             type="text"
-            value={getInitialName()}
-            onChange={(e)=> setName(e.target.value)}/>
+            value={ name || ""}
+            onChange={(e)=> {setName(e.target.value); setProp("name", e.target.value)}}/
+          >
         </div>
         { currentMeal.id.length > 0 &&
           <div className="w-6 cursor-pointer hover:text-gray-700"
@@ -73,8 +81,8 @@ const MealForm = () => {
           Tipo de Menú
         </label>
         <select className="my-1 meal-input"
-          value={getInitialType()}
-          onChange={e => setType(e.target.value)}>
+          value={ type || ""}
+          onChange={e => {setType(e.target.value); setProp("type", e.target.value)}}>
           <option value="">-</option>
           {mealTypes.map(m => (
             <option key={m.code} value={m.code}>
@@ -87,13 +95,20 @@ const MealForm = () => {
         <label className="text-sm tracking-widest uppercase">
           Descripción
         </label>
-        <textarea className="my-1 meal-input" rows={3} cols={20} value={getInitialDescription()}/>
+        <textarea className="my-1 meal-input" 
+          value={ description || ""}
+          rows={3} cols={20} 
+          onChange={e => {setDescription(e.target.value); setProp("description", e.target.value)}}
+        />
       </div>
       <div className="flex flex-col my-2">
         <label className="text-sm tracking-widest uppercase">
           Kcals
         </label>
-        <input type="number" className="my-1 meal-input" value={getInitialKcal()}/>
+        <input type="number" className="my-1 meal-input"
+          value={ kcal || 0}
+          onChange={e => {setKcal(Number(e.target.value)); setProp("kcal", Number(e.target.value))}}
+          />
     </div>
   </div>
   )

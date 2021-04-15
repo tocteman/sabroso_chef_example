@@ -36,7 +36,6 @@ export const menusPost = (menus: Promise<AxiosResponse<any>>[]) =>
     })
   .catch(err => console.log(err))
 
-
 export const buildMenuForm = (menuData: IMenu, chefId:string) => {
   const f = new FormData()
   const m = menuData
@@ -51,8 +50,7 @@ export const buildMenuForm = (menuData: IMenu, chefId:string) => {
   return f 
 }
 
-
-export const validateNewMenus = (menus: IMenu[]) => {
+export const validateMenus = (menus: IMenu[]) => {
   const resp = (ok: boolean, msg: string) => ({ok, msg})
   const lunches = menus.filter(m => m.type === 'LUNCH')
   const tagsOk = menus
@@ -64,6 +62,8 @@ export const validateNewMenus = (menus: IMenu[]) => {
   if (!tagsOk) return resp(false, "Recuerda etiquetar todos los menús") 
   if (!mainsOk) return resp(false, "Todos los menús deben tener un fuerte")
   if (lunches.length > 0 && !lunchesOk) return resp(false, "Almuerzos incompletos")
-
   return resp(true, "ok")
 }
+
+
+

@@ -6,7 +6,7 @@ import { RoughNotation } from "react-rough-notation";
 const Toast = () => {
   const [toastState, setToastState] = useAtom(ToastState)
   React.useEffect(() => {
-    setTimeout(() => setToastState({message: "", status: "hidden"}), 4000) 
+    setTimeout(() => setToastState({message: "", status: "hidden"}), 2000) 
   }, [])
   return (
     <RoughNotation strokeWidth={2} 

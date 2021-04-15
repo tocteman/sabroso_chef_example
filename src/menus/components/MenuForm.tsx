@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {useAtom} from 'jotai'
 import type {IMeal} from '../../models/MealTypes';
 import {MenuMap} from '../../services/MealService';
@@ -8,8 +8,7 @@ const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
   const [newMenuMap, setNewMenuMap] = useAtom(MenuMap)
   // const currentMeals = () => meals.map(m => m.name)
   const currentMeals = () => meals.map((m, i) => ({key: `${i}-${m.name}`, value: m.name, label: m.name}))
-  const [menuMap] = useAtom(MenuMap)
-  const [currentInput, setCurrentInput] = React.useState("")
+  const [menuMap, setMenuMap] = useAtom(MenuMap)
   const getSpec = () => meals[0].type.toLowerCase()
   const getValue = () => menuMap.get(menuId)[`${getSpec()}`] || ""
   const setText = (mealName: string) => {
@@ -33,7 +32,8 @@ const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
     return setNewMenuMap(newMap)
   }
 
-  const selectSuggestion = (mealName) => {console.log(mealName); setText(mealName.value)}
+  const selectSuggestion = (mealName) => setText(mealName.value)
+
 
   return (
     <div className="flex">

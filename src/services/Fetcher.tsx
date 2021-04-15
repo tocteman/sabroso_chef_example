@@ -22,6 +22,8 @@ export const FilteredFetcher = (url: string, filterString:string) => {
 export const PosterPromise = (url: string, data) => 
    InterceptedAxios().put(`${apiUrl}/${url}`, data)
 
+export const DeleterPromise = (url: string) => 
+  InterceptedAxios().delete(`${apiUrl}/${url}`)
 
 export const Fetcher = (url:string, history:any) => {
   return InterceptedAxios().get(url)

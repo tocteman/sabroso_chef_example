@@ -1,14 +1,16 @@
 import React from 'react'
 import {atom, useAtom} from 'jotai'
-import {CurrentMeal, DisplayEditMealPanel} from '../../services/MealService'
+import {CurrentMeal, DisplayEditMealPanel, MealMap, validateNewMeals, mealsPost, mealsPostPromises} from '../../services/MealService'
 import {groupBy} from '../../utils/JsUtils'
 import type {IMenu} from 'src/models/MenuTypes'
 import {Ddmm} from '../../utils/DateUtils'
 import CloseIcon from '../../svgs/CloseIcon'
-import {initialMeal} from '../../models/MealTypes'
+import {IMeal, initialMeal} from '../../models/MealTypes'
 import { Transition  } from '@headlessui/react'
 import EditIcon from '../../svgs/EditIcon'
 import MealForm from './MealForm'
+import {ToastState} from '../../services/UiService'
+import {useLocalStorage} from '../../utils/LocalStorageHook'
 
 
 const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
@@ -16,17 +18,42 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
   const [editPanel, setEditPanel] = useAtom(DisplayEditMealPanel)
   const groupByType = groupBy(currentMeal.type.toLowerCase())
   const menusByType = groupByType(menus)
-
+  const [mealMap, setMealMap] =  useAtom(MealMap)
+  const [, setToastState] = useAtom(ToastState)
+  const [cu] = useLocalStorage('user', '')
+  
   const renderMenus = () => menusByType[currentMeal.name] ? 
-    Object.entries(menusByType[currentMeal.name]) : 
-    null
+    Object.entries(menusByType[currentMeal.name]) : null
 
-
-  const publishChanges = () => {
-
+  const validateAndPublishMeals = () => {
+    const meals: IMeal[] = Array.from(mealMap, ([id, meal]) => ({id, meal})).map(m => m.meal)
+    const validation = validateNewMeals(meals)
+    if (validation.ok === true ) {
+      postMeals(meals) 
+      setCurrentMeal(initialMeal)
+    } else {
+      showPublishError(validation)
+    }
   }
   
-  
+  const showPublishError = (validation) => 
+    setToastState({status: "error", message: validation.msg})
+
+  const postMeals = (meals) => 
+    mealsPost(mealsPostPromises(meals, cu.id))
+      .then(()=> {
+        setToastState({status: "ok", message: "Has publicado las comidas"})
+        setMealMap(new Map()) 
+        setEditPanel(false)
+      })
+      .catch(err => setToastState({status: "error", message: err}))
+
+  const setNewMap = () => {
+    const map = new Map()
+    map.set(currentMeal.id, currentMeal)
+    setMealMap(map)
+  }
+
   return (
     <div
       className={`min-h-screen p-8 ml-8  
@@ -40,7 +67,7 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
           <div className="flex justify-between">
             <div className="flex items-center">
               <div className="text-2xl font-bold">{currentMeal.name}</div>
-              <div onClick={() => setEditPanel(true)} 
+              <div onClick={() => {setEditPanel(true); setNewMap()}} 
                 className="w-3 ml-3 cursor-pointer hover:text-gray-700"                
               >
                 <EditIcon/>
@@ -52,7 +79,6 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
             >
               <CloseIcon />
             </div>
-
           </div>
           {currentMeal.kcal && (
             <div className="mt-2 text-lg">
@@ -76,8 +102,7 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
   { currentMeal.id.length > 1 && editPanel === true && (
     <div>
       <MealForm/>
-
-      <button onClick={() => publishChanges()}
+      <button onClick={() => validateAndPublishMeals()}
         className="secondary-button">
         Publicar Cambios
       </button>

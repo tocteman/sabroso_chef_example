@@ -15,8 +15,6 @@ export const EntreeSlice = atom<ISliceRange>(is)
 export const DessertSlice = atom<ISliceRange>(is)
 
 export const CurrentMeal = atom<IMeal>(initialMeal)
-
-
 export const BreakfastMenu = atom<string>("")
 export const DinnerMenu = atom<string>("")
 export const LunchMenu = atom<ICompositeMenu>(initialCompositeMenu)
@@ -52,10 +50,12 @@ const buildMealObj = (m:IMeal, chefId:string) => ({
   chefId,
   description: m.description,
   name: m.name,
-  type: m.type
+  type: m.type,
+  kcal: m.kcal
 })
 
-export const mealsPostPromises = (meals: IMeal[], chefId: string) => meals.map(m => PosterPromise(
+export const mealsPostPromises = (meals: IMeal[], chefId: string) => 
+  meals.map(m => PosterPromise(
   `meals/${m.id}`, buildMealObj(m, chefId)
 ))
 

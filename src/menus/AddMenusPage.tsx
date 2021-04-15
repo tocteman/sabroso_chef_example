@@ -13,7 +13,6 @@ import { Transition } from '@headlessui/react'
 
 
 const AddMenusPage = () => {
-
   let {path, url} = useRouteMatch() 
   const history = useHistory()
   const trimAddr = (addr: string) =>  /[\/]$/.exec(addr) ? addr.slice(0, -1) : addr
