@@ -26,7 +26,9 @@ module.exports = {
         },
         mostaza: {
           200: '#fcf1a1',
-          300: '#fcec71'
+          300: '#fcec71',
+          400: '#fcd617',
+          500: '#FCCA00'
         }
       },
       animation: {

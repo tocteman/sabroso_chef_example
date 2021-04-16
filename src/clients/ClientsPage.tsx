@@ -8,9 +8,8 @@ import {useLocalStorage} from '../utils/LocalStorageHook'
 import {clientsFiltersAtom, FilterEncodeString, proposalsFiltersAtom} from '../services/FilterService'
 import {PicksFilter} from '../utils/DateUtils'
 import Loader from '../general/components/Loader'
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation"; //@ts-ignore
-import Vianda from '../assets/images/vianda.svg' //@ts-ignore
-import Plato from '../assets/images/catering.svg'
+import { RoughNotation, RoughNotationGroup } from "react-rough-notation"; 
+import { MenuTypes } from "../services/MenuService"
 
 const ClientsPage = () => {
   const [cu] = useLocalStorage('user', '')
@@ -29,15 +28,21 @@ const ClientsPage = () => {
     setCurrentProposals([PicksFilter(cu.chefId, 'chefId', '=')])
   }, [])
 
-  const parsedServicesTypes = (proposal) => JSON.parse(proposal.servicesTypes)
+  const printMenuTypeName = (code: string) => MenuTypes.find(m => m.code === code)?.name
   
+  const printDemoName = (name:string) => 
+    name?.includes("Santa") ? "Primera Empresa" : 
+    name.includes("Britransformadores") ? "Segunda Empresa" :
+    name
+ 
   if (!workspaces || workspacesFetchError) return <Loader />
   if (!proposals) return <Loader />
+  
   return (
     <div className="flex">
       <div className="w-1/2 p-8">
         <div className="w-1/3">
-          <RoughNotation strokeWidth={2} type="underline" color={'#fc8e5f'} show={true} animationDuration={400} iterations={1}>
+          <RoughNotation strokeWidth={2} type="underline" color={'#fc8e5f'} show={true} animationDuration={500} iterations={1}>
             <h2 className="my-8 text-3xl font-bold">Clientes</h2>
           </RoughNotation>
         </div>
@@ -54,7 +59,7 @@ const ClientsPage = () => {
                 onClick={() => setCurrentClient(wk)}
               >
                 <h2>
-                  {wk.name}
+                  {printDemoName(wk.name)}
                  </h2>
               </div>
             ))}
@@ -65,26 +70,51 @@ const ClientsPage = () => {
           `}
       >
         {currentClient && <div>
-
           <div className="mt-8 text-2xl font-bold">
-                  {currentClient.name === 'Santa Priscila / Profremar' ? 'Una Empresa' : currentClient.name === 'Los sabrositos' ? 'Universales' : currentClient.name}
+                  {printDemoName(currentClient.name)}
           </div>
             <hr className="my-2 border border-crema-200"/>
         </div>
           }
         {currentClient && proposals.filter(p => p.workspaceId === currentClient.id).map(p => (
         <div key={p.id} className="mt-4">
-          { p.servicesTypes.map((pst, index) => (
-          <div key={pst.name} className="flex items-center my-4 text-xl divide-x divide-mostaza-200">
-            {index === 0 && <div className="w-12 pr-2"><img src={Vianda}/></div>}
-            {index === 1 && <div className="w-12 pr-2"><img src={Plato}/></div>}
-              <div className="px-2 font-bold">
-                  {pst.name}
+          <div className="text-xl font-bold leading-none text-mostaza-500">
+            precio base
+          </div>
+          <div className="text-2xl font-bold leading-tight">
+            ${p.basePrice.toFixed(2)}
+          </div>
+          <hr className="py-1 mt-2 border-crema-200"/>
+          <div className="text-xl font-bold text-mostaza-500">tipos de servicios</div>
+          <div className="flex">
+            { p.servicesTypes.map((st, index) => (
+              <div>
+                <div className="text-sm tracking-wider uppercase">
+                  {st.name}
+                </div>
+                <div className="text-2xl font-bold leading-none">
+                  ${st.price.toFixed(2)}
+                </div>
               </div>
-            <div className="px-2">${pst.price.toFixed(2)}</div>
-            <div className="pl-2">{pst.maxOrderTime}</div>
-            </div>)) }
-            <div className="mt-32 text-2xl">[ ... ]</div>
+            ))}
+          </div>
+          <hr className="py-1 mt-2 border-crema-200"/>
+          <div className="text-xl font-bold text-mostaza-500">
+            tipos de menús
+          </div>
+          <div className="flex">
+          { p.menuTypes.map(mt => (
+            <div className="pr-4">
+              <div className="text-sm tracking-wider text-gray-700 uppercase">
+                {printMenuTypeName(mt.name)}
+              </div>
+              <div className="text-2xl font-bold leading-none">
+                ${mt.price.toFixed(2)}
+              </div>
+            </div>
+          )) }
+          </div>
+            <div className="mt-32">( ... agregar kpis )</div>
           </div>
         ))}
       </div>

@@ -12,7 +12,7 @@ const NavigationSidebar = () => {
     {text: 'Comidas', linkUrl: '/meals'},
     {text: 'Órdenes', linkUrl: '/orders'},
     {text: 'Clientes', linkUrl: '/clients'},
-    {text: 'Cronograma', linkUrl: '/addmenus'},
+    // {text: 'Cronograma', linkUrl: '/addmenus'},
   ]
   return (
     <div>

@@ -40,18 +40,20 @@ const OrdersPage = () => {
 
   const [currentMenuType, setCurrentMenuType] = useAtom(CurrentMenuType)
   const [currentServiceType, setCurrentServiceType] = useAtom(CurrentServiceType)
-
   const [currentWorkspace, setCurrentWorkspace] = useAtom(CurrentWorkspace)
+  
+  const setFirstWorkspace = () => setCurrentWorkspace(workspaces[0]?.id)
 
   useEffect(() => {
     const dateStrings: string = InBetweenDays([prev, next])
     setCurrentMenuFilters([PicksFilter(cu.chefId, 'chefId', '=')])
     setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
+    setTimeout(()=> {workspaces && setFirstWorkspace()}, 300 )
   }, [])
 
-    if (!workspaces) return <Loader/>
-    if (!orders) return <Loader/>
-    if (!groups) return <Loader/>
+  if (!workspaces) return <Loader/>
+  if (!orders) return <Loader/>
+  if (!groups) return <Loader/>
 
   const setDate = (dateString: string) => {
     setPrev(dateString), setNext(dateString)
@@ -78,6 +80,8 @@ const OrdersPage = () => {
       }))
 
 
+  const wks = () => workspaces.map(w => ({...w, name: printDemoName(w.name)}))
+  
   const filteredGroups = () => parsedGroups()
       .filter(g => currentServiceType === 'ALL' ? true :
         currentServiceType === g.serviceType?.name)
@@ -107,11 +111,6 @@ const OrdersPage = () => {
     return mapMenu
   }
 
-
-  
-
-
-
   const ServiceTypes = () => 
     Array.from(new Set(
       mappedGroups()
@@ -136,8 +135,10 @@ const OrdersPage = () => {
     }
   }
 
-  console.log(ordersByWk(currentWorkspace))
-  console.log(menuCount(ordersByWk(currentWorkspace)) > 0 )
+  const printDemoName = (name:string) => 
+    name?.includes("Santa") ? "Primera Empresa" : 
+    name.includes("Britransformadores") ? "Segunda Empresa" :
+    name
 
   return (
     <main className="p-8">
@@ -182,11 +183,10 @@ const OrdersPage = () => {
           <label className="text-sm uppercase">Tipo de Menú</label>
           <select onChange={(e) => setCurrentMenuType(e.target.value)}
             className="uppercase std-input"
-            defaultValue={
-              currentMenuType === 'ALL' ?  "Todos" :
-                MenuTypes.filter(mt => currentMenuType === mt.code)[0].code
-          }
-            >
+            defaultValue={ currentMenuType === 'ALL' ?  
+              "Todos" : MenuTypes.filter(mt => currentMenuType === mt.code)[0].code
+            }
+          >
             {MenuTypes.map(mt => (
               <option value={mt.code} key={`option-${mt.code}`}>
                 {mt.name}
@@ -218,12 +218,10 @@ const OrdersPage = () => {
           <label className="text-sm uppercase">Clientes</label>
           <select onChange={(e) => setCurrentWorkspace(e.target.value)}
             className="uppercase std-input" 
-            defaultValue={
-              workspaces?.filter(wk => currentWorkspace === wk.id)[0] || ""
-            }
+            value={currentWorkspace}
           >
             <option value={""}>-</option>
-            {workspaces
+            {wks()
               .map(wk => (
               <option key={`workspace-${wk.id}`} value={wk.id}>
                 {wk.name}
@@ -237,7 +235,7 @@ const OrdersPage = () => {
         {orders && ordersByWk(currentWorkspace) && menus && (
           <div>
             <h3 className="my-2 text-2xl font-bold">
-              {workspaces.filter(wk => wk.id === currentWorkspace)[0]?.name}
+              {wks().filter(wk => wk.id === currentWorkspace)[0]?.name}
             </h3>
           {orders && menuCount(ordersByWk(currentWorkspace)) > 0 ? (
               <h5 className="mt-2 text-lg font-normal">
