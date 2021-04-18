@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Toast from './components/Toast'
 import InnerPageRouter from './InnerPageRouter'
 import NavigationSidebar from './navigation/NavigationSidebar'
@@ -8,6 +8,7 @@ import {useAtom} from 'jotai'
 
 const PageContainer = () => {
   const [toastState] = useAtom(ToastState)
+  const [open, setOpen] = useState(false)
   return (
     <div className="flex min-h-screen font-sans bg-crema-100">
       {toastState.status !== "hidden" &&<div className="absolute flex items-center justify-center w-full min-h-screen">
@@ -17,10 +18,10 @@ const PageContainer = () => {
 
       </div>
       }
-      <aside className="w-1/6 border-r-2 bg-crema-150 border-mostaza-300">
+      <aside className="hidden border-r-2 sm:block sm:w-1/6 bg-crema-150 border-mostaza-300">
         <NavigationSidebar/>
       </aside>
-      <main className="w-5/6 overflow-x-hidden">
+      <main className="w-full overflow-x-hidden sm:w-5/6">
           <Topbar/>
           <InnerPageRouter/>
       </main>

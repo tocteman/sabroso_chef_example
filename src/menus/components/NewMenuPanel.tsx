@@ -15,6 +15,7 @@ import {ToastState} from '../../services/UiService'
 import {mutate} from 'swr'
 import { FilterEncodeString, menusFiltersAtom } from '../../services/FilterService'
 import MinusCircle from '../../svgs/MinusCircle'
+import CloseCircle from '../../svgs/CloseCircle'
 
 const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const [cu] = useLocalStorage('user', '')
@@ -135,7 +136,9 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
                 menuId={m.id}
               />
               {deleting === false &&<div className="ml-4 font-bold cursor-pointer hover:text-gray-700" onClick={()=>deleteItem(m.id)}>
-                <div className="pt-3 text-4xl font-bold">-</div>
+                <div className="w-4 pt-3">
+                  <MinusCircle/> 
+                </div>
             </div>}
         {deleting && <div>...</div>}
             </div>
@@ -164,7 +167,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
                 />
 
         {deleting === false &&<div className="ml-4 font-bold cursor-pointer hover:text-gray-700" onClick={()=>deleteItem(m.id)}>
-                <div className="pt-3 text-4xl font-bold">-</div>
+          <div className="w-4 pt-3"><MinusCircle/></div>
             </div>}
         {deleting && <div>...</div>}
       </div>
@@ -195,7 +198,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
                 key={`${m.id}-main`}
               />
               {deleting === false && <div className="ml-4 font-bold cursor-pointer hover:text-gray-700" onClick={()=>deleteItem(m.id)}>
-                <div className="pt-3 text-4xl font-bold">-</div>
+                <div className="w-4 pt-3"><MinusCircle/></div>
             </div>
               }
             {deleting && <div>...</div>}

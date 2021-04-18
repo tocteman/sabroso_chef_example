@@ -43,7 +43,7 @@ const MealsPage = () => {
 
   return (
     <div className="flex">
-      <div className="w-1/2 p-8">
+      <div className=" p-8">
         <div className="w-1/3">
           <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={400} iterations={1}>
             <h2 className="my-8 text-3xl font-bold">Comidas</h2>
@@ -78,7 +78,7 @@ const MealsPage = () => {
          </button>
       </div>
 
-      <div className="relative w-1/2 min-h-screen">
+      <div className="relative z-10 w-2/3 min-h-screen md:w-1/2">
         <Transition
           show={addMealPanel}
           enter="transition transform duration-500"
@@ -93,7 +93,7 @@ const MealsPage = () => {
           enter="transition transform duration-500"
           enterFrom="translate-x-1/3"
         >
-          <div className="inset-0 min-h-screen">
+          <div className="absolute inset-0 z-10 min-h-screen">
             {currentMeal.id.length > 0&& <MealPanel menus={menus}/>}
           </div>
         </Transition>
