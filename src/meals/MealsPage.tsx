@@ -28,6 +28,7 @@ const MealsPage = () => {
   if (!meals || mealsFetchError) return <Loader />
   if (!menus || menuError) return <Loader />
 
+
   const showPanel = () => {
     const mealId = uuidv4()
     setMealMap(mealMap.set(mealId, {
@@ -72,11 +73,10 @@ const MealsPage = () => {
         {cmt === 'Postres' && (
           <MealList meals={sortByStr(desserts, 'name')} mealType={cmt} atomRef={DessertSlice} />
         )}
-
-        <button className="main-button" onClick={() => showPanel()}>
-           Añadir Plato
-         </button>
-      </div>
+				<button className="main-button" onClick={() => showPanel()}>
+					Añadir Plato
+				</button>
+			</div>
 
       <div className={`relative z-10 w-2/3 min-h-screen md:w-1/2`}>
         <Transition

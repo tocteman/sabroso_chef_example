@@ -1,5 +1,5 @@
 import React from 'react'
-import {atom, useAtom} from 'jotai'
+import {useAtom} from 'jotai'
 import {CurrentMeal, DisplayEditMealPanel, MealMap, validateNewMeals, mealsPost, mealsPostPromises} from '../../services/MealService'
 import {groupBy} from '../../utils/JsUtils'
 import type {IMenu} from 'src/models/MenuTypes'

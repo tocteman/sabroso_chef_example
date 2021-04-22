@@ -26,6 +26,9 @@ export const MealMap = atom<Map<string, IMeal>>(new Map())
 export const DisplayAddMealPanel = atom<boolean>(false)
 export const DisplayEditMealPanel = atom<boolean>(false)
 
+export const DisplayExcelImportPanel = atom<boolean>(false)
+// QUÉ TIPO DE ARCHIVO ES ESTE
+export const ExcelMeals = atom<File|null>(null)
 
 export const selectedMeal = atom<string>("")
 
@@ -45,6 +48,16 @@ export const buildMealForm = (mealData: IMeal, chefId: string  ) => {
   return f
   }
 
+export const importData = (mealsObj) =>
+	PosterPromise(`meals/import_excel`, buildExcelForm(mealsObj))
+
+export const buildExcelForm = (mealsObj) => {
+	 const f = new FormData();
+	 f.append('chefId', mealsObj.chefId );
+	 f.append('meals', mealsObj.meals );
+	 return f
+}
+
 const buildMealObj = (m:IMeal, chefId:string) => ({
   id: m.id,
   chefId,
@@ -54,7 +67,7 @@ const buildMealObj = (m:IMeal, chefId:string) => ({
   kcal: m.kcal
 })
 
-export const mealsPostPromises = (meals: IMeal[], chefId: string) => 
+export const mealsPostPromises = ({meals: IMeal[], chefId: string}) =>
   meals.map(m => PosterPromise(
   `meals/${m.id}`, buildMealObj(m, chefId)
 ))
@@ -76,4 +89,9 @@ export const validateNewMeals = (meals: IMeal[]) => {
   return resp(true, "ok")
 }
 
-
+export const validateExcelImport = ({meals, chefId}) => {
+  const resp = (ok: boolean, msg: string) => ({ok, msg})
+	console.log({meals})
+	if (!meals) return resp(false, "Asegúrate de importar el archivo correcto")
+	return resp(true, "ok")
+}
