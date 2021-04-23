@@ -18,8 +18,6 @@ export const CurrentMeal = atom<IMeal>(initialMeal)
 export const BreakfastMenu = atom<string>("")
 export const DinnerMenu = atom<string>("")
 export const LunchMenu = atom<ICompositeMenu>(initialCompositeMenu)
-
-
 export const MenuMap = atom<Map<string, IMenu>>(new Map())
 export const MealMap = atom<Map<string, IMeal>>(new Map())
 
@@ -67,7 +65,7 @@ const buildMealObj = (m:IMeal, chefId:string) => ({
   kcal: m.kcal
 })
 
-export const mealsPostPromises = ({meals: IMeal[], chefId: string}) =>
+export const mealsPostPromises = (meals: IMeal[], chefId: string) =>
   meals.map(m => PosterPromise(
   `meals/${m.id}`, buildMealObj(m, chefId)
 ))
@@ -81,6 +79,7 @@ export const mealsPost = (meals: Promise<AxiosResponse<any>>[]) =>
     .catch(err => console.log(err))
 
 export const validateNewMeals = (meals: IMeal[]) => {
+	console.log({meals})
   const resp = (ok: boolean, msg: string) => ({ok, msg})
   const namesOk = meals.every(m => m.name.length>0)
   const typesOk = meals.every(m => m.type.length > 0)

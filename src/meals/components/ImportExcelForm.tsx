@@ -1,6 +1,6 @@
 import React from 'react'
 import {useAtom} from 'jotai'
-import { DisplayExcelImportPanel, importData} from '../../services/MealService'
+import { DisplayExcelImportPanel, importData, ExcelMeals} from '../../services/MealService'
 import {ToastState} from '../../services/UiService'
 
 const ImportExcelForm = () => {
@@ -17,3 +17,5 @@ const ImportExcelForm = () => {
 		</div>
 	)
 }
+
+export default ImportExcelForm

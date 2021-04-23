@@ -1,12 +1,13 @@
-import React from "react"
+import React, {useState} from "react"
 import { useAtom } from "jotai"
-import { DisplayAddMealPanel, MealMap, mealsPost, mealsPostPromises, validateExcelImport, validateNewMeals} from "../../services/MealService"
+import { DisplayAddMealPanel, MealMap, mealsPost, mealsPostPromises, validateExcelImport, validateNewMeals, ExcelMeals, importData} from "../../services/MealService"
 import CloseIcon from "../../svgs/CloseIcon"
 import MealForm from "./MealForm"
 import type { IMeal } from '../../models/MealTypes'
 import { ToastState } from '../../services/UiService'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
 import {mutate} from "swr"
+import ImportExcelForm from './ImportExcelForm'
 
 const AddMealPanel = () => {
 
@@ -15,6 +16,7 @@ const AddMealPanel = () => {
   const [mealMap, setMealMap] =  useAtom(MealMap)
   const [, setToastState] = useAtom(ToastState)
 	const [excelMeals, setExcelMeals] = useAtom(ExcelMeals)
+	const [displayExcelForm, setDisplayExcelForm] = useState(false)
 
   const validateAndPublishMeals = () => {
     const meals: IMeal[] = Array.from(mealMap, ([id, meal]) => ({id, meal})).map(m => m.meal)
@@ -28,7 +30,7 @@ const AddMealPanel = () => {
     setToastState({status: "error", message: validation.msg})
 
   const postMeals = (meals) => 
-    mealsPost(mealsPostPromises({meals, chefId:cu.id}))
+    mealsPost(mealsPostPromises(meals, cu.id))
       .then(()=> {
         setToastState({status: "ok", message: "Has publicado las comidas"})
         setMealMap(new Map()) 
@@ -40,15 +42,16 @@ const AddMealPanel = () => {
 		const mealObj = {chefId: cu.id, meals:excelMeals}
 		const validation = validateExcelImport(mealObj)
 		return validation.ok === true ?
-					 publishExcelMeals({chefId, meals}) :
+					 publishExcelMeals(mealObj) :
 					 showPublishError(validation)
 	}
 
-	const publishExcelMeals = () =>
-		importData()
+	const publishExcelMeals = (mealObj) =>
+		importData(mealObj)
 			.then(()=> {
 				setExcelMeals(null)
         setToastState({status: "ok", message: "Has publicado las comidas"})
+				setDisplayExcelForm(false)
 			})
 		.catch(err => setToastState({status: "error", message: err}))
 
@@ -64,19 +67,32 @@ const AddMealPanel = () => {
             <CloseIcon/>
           </div>
         </div>
-        <MealForm />
-        <button className="secondary-button"
-          onClick={() => validateAndPublishMeals()}>
-          Publicar Comidas
-        </button>
-				<hr className="border-2 border-mostaza-200"/>
-				<div className="my-4">
-					<button className="primary-button" onClick={() => importFromExcel()}>
-						Importar desde Excel
-					</button>
-				</div>
-      </div>
-    </div>
+		{!displayExcelForm &&
+		 <div>
+			 <MealForm />
+			 <button className="secondary-button"
+				 onClick={() => validateAndPublishMeals()}>
+				 Publicar Comidas
+			 </button>
+			 <hr className="border-2 border-mostaza-200"/>
+			 <div className="my-4">
+				 <button className="main-button" onClick={() => setDisplayExcelForm(true)}>
+					 Importar desde Excel
+				 </button>
+			 </div>
+		 </div>
+		}
+		{displayExcelForm &&
+		 <div className="flex flex-col">
+			 <ImportExcelForm/>
+			 <button className="secondary-button"
+				 onClick={()=> validateAndPublishExcelMeals()}>
+				 Publicar Comidas
+			 </button>
+		 </div>
+		}
+		</div>
+		</div>
   )
 }
 

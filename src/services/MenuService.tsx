@@ -51,10 +51,11 @@ export const buildMenuForm = (menuData: IMenu, chefId:string) => {
 }
 
 export const validateMenus = (menus: IMenu[]) => {
+	console.log({menus})
   const resp = (ok: boolean, msg: string) => ({ok, msg})
   const lunches = menus.filter(m => m.type === 'LUNCH')
   const tagsOk = menus
-    .every(m => /(A|B|C)/.test(m.tag))
+    .every(m => /[A-Z]/.test(m.tag))
   const mainsOk = menus
     .every(m => m.main.length > 1)
   const lunchesOk = lunches?.every(m => m.dessert.length > 1 && m.entree.length > 1)
