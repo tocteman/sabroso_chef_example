@@ -8,8 +8,8 @@ import {useLocalStorage} from '../utils/LocalStorageHook'
 import {clientsFiltersAtom, FilterEncodeString, proposalsFiltersAtom} from '../services/FilterService'
 import {PicksFilter} from '../utils/DateUtils'
 import Loader from '../general/components/Loader'
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation"; 
 import { MenuTypes } from "../services/MenuService"
+import RoughTitle from "../general/components/RoughTitle"
 
 const ClientsPage = () => {
   const [cu] = useLocalStorage('user', '')
@@ -42,9 +42,7 @@ const ClientsPage = () => {
     <div className="flex">
       <div className="w-1/2 p-8">
         <div className="w-1/3">
-          <RoughNotation strokeWidth={2} type="underline" color={'#fc8e5f'} show={true} animationDuration={500} iterations={1}>
-            <h2 className="my-8 text-3xl font-bold">Clientes</h2>
-          </RoughNotation>
+					<RoughTitle title={"Clientes"}/>
         </div>
         {workspaces &&
           proposals &&

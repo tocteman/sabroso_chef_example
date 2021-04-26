@@ -9,7 +9,7 @@ import OrdersPage from '../orders/OrdersPage';
 import MenusPage from '../menus/MenusPage'
 import MealsPage from '../meals/MealsPage'
 import ClientsPage from '../clients/ClientsPage';
-import AddMenusPage from '../menus/AddMenusPage';
+import SchedulesPage from '../schedules/SchedulesPage'
 
 const InnerPageRouter = () => {
   return (
@@ -26,8 +26,8 @@ const InnerPageRouter = () => {
       <Route path='/clients'>
         <ClientsPage/>
       </Route>
-      <Route path='/addmenus'>
-        <AddMenusPage/>
+      <Route path='/schedules'>
+        <SchedulesPage/>
       </Route>
       <Route path='/'>
         <OrdersPage/>

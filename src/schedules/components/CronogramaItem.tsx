@@ -29,7 +29,7 @@ const CronogramaItem = () => {
     <div className="flex flex-col">
       <div className="w-1/6">
         <div className="flex cursor-pointer bg-crema-100 hover:underline"
-          onClick={()=> history.push("/addmenus")}
+          onClick={()=> history.push("/schedules")}
         >
           <div className="w-4">
             <ChevronLeft />

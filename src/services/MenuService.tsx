@@ -1,9 +1,7 @@
-import React from 'react'
 import {atom} from 'jotai'
 import type {IMenu, IMenuPerDay, IMenuType} from '../models/MenuTypes'
 import {initialMenu, initialMenuPerDay} from '../models/MenuTypes'
 import {PosterPromise} from '../services/Fetcher'
-import {mutate} from 'swr'
 import type {AxiosResponse} from 'axios'
 
 

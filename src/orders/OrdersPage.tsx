@@ -17,6 +17,7 @@ import { RoughNotation} from "react-rough-notation";
 import { generatePdf } from '../services/OrderReportService'
 import { CurrentMenuType, CurrentServiceType, MenuTypes } from '../services/MenuService'
 import {CurrentWorkspace} from '../services/WorkspaceService'
+import RoughTitle from "../general/components/RoughTitle"
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')
@@ -144,9 +145,7 @@ const OrdersPage = () => {
     <main className="p-8">
       <div className="flex justify-between">
         <div className="w-1/6">
-          <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={300} iterations={1}>
-          <h1 className="my-8 text-3xl font-bold">Órdenes</h1>
-          </RoughNotation>
+					<RoughTitle title={"Órdenes"}/>
         </div>
         <div>
         <button onClick={() => pdfGen(currentWorkspace)}

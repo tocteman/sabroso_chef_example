@@ -8,11 +8,11 @@ import { PicksFilter, TodayPicks, InBetweenDays } from '../utils/DateUtils'
 import {useHistory} from 'react-router'
 import {useLocalStorage} from '../utils/LocalStorageHook'
 import Loader from '../general/components/Loader'
-import { RoughNotation} from "react-rough-notation";
 import MenuPanel from './components/MenuPanel'
 import MenuCalendar from './components/MenuCalendar'
 import {CurrentDay, CurrentMonth} from '../services/MenuService'
 import { Transition } from '@headlessui/react'
+import RoughTitle from "../general/components/RoughTitle"
 
 const MenusPage = () => {
   const [currentMenuFilters, setCurrentMenuFilters] = useAtom(menusFiltersAtom)
@@ -42,16 +42,7 @@ const MenusPage = () => {
       <div className="flex">
         <div className="flex flex-col w-1/2 pr-8 mt-8 ml-8 mr-8">
           <div className="w-1/3">
-            <RoughNotation
-              type="underline"
-              strokeWidth={2}
-              color={'#ff3331'}
-              show={true}
-              animationDuration={400}
-              iterations={1}
-            >
-              <h2 className="my-8 text-3xl font-bold">Menús</h2>
-            </RoughNotation>
+						<RoughTitle title={"Menús"}/>
           </div>
          <MenuCalendar menus={menus}/>
         </div>

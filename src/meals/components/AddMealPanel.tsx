@@ -6,7 +6,6 @@ import MealForm from "./MealForm"
 import type { IMeal } from '../../models/MealTypes'
 import { ToastState } from '../../services/UiService'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
-import {mutate} from "swr"
 import ImportExcelForm from './ImportExcelForm'
 
 const AddMealPanel = () => {

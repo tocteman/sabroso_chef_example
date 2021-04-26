@@ -8,13 +8,13 @@ import MealList from './components/MealList'
 import MealPanel from './components/MealPanel'
 import {MainSlice, EntreeSlice, DessertSlice, DisplayAddMealPanel, MealMap} from '../services/MealService'
 import Loader from '../general/components/Loader'
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import { CurrentMeal } from '../services/MealService'
 import { Transition  } from '@headlessui/react'
 import { sortByStr } from '../utils/StringUtils'
 import MealForm from './components/MealForm'
 import AddMealPanel from './components/AddMealPanel'
 import { v4 as uuidv4 } from 'uuid';
+import RoughTitle from "../general/components/RoughTitle"
 
 const MealsPage = () => {
   const { data: meals, error: mealsFetchError } = useSWR(['meals'], Fetcher)
@@ -46,9 +46,7 @@ const MealsPage = () => {
     <div className="flex">
       <div className="p-8 ">
         <div className="w-1/3">
-          <RoughNotation strokeWidth={2} type="underline" color={'#ff3331'} show={true} animationDuration={400} iterations={1}>
-            <h2 className="my-8 text-3xl font-bold">Comidas</h2>
-          </RoughNotation>
+					<RoughTitle title={"Comidas"}/>
         </div>
         <div className="flex">
           {mealTypes.map((mt: string) => (
