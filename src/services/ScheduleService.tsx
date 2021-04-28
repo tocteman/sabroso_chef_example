@@ -8,15 +8,26 @@ import { dateForMenu, dateForFilter } from '../utils/DateUtils'
 export const schedulePostPromise = () => {
 	const schedule = buildBlankSchedule()
 	console.log({schedule})
-	PosterPromise(
+	return PosterPromise(
 		`schedules/${schedule.id}`, schedule
 	)
 }
 
+export const ActiveCell = atom<boolean>(false)
+
+export const WeekDays = [
+	{code: "MONDAY", name: "Lunes"},
+	{code: "TUESDAY", name: "Martes"},
+	{code: "WEDNESDAY", name: "Miércoles"},
+	{code: "THURSDAY", name: "Jueves"},
+	{code: "FRIDAY", name: "Viernes"},
+	{code: "SATURDAY", name: "Sábado"},
+	{code: "SUNDAY", name: "Domingo"},
+]
+
 	const buildBlankSchedule = () => ({
 		id: uuidv4(),
 		name: "Un Schedule",
-		/* startDate: dateForMenu(new Date()), */
 		startDate: dateForFilter('2021-04-27'),
 		endDate: "",
 		status: "active"

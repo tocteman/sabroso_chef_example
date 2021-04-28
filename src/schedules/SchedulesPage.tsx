@@ -19,6 +19,8 @@ const SchedulesPage = () => {
   const [, setToastState] = useAtom(ToastState)
   const trimAddr = (addr: string) =>  /[\/]$/.exec(addr) ? addr.slice(0, -1) : addr
 
+	if (!schedules || schErr) return <Loader/>
+
   const includesId: () => boolean = () =>
     ExampleData
     .map(e => e.id.toString())
@@ -26,19 +28,14 @@ const SchedulesPage = () => {
 
 	const addSchedule = () => {
 		schedulePostPromise()
-			.then(()=>{
-				console.log("ÉXITO!!!")
-				mutate(['schedules'])
-       setToastState({status: "ok", message:"Has publicado un cronograma"})
+			.then(res =>{
+				console.log({res})
+				mutate(['schedules'], Fetcher)
+				setToastState({status: "ok", message:"Has publicado un cronograma"})
 			})
 		.catch(err => console.log({err}))
 	}
 
-
-	if (!schedules || schErr) return <Loader/>
-
-	/* console.log({schedules})
-	 */
 
     return (
       <div className="flex flex-col p-8">

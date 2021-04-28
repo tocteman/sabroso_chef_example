@@ -18,6 +18,10 @@ import { generatePdf } from '../services/OrderReportService'
 import { CurrentMenuType, CurrentServiceType, MenuTypes } from '../services/MenuService'
 import {CurrentWorkspace} from '../services/WorkspaceService'
 import RoughTitle from "../general/components/RoughTitle"
+import ServiceTypeFilter from "../general/components/filters/ServiceTypeFilter"
+import MenuTypesFilter   from "../general/components/filters/MenuTypeFilter"
+import WorkspaceFilter   from "../general/components/filters/WorkspaceFilter"
+import {printDemoName} from '../services/WorkspaceService'
 
 const OrdersPage = () => {
   const [cu] = useLocalStorage('user', '')

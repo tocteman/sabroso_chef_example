@@ -13,6 +13,10 @@ const initialWeeks =  {
    4:  {number: 4, status: "inactive"}
 }
 
+const addWeek = () => {
+
+}
+
 
 const CronogramaItem = () => {
   let {id} = useParams()
@@ -61,7 +65,6 @@ const CronogramaItem = () => {
           })}>
           <CronogramaWeeklyColumn 
             status={v.status} 
-
             weekNumber={v.number}
           />
         </div>
