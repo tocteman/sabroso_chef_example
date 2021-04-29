@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 import {useAtom} from 'jotai'
 import type {IMeal} from '../../models/MealTypes';
-import {MenuMap} from '../../services/MealService';
+import {MenuMap} from '../../services/MenuService';
 import DataListInput from "react-datalist-input";
 
-const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
+const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId }) => {
   const [newMenuMap, setNewMenuMap] = useAtom(MenuMap)
   // const currentMeals = () => meals.map(m => m.name)
   const currentMeals = () => meals.map((m, i) => ({key: `${i}-${m.name}`, value: m.name, label: m.name}))

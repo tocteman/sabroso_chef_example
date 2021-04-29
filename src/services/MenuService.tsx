@@ -18,6 +18,7 @@ export const MenusPerDay = atom<IMenuPerDay[]>([initialMenuPerDay])
 export const CurrentMenuType = atom<string>("LUNCH")
 export const CurrentServiceType =atom<string>("Vianda")
 
+export const MenuMap = atom<Map<string, IMenu>>(new Map())
 export const DisplayNewMenuPanel =atom<boolean>(false)
 export const DisplayEditMenuPanel = atom<IMenu>(initialMenu)
 

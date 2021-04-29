@@ -13,17 +13,26 @@ export const schedulePostPromise = () => {
 	)
 }
 
-export const ActiveCell = atom<boolean>(false)
-
-export const WeekDays = [
-	{code: "MONDAY", name: "Lunes"},
-	{code: "TUESDAY", name: "Martes"},
-	{code: "WEDNESDAY", name: "Miércoles"},
-	{code: "THURSDAY", name: "Jueves"},
-	{code: "FRIDAY", name: "Viernes"},
-	{code: "SATURDAY", name: "Sábado"},
-	{code: "SUNDAY", name: "Domingo"},
+export const WeekDaysObj = [
+	{code: "MONDAY", name: "Lunes", active:false},
+	{code: "TUESDAY", name: "Martes", active:false},
+	{code: "WEDNESDAY", name: "Miércoles", active:false},
+	{code: "THURSDAY", name: "Jueves", active:false},
+	{code: "FRIDAY", name: "Viernes", active:false},
+	{code: "SATURDAY", name: "Sábado", active:false},
+	{code: "SUNDAY", name: "Domingo", active:false},
 ]
+
+
+export const weekDayMap = () => {
+	const weekMap = new Map()
+	WeekDaysObj.forEach(d => weekMap.set(d.code, d))
+	return weekMap
+}
+export const ActiveCell = atom<boolean>(false)
+export const WeekDays = atom<Map<string, any>>(weekDayMap())
+
+
 
 	const buildBlankSchedule = () => ({
 		id: uuidv4(),

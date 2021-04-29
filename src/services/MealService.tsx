@@ -18,7 +18,6 @@ export const CurrentMeal = atom<IMeal>(initialMeal)
 export const BreakfastMenu = atom<string>("")
 export const DinnerMenu = atom<string>("")
 export const LunchMenu = atom<ICompositeMenu>(initialCompositeMenu)
-export const MenuMap = atom<Map<string, IMenu>>(new Map())
 export const MealMap = atom<Map<string, IMeal>>(new Map())
 
 export const DisplayAddMealPanel = atom<boolean>(false)

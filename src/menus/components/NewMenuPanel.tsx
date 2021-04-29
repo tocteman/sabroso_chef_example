@@ -4,7 +4,7 @@ import {useAtom} from 'jotai'
 import {CurrentDay, DisplayNewMenuPanel, menusPost, menusPostPromises, validateMenus} from '../../services/MenuService'
 import type {IMeal} from '../../models/MealTypes'
 import MenuForm from './MenuForm'
-import {LunchMenu, MenuMap} from '../../services/MealService'
+import {LunchMenu, MenuMap} from '../../services/MenuService'
 import {MenuTypes} from '../../services/MenuService'
 import { v4 as uuidv4 } from 'uuid';
 import {IMenu, initialMenu} from '../../models/MenuTypes'
@@ -16,8 +16,9 @@ import {mutate} from 'swr'
 import { FilterEncodeString, menusFiltersAtom } from '../../services/FilterService'
 import MinusCircle from '../../svgs/MinusCircle'
 import CloseCircle from '../../svgs/CloseCircle'
+import { generatePdf } from 'src/services/OrderReportService'
 
-const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
+const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin}) => {
   const [cu] = useLocalStorage('user', '')
   const [, setToastState] = useAtom(ToastState)
   const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
@@ -33,23 +34,35 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const addMenu = (mt) => {
     const menuId = uuidv4()
     setShowDropdown(false)
-    setMenuMap(menuMap.set(menuId, {
-      ...initialMenu, 
-      type: mt.code,
-      menuDate: format(currentDay, 'yyyy-MM-dd'),
-      id: menuId
-    }))
-  }
- 
+		return origin === 'schedule' ? // <- pilas a este <<return>>
+			setMenuMap(menuMap.set(menuId, generateScheduledMenu(mt))) :
+			setMenuMap(menuMap.set(menuId, generateMenu(mt)))
+	}
+
+	const generateMenu = (menuId, mt) => ({
+		...initialMenu,
+		type: mt.code,
+		menuDate: format(currentDay, 'yyyy-MM-dd'),
+		id: menuId
+	})
+
+	const generateScheduledMenu = (menuId, mt) => ({
+		...initialMenu,
+		type: mt.code,
+		id: menuId
+		scheduleId: "",
+		dayPosition: "",
+		weekPosition: 0
+	})
+
+
   const duplicateLunch = () => {
     const lunch = almuerzos()[0].menu
     const menuId = uuidv4()
     setDuplicable(false)
     setMenuMap(menuMap.set(menuId, {
       ...lunch,
-      type: "LUNCH",
       id: menuId,
-      menuDate: format(currentDay, 'yyyy-MM-dd'),
       main: "",
       tag: ""
     }))
@@ -76,17 +89,17 @@ const NewMenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
   const showPublishError = (validation) => setToastState({status: "error", message: validation.msg}) 
 
   const postMenus = (menus) =>  
-    menusPost(menusPostPromises(menus, cu.id))
-        .then(()=> {
-          mutate(['menus', FilterEncodeString(currentMenuFilters)])
-          setToastState({status: "ok", message:"Has publicado los menús"})
-          setMenuMap(new Map())
-        })
-        .catch(err =>
-          setToastState({status: "error", message: err})
-        )
+		menusPost(menusPostPromises(menus, cu.id))
+			.then(()=> {
+				mutate(['menus', FilterEncodeString(currentMenuFilters)])
+				setToastState({status: "ok", message:"Has publicado los menús"})
+				setMenuMap(new Map())
+			})
+			.catch(err =>
+				setToastState({status: "error", message: err})
+			)
 
-  const deleteItem = (menuId) => {
+	const deleteItem = (menuId) => {
     setDeleting(true)
     menuMap.delete(menuId)
     setTimeout(()=> {

@@ -3,9 +3,12 @@ export interface IMenu {
     entree: string;
     main: string;
     dessert: string;
-    menuDate: string;
+    menuDate?: string;
     tag: string;
-    type?: string
+    type?: string;
+		dayPosition?: string;
+		weekPosition?: string;
+		scheduleId?: string;
 }
 
 export interface IMenuType {
@@ -14,15 +17,11 @@ export interface IMenuType {
   maxHourTime: number;
 }
 
-
-
-
 export const initialMenu: IMenu = {
     id: "",
     entree: "",
     main: "",
     dessert: "",
-    menuDate: "",
     tag: "",
     type: ""
 }

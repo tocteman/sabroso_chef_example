@@ -1,10 +1,10 @@
 module.exports = {
-   purge: {
-     content: ['./src/**/*.html', './src/**/*.tsx'],
-     options: {
-       safelist: ['col-start-1', 'col-start-2', 'col-start-3', 'col-start-4', 'col-start-5', 'col-start-7', 'col-start-0']
-     }
-   },
+    // purge: {
+   //   content: ['./src/**/*.html', './src/**/*.tsx'],
+   //   options: {
+   //     safelist: ['col-start-1', 'col-start-2', 'col-start-3', 'col-start-4', 'col-start-5', 'col-start-7', 'col-start-0']
+   //   }
+   // },
   theme: {
     fontFamily: {
       "sans": ["'Source Sans Pro'", "sans-serif"],
@@ -25,11 +25,25 @@ module.exports = {
           300: '#f9f1b1 '
         },
         mostaza: {
+					100: '#fcf5bd',
           200: '#fcf1a1',
           300: '#fcec71',
           400: '#fcd617',
           500: '#FCCA00'
         }
+      },
+      height: {
+        'cuarto': '25vh',
+        'medio': '50vh',
+				'dostercios': '67vh',
+        'americano': '75vh',
+        'casitoda': '87vh',
+        'screen': '100vh',
+        'screen1/4': '125vh',
+        'screen1/3': '133vh',
+        'screen1/2': '150vh',
+        'screen2/3': '167vh',
+        'screen2': '200vh'
       },
       animation: {
         "slide-in-fwd-right": "slide-in-fwd-right 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both"

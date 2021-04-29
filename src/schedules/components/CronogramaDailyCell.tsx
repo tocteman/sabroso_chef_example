@@ -1,25 +1,32 @@
 import {useAtom} from 'jotai'
 import React, {useState} from 'react'
-import {ActiveCell} from '../../services/ScheduleService'
+import {ActiveCell, WeekDays} from '../../services/ScheduleService'
+import { Popover, Transition } from "@headlessui/react";
 
-const CronogramaDailyCell = ({status, weekDay}) => {
-  const [activeCell, setActiveCell] = useAtom(ActiveCell)
+const CronogramaDailyCell = ({weekDay}) => {
+  const [weekDaysMap, setWeekDaysMap] = useAtom(WeekDays)
   const mts = [
     {name: "Desayuno"},
     {name: "Almuerzo"},
     {name: "Cena"}
-  ]
+	]
+
+	const setMenuType = () => {
+		// abrir panel
+	}
 
   return (
-  <div className={`${ status === "active" ? `bg-white p-6 border-crema-150 border-2 rounded shadow-sm ` : `bg-crema-125 p-16` } flex justify-center bg-transparent my-4 text-center text-xl border-mostaza-300 font-bold text-lg`}>
-    {status === 'active' && !activeCell && (
-			<div onClick={()=>setActiveCell(true)}>{weekDay.name}</div>
-		)}
-  {status === 'active' && activeCell && (
+  <div className={`${ weekDay.status === "active" ? `bg-white p-6 border-crema-150 border-2 rounded shadow-sm ` : `bg-crema-125 p-6` }
+ justify-center bg-transparent my-4 text-center text-xl border-mostaza-300 font-bold text-lg`}>
+			<div className="">
+				{weekDay.name}
+			</div>
+  {weekDay.status === 'active' && (
     <div>{mts.map(m => (
-      <div key={`mt-${m.name}`} onClick={()=>console.log("clicked")}>
+      <div key={`mt-${m.name}`}
+				className="hover:bg-mostaza-200 my-1"
+				onClick={()=>console.log("clicked")}>
         {m.name}
-
       </div>
     ))}</div>)
   }

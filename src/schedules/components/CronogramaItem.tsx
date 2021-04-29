@@ -32,13 +32,13 @@ const CronogramaItem = () => {
   return (
     <div className="flex flex-col">
       <div className="w-1/6">
-        <div className="flex cursor-pointer bg-crema-100 hover:underline"
+        <div className="flex cursor-pointer bg-crema-100 hover:underline items-center"
           onClick={()=> history.push("/schedules")}
         >
           <div className="w-4">
             <ChevronLeft />
           </div>
-          <div className="text-sm">
+          <div className="font-bold text-lg hover:underline">
             Cronogramas
           </div>
         </div>
@@ -57,15 +57,16 @@ const CronogramaItem = () => {
           </h1>
         </RoughNotation>
       </div>
-      <div className="flex rounded border-crema-200">
+      <div className="w-1/2 flex flex-col rounded border-crema-200">
         {Object.entries(weeks).map(([k, v])=> (
-          <div onClick={w => setWeeks({
+          <div key={`key-${k}`}
+						onClick={w => setWeeks({
             ...initialWeeks,
             [`${k}`] : {number: v.number, status: "active" }
           })}>
           <CronogramaWeeklyColumn 
             status={v.status} 
-            weekNumber={v.number}
+            weekPosition={v.number}
           />
         </div>
         ))}
