@@ -8,7 +8,7 @@ export interface IMenu {
     type?: string;
 		dayPosition?: string;
 		weekPosition?: string;
-		scheduleId?: string;
+		scheduleWeekId?: string;
 }
 
 export interface IMenuType {
@@ -27,15 +27,18 @@ export const initialMenu: IMenu = {
 }
 
 export interface IMenuPerDay {
-  chefId: string;
-  entree: string;
-  dessert: string;
-  id: string;
-  image: string;
-  main: string;
-  menuDate: string;
-  tag: string;
-  type: string;
+		chefId: string;
+		entree: string;
+		dessert: string;
+		id: string;
+		image: string;
+		main: string;
+		menuDate: string;
+		tag: string;
+		type: string;
+		dayPosition?: string;
+		weekPosition?: string;
+		scheduleWeekId?: string;
 }
 
 export const initialMenuPerDay: IMenuPerDay = {

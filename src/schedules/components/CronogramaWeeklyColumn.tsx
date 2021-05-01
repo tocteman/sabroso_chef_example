@@ -1,52 +1,61 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {useAtom} from 'jotai'
 import CronogramaDailyCell from './CronogramaDailyCell'
-import {WeekDays} from '../../services/ScheduleService'
+import {WeekDays, CurrentWeek, weekDayMap} from '../../services/ScheduleService'
+import Loader from '../../general/components/Loader'
 
-const CronogramaWeeklyColumn = ({weekPosition, status}) => {
+
+
+const CronogramaWeeklyColumn = ({weekPosition, menusPerWeek}) => {
 
 	const [weekDaysMap, setWeekDaysMap] = useAtom(WeekDays)
+	const [currentWeek, setCurrentWeek] = useAtom(CurrentWeek)
+	const [showWeeks, setShowWeeks] = useState(true)
 
-	const setActiveDay = (d) => setWeekDaysMap(
-		weekDaysMap.set(d.code, {...d, status: "active"})
-	)
+	useEffect(() => {setWeekDaysMap(weekDayMap)}, [])
 
-	const daysToRender = (days) =>
-		<div className="flex">
-			{days.map(d => (
-			<div onClick={()=> setActiveDay(d)}>
-					<CronogramaDailyCell
-						weekDay={d}
-						key={`${weekPosition}-${d.code}`}
-					/>
-			</div>
-			))}
-		</div>
 
 	const weekDaysArray = () =>
 		Array.from(weekDaysMap, ([dayCode, dayInfo]) => ({dayCode, dayInfo}))
 		.map(d => d.dayInfo)
 
+	const menusPerDay = (dayCode) =>
+		menusPerWeek?.filter(m => m.dayPosition === dayCode) || []
+
+	const daysToRender = (days) => (
+		<div className="flex">
+			{days.map(d => (
+				<div key={`${weekPosition}-${d.code}`}  className="m-1">
+					<CronogramaDailyCell
+						menus={menusPerDay(d.code)}
+						weekDay={d}
+					/>
+			</div>
+			))}
+		</div>
+	)
+
+	const isActive = () => currentWeek.weekPosition === weekPosition
+
+
   return (
-    <div className={`${status === "active"? `cronograma-striped-active hover:bg-white ` : `column-striped-inactive hover:bg-mostaza-100 ` }   hover:border-mostaza-200 border-crema-200 border-8 rounded-lg my-4 mx-4 flex flex-col px-4 py-4 cursor-pointer`}>
-      {weekDaysMap && status === "active" &&
+    <div className={` ${isActive() ? `column-striped-active hover:bg-crema-200 ` : `column-striped-inactive hover:bg-mostaza-100 ` }
+   hover:border-mostaza-200 border-crema-200 border-8 rounded-lg my-4 flex flex-col px-4 py-4 cursor-pointer`}>
+			 <div className="flex flex-col items-end justify-center">
+				 <div className="text-sm uppercase leading-none text-right pr-8">
+					Semana
+				 </div>
+				 <div className="text-5xl font-bold pr-8">
+					 {weekPosition}
+				 </div>
+			 </div>
+			{weekDaysMap && isActive() &&
 			 <>
 				{daysToRender(weekDaysArray().slice(0,4))}
 				{daysToRender(weekDaysArray().slice(-3))}
 			 </>
 			}
-
-			{status !== "active" &&
-			 <div className="w-32 flex flex-col items-center justify-center">
-				 <div className="text-lg font-bold">
-					Semana
-				 </div>
-				 <div className="text-5xl font-bold my-2">
-					 3
-				 </div>
-			 </div>
-			}
-    </div>
+		</div>
   ) 
 
 

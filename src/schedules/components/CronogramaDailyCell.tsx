@@ -1,32 +1,59 @@
-import {useAtom} from 'jotai'
 import React, {useState} from 'react'
-import {ActiveCell, WeekDays} from '../../services/ScheduleService'
+import {useAtom} from 'jotai'
+import {ActiveCell, WeekDays, weekDayMap} from '../../services/ScheduleService'
 import { Popover, Transition } from "@headlessui/react";
+import { DisplayScheduledMenuPanel, DisplayMenuPanel, MenuTypes, CurrentDay, MenusPerDay, scheduledMenusPostPromises} from '../../services/MenuService'
+import { initialMenu } from '../../models/MenuTypes';
 
-const CronogramaDailyCell = ({weekDay}) => {
+
+const CronogramaDailyCell = ({weekDay, menus}) => {
   const [weekDaysMap, setWeekDaysMap] = useAtom(WeekDays)
-  const mts = [
-    {name: "Desayuno"},
-    {name: "Almuerzo"},
-    {name: "Cena"}
-	]
+	const [displayPanel, setDisplayPanel] = useAtom(DisplayMenuPanel)
+	const [, setCurrentEditMenu] = useAtom(CurrentDay)
+  const [menusPerDay, setMenusPerDay] = useAtom(MenusPerDay)
 
-	const setMenuType = () => {
-		// abrir panel
+	const setMenuType = (mt) => {
+		setTimeout(() => {
+		setDisplayPanel({origin: "schedule", display: true})
+		}, 100)
+		// determinar tipo de menú
 	}
 
+
+	console.log({menus})
+
+	const setActiveDay = (d) => {
+		setMenusPerDay(menus)
+		const newWeekDaysMap = weekDayMap()
+		newWeekDaysMap.set(d.code, {...d, status: "active"})
+		setWeekDaysMap(newWeekDaysMap)
+		setCurrentEditMenu(initialMenu)
+		setDisplayPanel({origin: "schedule", display: true})
+	}
+
+
+
   return (
-  <div className={`${ weekDay.status === "active" ? `bg-white p-6 border-crema-150 border-2 rounded shadow-sm ` : `bg-crema-125 p-6` }
- justify-center bg-transparent my-4 text-center text-xl border-mostaza-300 font-bold text-lg`}>
+		<div onClick={() => setActiveDay(weekDay)}
+			className={
+			`justify-center bg-transparent my-4 text-center border-2
+			 font-bold rounded shadow-sm text-lg
+			  ${ weekDay.status === "active" ?
+				    `bg-white p-4 border-yellow-500 border-2 rounded shadow-sm ` :  `bg-crema-125 p-4 hover:bg-white ` }
+					${ menus.length > 0 ?
+						` border-red-300` : ` border-mostaza-300` }
+						` }
+
+	>
 			<div className="">
 				{weekDay.name}
 			</div>
-  {weekDay.status === 'active' && (
-    <div>{mts.map(m => (
-      <div key={`mt-${m.name}`}
+  {weekDay.status === 'estovaacambiar' && (
+    <div>{MenuTypes.map(mt => (
+      <div key={`mt-${mt.name}`}
 				className="hover:bg-mostaza-200 my-1"
-				onClick={()=>console.log("clicked")}>
-        {m.name}
+				onClick={()=>setMenuType(mt)}>
+        {mt.name}
       </div>
     ))}</div>)
   }

@@ -8,6 +8,7 @@ export const mealsFiltersAtom = atom<Filter[]>([])
 export const menusFiltersAtom = atom<Filter[]>([])
 export const clientsFiltersAtom = atom<Filter[]>([])
 export const proposalsFiltersAtom = atom<Filter[]>([])
+export const singleScheduleFiltersAtom = atom<Filter[]>([])
 export const FilterEncodeString = (currentAtomValue:any) => {
   const filters = currentAtomValue
   if (filters.length > 0) {
@@ -23,5 +24,8 @@ export const FilterEncodeString = (currentAtomValue:any) => {
   }
 }
 
-
-
+export const SimpleFilter = (valueString: string, fieldString:string, operator:string) => ({
+    field: fieldString,
+    value: valueString,
+    operator: operator
+  })

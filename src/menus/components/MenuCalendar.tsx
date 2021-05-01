@@ -9,12 +9,13 @@ import {dateForFilter, dateForMenu, diasSemana, numberToDate} from '../../utils/
 import type {IDiaSemana} from '../../utils/DateUtils'
 import ChevronLeft from '../../svgs/ChevronLeft'
 import ChevronRight from '../../svgs/ChevronRight'
-import {CurrentDay, CurrentMonth, MenusPerDay} from '../../services/MenuService'
+import {CurrentDay, CurrentMonth, MenusPerDay, DisplayMenuPanel} from '../../services/MenuService'
 import {groupBy} from '../../utils/JsUtils'
 import type {IMenu, IMenusPerDay} from '../../models/MenuTypes'
 
 const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
-  const [, setCurrentDay] = useAtom(CurrentDay)
+	const [, setCurrentDay] = useAtom(CurrentDay)
+  const [, setDisplayPanel] = useAtom(DisplayMenuPanel)
   const [, setMenusPerDay] = useAtom(MenusPerDay)
   const [currentMonth, setCurrentMonth] = useAtom(CurrentMonth)
   const daysOfMonth = (month: number) => {
@@ -82,8 +83,8 @@ const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
                     `bg-crema-100 border-crema-200`} 
               `}
               onClick={() => {
-
                 setCurrentDay(day.valueOf());
+								setDisplayPanel({display: true, origin: "menu"})
                 setMenusPerDay(mpd(day))
               }}
             >

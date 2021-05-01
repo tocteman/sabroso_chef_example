@@ -34,8 +34,9 @@ const OrdersPage = () => {
 
 
   const { data: workspaces} = useSWR( ['workspaces'], Fetcher)
-  const { data: orders} = useSWR(FilterEncodeString(currentOrderFilters) !== "" ? 
-    ['orders', FilterEncodeString(currentOrderFilters)] : null, FilteredFetcher
+  const { data: orders} = useSWR(
+		FilterEncodeString(currentOrderFilters) !== "" ?
+			['orders', FilterEncodeString(currentOrderFilters)] : null, FilteredFetcher
   )
   const { data: groups} = useSWR(['groups'], Fetcher)
   const { data: menus} = useSWR(

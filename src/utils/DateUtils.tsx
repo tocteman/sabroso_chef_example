@@ -5,7 +5,6 @@ import type { Filter } from '../models/FilterTypes'
 import parse from 'date-fns/parse'
 
 export const LocalHourFix = 21600000
-21600000
 export const PicksFilter = (valueString: string, fieldString:string, operator:string) => ({
     field: fieldString,
     value: valueString,
@@ -46,6 +45,16 @@ export const diasSemana: IDiaSemana[] = [
   {weekDayNumber: 6, weekDayName: 'Sábado'},
 
 ]
+
+export const todayOrFurther = (selectedDateString) => {
+
+	if (selectedDateString?.length < 1) { return false }
+	const selected = parse(selectedDateString, 'yyyy-MM-dd', new Date()).valueOf()
+	const today = new Date().valueOf() - 86000000
+	console.log({selected})
+	console.log({today})
+	return selected > today ? true: false
+}
 
 export const TodayPicks = () => {
   return format(new Date().valueOf(), 'yyyy-MM-dd') 

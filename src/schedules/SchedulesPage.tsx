@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react'
 import {useAtom} from 'jotai'
-import {Switch, Route, useRouteMatch, Link, useHistory, useLocation} from 'react-router-dom'
+import {Switch, Route, useRouteMatch,  useHistory, useLocation} from 'react-router-dom'
 import ExampleData from './components/ExampleData'
 import CronogramaSummaryItem from './components/CronogramaSummaryItem'
 import CronogramaItem from './components/CronogramaItem'
@@ -22,50 +22,36 @@ const SchedulesPage = () => {
   const location = useLocation()
 	const {data: schedules, error: schErr} = useSWR(['schedules'], Fetcher)
   const [, setToastState] = useAtom(ToastState)
-  const trimAddr = (addr: string) =>  /[\/]$/.exec(addr) ? addr.slice(0, -1) : addr
 
-	/* if (!schedules || schErr) return <Loader/> */
+	if (!schedules || schErr) return <Loader/>
 
   const includesId: () => boolean = () =>
     ExampleData
     .map(e => e.id.toString())
     .some(id => id === history.location.pathname.slice(-1)[0])
 
-	const addSchedule = () => {
-		schedulePostPromise()
-			.then(res =>{
-				console.log({res})
-				mutate(['schedules'], Fetcher)
-				setToastState({status: "ok", message:"Has publicado un cronograma"})
-			})
-		.catch(err => console.log({err}))
-	}
-
-	const ref = React.createRef()
-
-	console.log({history})
+	const parsedSchedules = () => schedules
+	.map(s => ({...s, progress: Math.floor(100 * Math.random())}))
 
 	const checkLocation = () =>
 		history.location.pathname.match(/schedules[\/]?$/) ? true : false
 
-
-
+	console.log({schedules})
 
     return (
-      <div className="flex flex-col p-8">
+      <div className="flex flex-col">
 				{
 					checkLocation() === true &&
 					<>
-					<div className="flex pr-8 items-center">
-						<div className="w-1/2">
+					<div className="flex w-2/3 pr-8 items-center p-8 justify-between">
+						<div className="w-1/3 ml-3">
 							<RoughTitle title={"Cronogramas"} roughProps={{strokeWidth: 3}}/>
 						</div>
-						<div className="ml-8">
+						<div className="ml-24">
 							<Popover className="relative">
 								{({open}) => (
 									<>
 										<Popover.Button className={`${!open ? `secondary-button` : `blank-button` }`}
-											onClick={()=> addSchedule()}
 										>
 											{open && <>Nuevo Cronograma</>}
 											{!open &&
@@ -94,21 +80,13 @@ const SchedulesPage = () => {
 							</Popover>
 						</div>
 					</div>
-					<div className="w-2/3 my-4">
-						{!includesId() && ExampleData.map(e =>
-							<Link to={`${trimAddr(url)}/${e.id}`}
-								key={`${e.id}`}>
-								<CronogramaSummaryItem
-									name={e.name}
-									progress={e.progress}
-								/>
-							</Link>
+					<div className="w-2/3 my-4 px-8">
+						{!includesId() && parsedSchedules().map(s =>
+							<CronogramaSummaryItem schedule={s} key={s.id} />
 						)}
 					</div>
 			</>
-
 				}
-
         <Switch>
           <Route exact path={`${path}/:id`}>
             <CronogramaItem/>

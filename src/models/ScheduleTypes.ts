@@ -9,6 +9,7 @@ export interface ISchedule {
 export interface IScheduleWeek {
 	id: string;
 	weekPosition: number;
+	scheduleId: string;
 }
 
 export interface IScheduleMenu {
@@ -33,7 +34,8 @@ export const initialSchedule: ISchedule = {
 
 export const initialScheduleWeek: IScheduleWeek = {
 	id: null,
-	weekPosition: null
+	weekPosition: null,
+	scheduleId: null
 }
 
 export const initialScheduleMenu: IScheduleMenu = {

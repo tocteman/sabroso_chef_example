@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import CloseIcon from '../../svgs/CloseIcon'
 import {useAtom} from 'jotai'
-import {CurrentDay, DisplayNewMenuPanel, menusPost, menusPostPromises, validateMenus} from '../../services/MenuService'
+import { CurrentDay, DisplayMenuPanel, DisplayNewMenuPanel, menusPost, menusPostPromises, validateMenus, scheduledMenusPostPromises} from '../../services/MenuService'
 import type {IMeal} from '../../models/MealTypes'
 import MenuForm from './MenuForm'
 import {LunchMenu, MenuMap} from '../../services/MenuService'
@@ -11,32 +11,39 @@ import {IMenu, initialMenu} from '../../models/MenuTypes'
 import format from 'date-fns/format'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
 import DuplicateIcon from '../../svgs/DuplicateIcon'
-import {ToastState} from '../../services/UiService'
+import {ToastState, Loading} from '../../services/UiService'
 import {mutate} from 'swr'
 import { FilterEncodeString, menusFiltersAtom } from '../../services/FilterService'
 import MinusCircle from '../../svgs/MinusCircle'
 import CloseCircle from '../../svgs/CloseCircle'
-import { generatePdf } from 'src/services/OrderReportService'
+import { CurrentWeek, WeekDays } from '../../services/ScheduleService'
 
 const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin}) => {
   const [cu] = useLocalStorage('user', '')
   const [, setToastState] = useAtom(ToastState)
-  const [displayPanel, setDisplayPanel] = useAtom(DisplayNewMenuPanel)
+  const [displayNewMenuPanel, setDisplayNewMenuPanel] = useAtom(DisplayNewMenuPanel)
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   const [showDropdown, setShowDropdown] = useState(false)
   const [currentMenuFilters] = useAtom(menusFiltersAtom)
-  
+	const [displayPanel, setDisplayPanel] = useAtom(DisplayMenuPanel)
   const [currentDay] = useAtom(CurrentDay)
   const toggleDropdown = () => setShowDropdown(true) 
   const [duplicable, setDuplicable] = useState(true)
   const [deleting, setDeleting] = useState(false)
+	const [currentWeek] = useAtom(CurrentWeek)
+	const [weekDaysMap] = useAtom(WeekDays)
+	const [, setLoading] = useAtom(Loading)
+
+	const weekDaysArray = () =>
+		Array.from(weekDaysMap, ([dayCode, dayInfo]) => ({dayCode, dayInfo}))
+		.map(d => d.dayInfo)
 
   const addMenu = (mt) => {
     const menuId = uuidv4()
     setShowDropdown(false)
-		return origin === 'schedule' ? // <- pilas a este <<return>>
-			setMenuMap(menuMap.set(menuId, generateScheduledMenu(mt))) :
-			setMenuMap(menuMap.set(menuId, generateMenu(mt)))
+		return displayPanel.origin === 'schedule' ? // <- pilas a este <<return>>
+			setMenuMap(menuMap.set(menuId, generateScheduledMenu(menuId, mt))) :
+			setMenuMap(menuMap.set(menuId, generateMenu(menuId, mt)))
 	}
 
 	const generateMenu = (menuId, mt) => ({
@@ -49,12 +56,11 @@ const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin
 	const generateScheduledMenu = (menuId, mt) => ({
 		...initialMenu,
 		type: mt.code,
-		id: menuId
-		scheduleId: "",
-		dayPosition: "",
-		weekPosition: 0
+		id: menuId,
+		image: "",
+		scheduleWeekId: currentWeek.id,
+		dayPosition: weekDaysArray().filter(d => d.status === 'active')[0]?.code,
 	})
-
 
   const duplicateLunch = () => {
     const lunch = almuerzos()[0].menu
@@ -79,14 +85,32 @@ const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin
         .filter(m => m.menu.type === 'DINNER')
 
   const validateAndPublishMenus = () => {
-    const menus: IMenu[] = Array.from(menuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
+    const menus: IMenu[] = Array.from(menuMap, ([id, menu]) => ({id, menu}))
+			.map(m => m.menu)
     const validation = validateMenus(menus)
-    validation.ok === true ?
-      postMenus(menus) :
-      showPublishError(validation) 
-  } 
+    validation.ok !== true ?
+      showPublishError(validation) :
+			displayPanel.origin === 'schedule' ?
+					postScheduledMenus(menus) : postMenus(menus)
+	}
 
-  const showPublishError = (validation) => setToastState({status: "error", message: validation.msg}) 
+  const showPublishError = (validation) => setToastState({status: "error", message: validation.msg})
+
+	const postScheduledMenus = (menus) =>
+		menusPost(scheduledMenusPostPromises(menus, cu.id))
+			.then(() => {
+				setLoading(true)
+				mutate(['schedule_menus'])
+				setDisplayPanel({...displayPanel, display: false})
+				setToastState({status: "ok", message:"Has programado los menús"})
+				setDisplayNewMenuPanel(false)
+				setTimeout(() => setLoading(false), 200)
+				setMenuMap(new Map())
+			})
+			.catch(err => {
+				console.log({err})
+				setToastState({status: "error", message: err})
+			})
 
   const postMenus = (menus) =>  
 		menusPost(menusPostPromises(menus, cu.id))

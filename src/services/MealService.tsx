@@ -78,7 +78,6 @@ export const mealsPost = (meals: Promise<AxiosResponse<any>>[]) =>
     .catch(err => console.log(err))
 
 export const validateNewMeals = (meals: IMeal[]) => {
-	console.log({meals})
   const resp = (ok: boolean, msg: string) => ({ok, msg})
   const namesOk = meals.every(m => m.name.length>0)
   const typesOk = meals.every(m => m.type.length > 0)
@@ -89,7 +88,6 @@ export const validateNewMeals = (meals: IMeal[]) => {
 
 export const validateExcelImport = ({meals, chefId}) => {
   const resp = (ok: boolean, msg: string) => ({ok, msg})
-	console.log({meals})
 	if (!meals) return resp(false, "Asegúrate de importar el archivo correcto")
 	return resp(true, "ok")
 }

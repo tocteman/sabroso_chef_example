@@ -1,8 +1,7 @@
 import React from 'react'
-import {CurrentDay, DisplayEditMenuPanel, menusPost, menusPostPromises, validateMenus} from '../../services/MenuService'
+import {CurrentDay, DisplayEditMenuPanel, menusPost, menusPostPromises, validateMenus, CurrentEditMenu, MenuMap, scheduledMenusPostPromises, DisplayMenuPanel} from '../../services/MenuService'
 import { useAtom } from 'jotai'
 import {useLocalStorage} from '../../utils/LocalStorageHook'
-import {MenuMap} from '../../services/MenuService'
 import {IMenu, initialMenu} from '../../models/MenuTypes'
 import CloseIcon from '../../svgs/CloseIcon'
 import { ToastState } from '../../services/UiService'
@@ -15,18 +14,21 @@ import {DeleterPromise} from '../../services/Fetcher'
 
 const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => {
   const [cu] = useLocalStorage('user', '')
-  const [displayPanel, setDisplayPanel] = useAtom(DisplayEditMenuPanel)
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   const [, setToastState] = useAtom(ToastState)
   const [currentMenuFilters] = useAtom(menusFiltersAtom)
   const [, setCurrentDay] = useAtom(CurrentDay)
+	const [currentEditMenu, setCurrentEditMenu] = useAtom(CurrentEditMenu)
+	const [displayPanel] = useAtom(DisplayMenuPanel)
 
   const validateAndPublishMenus = () => {
     const menus: IMenu[] = Array.from(menuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
     const validation = validateMenus(menus)
-    validation.ok === true ?
-      postMenus(menus) :
-      showPublishError(validation) 
+    validation.ok !== true ?
+      showPublishError(validation) :
+				displayPanel.origin === 'schedule' ?
+					postScheduledMenus(menus) : postMenus(menus)
+
   } 
 
   const showPublishError = (validation) => setToastState({status: "error", message: validation.msg}) 
@@ -35,19 +37,33 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
     menusPost(menusPostPromises(menus, cu.id))
      .then(()=> {
        mutate(['menus', FilterEncodeString(currentMenuFilters)])
-       setDisplayPanel(initialMenu)
-       setToastState({status: "ok", message:"Has publicado los menús"})
+       setCurrentEditMenu(initialMenu)
+       setToastState({status: "ok", message:"Has editado los menús"})
        setMenuMap(new Map())
      })
      .catch(err =>
        setToastState({status: "error", message: err})
      )
 
+	const postScheduledMenus = (menus) =>
+		menusPost(scheduledMenusPostPromises(menus, cu.id))
+			.then(() => {
+				mutate(['schedule_menus'])
+       setCurrentEditMenu(initialMenu)
+				setToastState({status: "ok", message:"Has editado los menús programados"})
+				setMenuMap(new Map())
+			})
+			.catch(err => {
+				console.log({err})
+				setToastState({status: "error", message: err})
+			})
+
+
   const deleteCurrentMenu = () => {
     DeleterPromise(`menus/${menu.id}`) 
       .then(()=> {
         mutate(['menus', FilterEncodeString(currentMenuFilters)])
-        setDisplayPanel(initialMenu)
+        setCurrentEditMenu(initialMenu)
         setCurrentDay(0)
         setToastState({status: 'ok', message: "Has eliminado el menú."})
         setMenuMap(new Map())
@@ -70,7 +86,7 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
           <TrashIcon/>
         </div>
         <div className="w-6 cursor-pointer" 
-             onClick={()=>setDisplayPanel(initialMenu)} >
+             onClick={()=>setCurrentEditMenu(initialMenu)} >
           <CloseIcon/>
         </div>
       </div>

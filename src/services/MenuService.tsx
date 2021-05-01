@@ -18,15 +18,28 @@ export const MenusPerDay = atom<IMenuPerDay[]>([initialMenuPerDay])
 export const CurrentMenuType = atom<string>("LUNCH")
 export const CurrentServiceType =atom<string>("Vianda")
 
+interface IDisplayPanel {origin: "schedule"|"menu", display: boolean}
+
+export const DisplayMenuPanel = atom<IDisplayPanel>(
+	{origin: "menu", display: false})
+
 export const MenuMap = atom<Map<string, IMenu>>(new Map())
 export const DisplayNewMenuPanel =atom<boolean>(false)
 export const DisplayEditMenuPanel = atom<IMenu>(initialMenu)
+export const CurrentEditMenu = atom<IMenu>(initialMenu)
+
+export const DisplayScheduledMenuPanel = atom<boolean>(false)
 
 export const menusPostPromises = (menus: IMenu[], chefId: string) => 
     menus
     .map(m => PosterPromise(
       `menus/${m.id}`, buildMenuForm(m, chefId)
     ))
+export const scheduledMenusPostPromises = (menus: IMenu[], chefId: string) =>
+    menus
+    .map(m => PosterPromise(
+      `schedule_menus/${m.id}`, m))
+
 
 export const menusPost = (menus: Promise<AxiosResponse<any>>[]) => 
   Promise.all(menus)
@@ -50,7 +63,6 @@ export const buildMenuForm = (menuData: IMenu, chefId:string) => {
 }
 
 export const validateMenus = (menus: IMenu[]) => {
-	console.log({menus})
   const resp = (ok: boolean, msg: string) => ({ok, msg})
   const lunches = menus.filter(m => m.type === 'LUNCH')
   const tagsOk = menus
@@ -64,6 +76,3 @@ export const validateMenus = (menus: IMenu[]) => {
   if (lunches.length > 0 && !lunchesOk) return resp(false, "Almuerzos incompletos")
   return resp(true, "ok")
 }
-
-
-

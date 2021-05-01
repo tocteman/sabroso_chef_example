@@ -1,20 +1,22 @@
 import React, {useState} from 'react'
 import {useAtom} from 'jotai'
 import type {IMeal} from '../../models/MealTypes';
-import {MenuMap} from '../../services/MenuService';
+import { CurrentEditMenu, MenuMap} from '../../services/MenuService';
 import DataListInput from "react-datalist-input";
 
-const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId }) => {
+const MenuForm: React.FC<{meals: IMeal[], menuId}> = ({meals, menuId}) => {
   const [newMenuMap, setNewMenuMap] = useAtom(MenuMap)
-  // const currentMeals = () => meals.map(m => m.name)
+	const [currentEditMenu, setCurrentEditMenu] = useAtom(CurrentEditMenu)
   const currentMeals = () => meals.map((m, i) => ({key: `${i}-${m.name}`, value: m.name, label: m.name}))
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   const getSpec = () => meals[0].type.toLowerCase()
+
   const getValue = () => menuMap.get(menuId)[`${getSpec()}`] || ""
-  const setText = (mealName: string) => {
-  const newMap = new Map(newMenuMap)
-    newMap.set(menuId, {...newMap.get(menuId), [`${getSpec()}`]: mealName})
-    return setNewMenuMap(newMap)
+
+	const setText = (mealName: string) => {
+			const newMap = new Map(newMenuMap)
+				newMap.set(menuId, {...newMap.get(menuId), [`${getSpec()}`]: mealName})
+				return setNewMenuMap(newMap)
   }
   const getTag = () => menuMap.get(menuId)['tag'] || ""
 

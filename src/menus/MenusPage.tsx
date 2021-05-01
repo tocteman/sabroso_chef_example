@@ -10,7 +10,7 @@ import {useLocalStorage} from '../utils/LocalStorageHook'
 import Loader from '../general/components/Loader'
 import MenuPanel from './components/MenuPanel'
 import MenuCalendar from './components/MenuCalendar'
-import {CurrentDay, CurrentMonth} from '../services/MenuService'
+import {CurrentDay, CurrentMonth, DisplayMenuPanel} from '../services/MenuService'
 import { Transition } from '@headlessui/react'
 import RoughTitle from "../general/components/RoughTitle"
 
@@ -20,6 +20,7 @@ const MenusPage = () => {
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
   const [, setCurrentMonth] = useAtom(CurrentMonth)
+	const [displayPanel, setDisplayPanel] = useAtom(DisplayMenuPanel)
   const [currentDay] = useAtom(CurrentDay)
   const history = useHistory()
   const { data: menus } = useSWR(
@@ -36,7 +37,7 @@ const MenusPage = () => {
   if (!meals) return <Loader />
   if (!menus) return <Loader />
 
-  
+
   return (
     <div className="">
       <div className="flex">
@@ -44,16 +45,16 @@ const MenusPage = () => {
           <div className="w-1/3">
 						<RoughTitle title={"Menús"}/>
           </div>
-         <MenuCalendar menus={menus}/>
+					<MenuCalendar menus={menus}/>
         </div>
-          <Transition
-          show={ currentDay > 0}
+        <Transition
+          show={ displayPanel.display === true}
           enter="transition transform duration-500"
           enterFrom="translate-x-1/3"
           enterTo=""
-            className="w-1/2"
-        >
-            <MenuPanel meals={meals} />
+					className="w-1/2"
+				>
+          <MenuPanel meals={meals} />
         </Transition>
       </div>
     </div>
@@ -61,5 +62,3 @@ const MenusPage = () => {
 }
 
 export default MenusPage
-
-
