@@ -6,7 +6,7 @@ import CronogramaSummaryItem from './components/CronogramaSummaryItem'
 import CronogramaItem from './components/CronogramaItem'
 import RoughTitle from '../general/components/RoughTitle'
 import useSWR, {mutate} from 'swr'
-import { mealsFiltersAtom, FilterEncodeString } from '../services/FilterService'
+import { MealsFiltersAtom, FilterEncodeString } from '../services/FilterService'
 import Loader from '../general/components/Loader'
 import {FilteredFetcher, Fetcher} from '../services/Fetcher'
 import {schedulePostPromise} from '../services/ScheduleService'
@@ -15,6 +15,7 @@ import AddSchedulePopover from './components/AddSchedulePopover'
 import { Popover, Transition } from "@headlessui/react";
 import GenGetIn from '../general/components/GenGetIn'
 import ChevronDown from '../svgs/ChevronDown'
+import {PopoverTransitionProps} from '../services/UiService'
 
 const SchedulesPage = () => {
   let {path, url} = useRouteMatch()
@@ -25,34 +26,27 @@ const SchedulesPage = () => {
 
 	if (!schedules || schErr) return <Loader/>
 
-  const includesId: () => boolean = () =>
-    ExampleData
-    .map(e => e.id.toString())
-    .some(id => id === history.location.pathname.slice(-1)[0])
-
 	const parsedSchedules = () => schedules
 	.map(s => ({...s, progress: Math.floor(100 * Math.random())}))
 
 	const checkLocation = () =>
 		history.location.pathname.match(/schedules[\/]?$/) ? true : false
 
-	console.log({schedules})
-
     return (
-      <div className="flex flex-col">
+      <div className="">
 				{
 					checkLocation() === true &&
-					<>
-					<div className="flex w-2/3 pr-8 items-center p-8 justify-between">
-						<div className="w-1/3 ml-3">
+					<div className="flex flex-col p-8">
+					<div className="flex flex-col sm:flex-row sm:w-2/3 pr-8 sm:items-center  sm:justify-between">
+						<div className="w-1/3">
 							<RoughTitle title={"Cronogramas"} roughProps={{strokeWidth: 3}}/>
 						</div>
-						<div className="ml-24">
+						<div className="sm:ml-24 -mt-4 sm:mt-0">
 							<Popover className="relative">
 								{({open}) => (
 									<>
-										<Popover.Button className={`${!open ? `secondary-button` : `blank-button` }`}
-										>
+										<Popover.Button
+											className={`${!open ? `secondary-button` : `blank-button` }`} >
 											{open && <>Nuevo Cronograma</>}
 											{!open &&
 											 <div className="flex items-center">
@@ -63,12 +57,7 @@ const SchedulesPage = () => {
 										<Transition
 											show={open}
 											as={Fragment}
-											enter="transition ease-out duration-200"
-											enterFrom="opacity-0 translate-y-1"
-											enterTo="opacity-100 translate-y-0"
-											leave="transition ease-in duration-150"
-											leaveFrom="opacity-100 translate-y-0"
-											leaveTo="opacity-0 translate-y-1"
+											{...PopoverTransitionProps}
 										>
 											<Popover.Panel className="absolute z-10">
 												<AddSchedulePopover/>
@@ -80,12 +69,12 @@ const SchedulesPage = () => {
 							</Popover>
 						</div>
 					</div>
-					<div className="w-2/3 my-4 px-8">
-						{!includesId() && parsedSchedules().map(s =>
+					<div className="w-full sm:w-2/3 my-4 sm:px-8">
+						{parsedSchedules().map(s =>
 							<CronogramaSummaryItem schedule={s} key={s.id} />
 						)}
 					</div>
-			</>
+			</div>
 				}
         <Switch>
           <Route exact path={`${path}/:id`}>

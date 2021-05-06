@@ -22,10 +22,7 @@ export const generatePdf = (
   const mapped = new Map( 
     Object.entries(
       groupByGroupAndTag(
-        groupedOrders, parsedGroups, currentMenus 
-      )
-    )
-  )
+        groupedOrders, parsedGroups, currentMenus)))
   mapped.forEach((v, k)=> {  //@ts-ignore
     mapped.set(k, v.reduce(
       (rvalue, innerObj)=> rvalue.concat(Object.values(innerObj)) ,[])
@@ -56,7 +53,7 @@ export const generatePdf = (
   doc.roundedRect(15, 150, 170, 70, 2, 2, 'FD')
   // // @ts-ignore
   doc.text("Recibido _____________________________", 15, 240)
-  doc.save(`ReporteSabroso_${theTypes(parsedGroups, currentMenus)}${format(currentDate + LocalHourFix, 'dd/MMM', {locale: esLocale})}.pdf`)
+  /* doc.save(`ReporteSabroso_${theTypes(parsedGroups, currentMenus)}${format(currentDate + LocalHourFix, 'dd/MMM', {locale: esLocale})}.pdf`) */
     return doc
   }
 
@@ -89,7 +86,7 @@ export const generatePdf = (
     })
   }
 
-  const generateAutoTableBody = (mapped:any) => 
+  export const generateAutoTableBody = (mapped:any) =>
    Array.from(mapped, ([tag, summary]) => ({tag, summary}))
      .map(row => [ row.tag, row.summary.map(v => 
          (typeof v === 'number') && (v > 0 ? v : 0)
@@ -99,7 +96,7 @@ export const generatePdf = (
      .map(row => ([...row, row.slice(1).reduce((rtotal, o) => rtotal + o, 0)]))
     .sort((a,b)=> a[0].charCodeAt(0) - b[0].charCodeAt(0))
   
-  const generateAutoTable = (mapped: any) => 
+  export const generateAutoTable = (mapped: any) =>
     Array.from(mapped, ([tag, summary]) => ({tag, summary}))
     .map(row => [
       row.tag, 
@@ -139,7 +136,7 @@ export const generatePdf = (
     })
   }
 
-  const relateTagAndMenu = (orders:IOrder[], currentMenus) => 
+  export const relateTagAndMenu = (orders:IOrder[], currentMenus) =>
     orders
     .filter(o => o.status !== 'CANCELED')
     .map(o => o.details.length > 1 ?
@@ -162,7 +159,7 @@ export const generatePdf = (
     return total
   }
 
-  const printGroups = (t, parsedGroups) =>  {
+  export const printGroups = (t, parsedGroups) =>  {
     const ft = Array.from(new Set(t.flat().map(r => r.gn).filter(r => r)))
     const goodGroups = parsedGroups
       .filter(g => ft.includes(g.name))
@@ -176,7 +173,7 @@ export const generatePdf = (
     return theTable
   }
 
-  const printFoodRows = (t, goodGroups) => {
+  export const printFoodRows = (t, goodGroups) => {
     const f = []
     t.forEach(tr => {
       const stringRow = tr.slice(1).map(tri => tri.gn)
@@ -184,7 +181,6 @@ export const generatePdf = (
         wos.filter(g=> !gns.includes(g)))
       const emptyGroups = withoutOrders.map(w => ({gn: w, value: 0}))
       const goodVals = tr.slice(1).concat(emptyGroups) 
-      // @ts-ignore
         .sort((a:any,b:any)=> (a.gn > b.gn) - (a.gn < b.gn))
         .map(s => s.value)
       const goodRow =  [
@@ -194,7 +190,6 @@ export const generatePdf = (
       ].reduce((row, v) => v === 0 ? [...row, "-"] : [...row, v] ,[])
       f.push(goodRow)
     })
-    //@ts-ignore
     return f.sort((a:any, b:any) => (a[0] > b[0]) - (a[0] < b[0]))
   }
 

@@ -10,7 +10,7 @@ const RoughTitle = ({title, roughProps}) =>
 		animationDuration={500}
 		iterations={1}
 >
-			<h2 className="my-8 text-3xl font-bold">{title}</h2>
+			<h2 className="mt-2 mb-6 sm:mt-6 sm:mb-8 text-3xl font-bold">{title}</h2>
 		</RoughNotation>
 
 export default RoughTitle

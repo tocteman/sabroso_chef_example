@@ -8,7 +8,7 @@ import { ToastState } from '../../services/UiService'
 import MenuForm from './MenuForm'
 import type {IMeal} from '../../models/MealTypes'
 import {mutate} from 'swr'
-import {FilterEncodeString, menusFiltersAtom} from '../../services/FilterService'
+import {FilterEncodeString, MenusFiltersAtom} from '../../services/FilterService'
 import TrashIcon from '../../svgs/TrashIcon'
 import {DeleterPromise} from '../../services/Fetcher'
 
@@ -16,10 +16,10 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
   const [cu] = useLocalStorage('user', '')
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   const [, setToastState] = useAtom(ToastState)
-  const [currentMenuFilters] = useAtom(menusFiltersAtom)
+  const [currentMenuFilters] = useAtom(MenusFiltersAtom)
   const [, setCurrentDay] = useAtom(CurrentDay)
 	const [currentEditMenu, setCurrentEditMenu] = useAtom(CurrentEditMenu)
-	const [displayPanel] = useAtom(DisplayMenuPanel)
+	const [displayPanel, setDisplayPanel] = useAtom(DisplayMenuPanel)
 
   const validateAndPublishMenus = () => {
     const menus: IMenu[] = Array.from(menuMap, ([id, menu]) => ({id, menu})).map(m => m.menu) 
@@ -60,6 +60,7 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
 
 
   const deleteCurrentMenu = () => {
+		if (!confirm("¿Desea eliminar este menú?")) return
     DeleterPromise(`menus/${menu.id}`) 
       .then(()=> {
         mutate(['menus', FilterEncodeString(currentMenuFilters)])
@@ -67,6 +68,7 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
         setCurrentDay(0)
         setToastState({status: 'ok', message: "Has eliminado el menú."})
         setMenuMap(new Map())
+				setDisplayPanel(false)
       })
       .catch(err => {
         setToastState({status: "error", message: err})

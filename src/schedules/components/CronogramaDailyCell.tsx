@@ -31,7 +31,7 @@ const CronogramaDailyCell = ({weekDay, menus}) => {
 		setDisplayPanel({origin: "schedule", display: true})
 	}
 
-
+	const printDay = dayString => dayString.slice(0,2).replace("á", "a")
 
   return (
 		<div onClick={() => setActiveDay(weekDay)}
@@ -46,7 +46,7 @@ const CronogramaDailyCell = ({weekDay, menus}) => {
 
 	>
 			<div className="">
-				{weekDay.name}
+				{printDay(weekDay.name)}
 			</div>
   {weekDay.status === 'estovaacambiar' && (
     <div>{MenuTypes.map(mt => (

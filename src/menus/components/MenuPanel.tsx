@@ -44,8 +44,8 @@ const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
 				: []
 
 	return (
-		<div className={`w-full pl-8 ${ displayPanel?.display === true && `h-full min-h-screen pr-8 bg-white border-l-2 border-mostaza-300`}  `} >
-			<div className="flex flex-col">
+		<div className={`w-full ml-8 ${ displayPanel?.display === true && `h-full min-h-screen pr-8 bg-white border-l-2 border-mostaza-300`}  `} >
+			<div className="flex flex-col p-4 sm:p-8">
 				{displayPanel?.display === true  && (
 					<>
 					<MenuPanelTopbar/>

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import getMonth from 'date-fns/getMonth'
 import useSWR from 'swr'
 import { useAtom } from 'jotai'
-import {FilterEncodeString, menusFiltersAtom} from '../services/FilterService'
+import {FilterEncodeString, MenusFiltersAtom} from '../services/FilterService'
 import {FilteredFetcher, Fetcher} from '../services/Fetcher'
 import { PicksFilter, TodayPicks, InBetweenDays } from '../utils/DateUtils'
 import {useHistory} from 'react-router'
@@ -13,9 +13,10 @@ import MenuCalendar from './components/MenuCalendar'
 import {CurrentDay, CurrentMonth, DisplayMenuPanel} from '../services/MenuService'
 import { Transition } from '@headlessui/react'
 import RoughTitle from "../general/components/RoughTitle"
+import {PanelTransitionProps} from '../services/UiService'
 
 const MenusPage = () => {
-  const [currentMenuFilters, setCurrentMenuFilters] = useAtom(menusFiltersAtom)
+  const [currentMenuFilters, setCurrentMenuFilters] = useAtom(MenusFiltersAtom)
   const [cu] = useLocalStorage('user', '')
   const [prev, setPrev] = useState(TodayPicks)
   const [next, setNext] = useState(TodayPicks)
@@ -39,9 +40,8 @@ const MenusPage = () => {
 
 
   return (
-    <div className="">
       <div className="flex">
-        <div className="flex flex-col w-1/2 pr-8 mt-8 ml-8 mr-8">
+        <div className="flex flex-col w-full sm:w-1/2 p-8">
           <div className="w-1/3">
 						<RoughTitle title={"Menús"}/>
           </div>
@@ -49,15 +49,11 @@ const MenusPage = () => {
         </div>
         <Transition
           show={ displayPanel.display === true}
-          enter="transition transform duration-500"
-          enterFrom="translate-x-1/3"
-          enterTo=""
-					className="w-1/2"
+					{...PanelTransitionProps}
 				>
           <MenuPanel meals={meals} />
         </Transition>
       </div>
-    </div>
   )
 }
 

@@ -73,8 +73,8 @@ const AddMealPanel = () => {
 				 onClick={() => validateAndPublishMeals()}>
 				 Publicar Comidas
 			 </button>
-			 <hr className="border-2 border-mostaza-200"/>
-			 <div className="my-4">
+			 <hr className="border mt-4 border-mostaza-200"/>
+			 <div className="my-2">
 				 <button className="main-button" onClick={() => setDisplayExcelForm(true)}>
 					 Importar desde Excel
 				 </button>

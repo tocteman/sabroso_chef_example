@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .main-button {
-  @apply px-4 py-2 mt-4 text-lg font-bold text-center border-2 rounded-lg border-mostaza-200 bg-gradient-to-b from-red-400 to-red-500 text-crema-100 hover:border-mostaza-200 shadow-sm hover:from-red-300;
+  @apply px-3 py-1 mt-2 font-bold text-center border-2 rounded-lg border-mostaza-200 bg-gradient-to-b from-red-400 to-red-500 text-crema-100 hover:border-mostaza-200 shadow-sm hover:from-red-300;
 }
 
 .secondary-button {
@@ -13,6 +13,23 @@
 .blank-button {
 	@apply px-4 py-1 mt-4 rounded border-mostaza-200 border-2 bg-crema-200 hover:bg-crema-100 shadow-sm font-bold
 }
+
+.main-list-item {
+	@apply max-w-sm p-2 my-1 text-lg bg-white rounded border-2 cursor-pointer border-crema-300 hover:bg-white hover:border-mostaza-300 hover:shadow-sm
+}
+
+.add-panel-bg {
+	@apply min-h-screen p-8 ml-8 bg-crema-125 border-mostaza-200 border-l-2 shadow-sm
+}
+
+.current-panel-bg {
+	@apply p-8 ml-8 min-h-screen bg-white border-l-2 border-mostaza-300
+}
+
+.panel-inner-container {
+	@apply flex flex-col max-w-md px-8 mx-auto
+}
+
 
 .column-striped-active {
 	background-color: #fffad6;
@@ -26,7 +43,11 @@
 
 
 .std-input {
-  @apply p-2 text-xl font-bold border-2 rounded appearance-none bg-crema-100 border-mostaza-200 shadow-sm focus:bg-white
+  @apply p-1 font-bold border-2 rounded bg-crema-100 border-mostaza-200 shadow-sm
+}
+
+.std-input-inner {
+	@apply pr-4 appearance-none focus:bg-white bg-crema-100 font-bold  sm:text-lg
 }
 
 .meal-input {

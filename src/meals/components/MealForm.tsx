@@ -45,12 +45,6 @@ const MealForm = () => {
     {name: "Postre", code: "DESSERT"}
   ]
 
-  const disableEdit = () =>{
-    setMealMap(new Map())
-    currentMeal.id.length > 0  ? 
-      setEditPanel(false) :
-      setCurrentMeal(initialMeal); 
-  }   
 
   useEffect(() => {
     isEdit() === true && setInitialValues()
@@ -69,12 +63,6 @@ const MealForm = () => {
             onChange={(e)=> {setName(e.target.value); setProp("name", e.target.value)}}/
           >
         </div>
-        { currentMeal.id.length > 0 &&
-          <div className="w-6 cursor-pointer hover:text-gray-700"
-            onClick={() => disableEdit()}>
-            <CloseIcon/>
-          </div>
-        }
       </div>
       <div className="flex flex-col my-2">
         <label className="text-sm tracking-widest uppercase">

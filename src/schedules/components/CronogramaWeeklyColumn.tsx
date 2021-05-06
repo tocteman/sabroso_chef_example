@@ -25,7 +25,7 @@ const CronogramaWeeklyColumn = ({weekPosition, menusPerWeek}) => {
 	const daysToRender = (days) => (
 		<div className="flex">
 			{days.map(d => (
-				<div key={`${weekPosition}-${d.code}`}  className="m-1">
+				<div key={`${weekPosition}-${d.code}`}  className="m-0 sm:m-1">
 					<CronogramaDailyCell
 						menus={menusPerDay(d.code)}
 						weekDay={d}

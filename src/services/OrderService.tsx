@@ -3,8 +3,12 @@ import { atom } from 'jotai'
 import type { IGroupAndQuantity, IGrouppedObj, IOrder, IOrderDetails, IReducedOrder } from '../models/OrderTypes'
 import type {IParsedGroup} from '../models/GroupTypes'
 import type {IMenu} from 'src/models/MenuTypes'
+import format from 'date-fns/format'
 
-export const viewAtom = atom<String>('cocina') 
+export const ViewAtom = atom<String>('cocina')
+
+ const todayStr = () => format(new Date().valueOf(), 'yyyy-MM-dd')
+export const SingleDayDate = atom<String>(todayStr())
 
 
 export const groupByGroupAndTag: (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], menus: IMenu[]) => IGrouppedObj
@@ -24,6 +28,8 @@ export const groupByGroupAndTag: (groupedOrders: IOrder[], parsedGroups: IParsed
         }))
       }
     , {})
+
+
 
 const extractOrderDetails = (groupedOrders: IOrder[], parsedGroups: IParsedGroup[], menus: IMenu[]) => 
     groupedOrders

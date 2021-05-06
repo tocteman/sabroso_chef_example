@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import useSWR from 'swr'
 import { useAtom, atom } from 'jotai'
-import { mealsFiltersAtom, FilterEncodeString } from '../services/FilterService'
+import { MealsFiltersAtom, FilterEncodeString } from '../services/FilterService'
 import {FilteredFetcher, Fetcher} from '../services/Fetcher'
 import {IMeal, initialMeal} from '../models/MealTypes'
 import MealList from './components/MealList'
@@ -15,6 +15,7 @@ import MealForm from './components/MealForm'
 import AddMealPanel from './components/AddMealPanel'
 import { v4 as uuidv4 } from 'uuid';
 import RoughTitle from "../general/components/RoughTitle"
+import {PanelTransitionProps} from '../services/UiService'
 
 const MealsPage = () => {
   const { data: meals, error: mealsFetchError } = useSWR(['meals'], Fetcher)
@@ -44,7 +45,7 @@ const MealsPage = () => {
 
   return (
     <div className="flex">
-      <div className="p-8 ">
+      <div className="w-full sm:w-1/2 p-8">
         <div className="w-1/3">
 					<RoughTitle title={"Comidas"}/>
         </div>
@@ -61,9 +62,8 @@ const MealsPage = () => {
             </div>
           ))}
         </div>
-          
-          {cmt === 'Fuertes' && (
-          <MealList meals={sortByStr(mains, 'name')} mealType={cmt} atomRef={MainSlice} />
+				{cmt === 'Fuertes' && (
+					<MealList meals={sortByStr(mains, 'name')} mealType={cmt} atomRef={MainSlice} />
         )}
         {cmt === 'Entradas' && (
           <MealList meals={sortByStr(entrees, 'name')} mealType={cmt} atomRef={EntreeSlice} />
@@ -75,28 +75,19 @@ const MealsPage = () => {
 					Añadir Plato
 				</button>
 			</div>
-
-      <div className={`relative z-10 w-2/3 min-h-screen md:w-1/2`}>
+			<>
         <Transition
-          show={addMealPanel}
-          enter="transition transform duration-500"
-          enterFrom="translate-x-1/3"
-        >
-          <div className="inset-0 min-h-screen">
-            {addMealPanel === true && <AddMealPanel/>}
-          </div>
+					show={addMealPanel}
+					{...PanelTransitionProps}
+				>
+					<AddMealPanel/>
         </Transition>
-        <Transition
-          show={currentMeal.id.length > 1}
-          enter="transition transform duration-500"
-          enterFrom="translate-x-1/3"
-        >
-          <div className="inset-0 z-10 min-h-screen">
-            {currentMeal.id.length > 0&& <MealPanel menus={menus}/>}
-          </div>
+        <Transition show={currentMeal.id.length > 1}
+					{...PanelTransitionProps}
+				>
+					<MealPanel menus={menus}/>
         </Transition>
-      </div>
-
+			</>
     </div>
   )
 }

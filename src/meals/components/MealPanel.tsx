@@ -54,21 +54,29 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
     setMealMap(map)
   }
 
+
+  const disableEdit = () =>{
+    setMealMap(new Map())
+    currentMeal.id.length > 0  ?
+      setEditPanel(false) :
+      setCurrentMeal(initialMeal);
+  }
+
   return (
     <div
-      className={`min-h-screen p-8 ml-8  
+      className={`min-h-screen p-4 sm:p-8 ml-8
         ${currentMeal.id.length > 1 &&
-        `min-h-screen bg-white pr-8 border-l-2 border-mostaza-300` } 
+        `min-h-screen bg-white pr-4 sm:pr-8 border-l-2 border-mostaza-300` }
         ${currentMeal.id.length>1 && `slide-in-fwd-right ` }
         `}
     >
       {currentMeal.id.length > 1 &&  editPanel === false && ( 
-        <div className="p-8">
+        <div className="p-4 sm:p-8">
           <div className="flex justify-between">
             <div className="flex items-center">
-              <div className="text-2xl font-bold">{currentMeal.name}</div>
+              <div className="text-xl sm:text-2xl font-bold">{currentMeal.name}</div>
               <div onClick={() => {setEditPanel(true); setNewMap()}} 
-                className="w-3 ml-3 cursor-pointer hover:text-gray-700"                
+                className="w-2 sm:w-3 ml-2 cursor-pointer hover:text-gray-700"
               >
                 <EditIcon/>
               </div>
@@ -100,8 +108,18 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
         </div>
       )}
   { currentMeal.id.length > 1 && editPanel === true && (
-    <div>
-      <MealForm/>
+    <div className="w-11/12">
+			<div className="flex justify-between my-4">
+				<div className=" text-xl font-bold">
+					Editar Comida
+				</div>
+				<div className="w-6 cursor-pointer hover:text-gray-700"
+					onClick={() => disableEdit()}>
+					<CloseIcon/>
+				</div>
+			</div>
+
+			<MealForm/>
       <button onClick={() => validateAndPublishMeals()}
         className="secondary-button">
         Publicar Cambios

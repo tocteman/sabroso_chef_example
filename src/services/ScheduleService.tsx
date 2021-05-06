@@ -10,10 +10,9 @@ import type {ISchedule, IScheduleWeek} from '../models/ScheduleTypes'
 export const schedulePostPromise = (schedule) =>
 	PosterPromise(`schedules/${schedule.id}`, schedule)
 
-export const weekPostPromise = (week) => {
-	console.log({week})
-	return PosterPromise(`schedule_weeks/${week.id}`, week)
-}
+export const weekPostPromise = (week) =>
+	 PosterPromise(`schedule_weeks/${week.id}`, week)
+
 
 export const WeekDaysObj = [
 	{code: "MONDAY", name: "Lunes", status:"inactive"},

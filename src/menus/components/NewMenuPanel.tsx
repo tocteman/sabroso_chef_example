@@ -13,7 +13,7 @@ import {useLocalStorage} from '../../utils/LocalStorageHook'
 import DuplicateIcon from '../../svgs/DuplicateIcon'
 import {ToastState, Loading} from '../../services/UiService'
 import {mutate} from 'swr'
-import { FilterEncodeString, menusFiltersAtom } from '../../services/FilterService'
+import { FilterEncodeString, MenusFiltersAtom } from '../../services/FilterService'
 import MinusCircle from '../../svgs/MinusCircle'
 import CloseCircle from '../../svgs/CloseCircle'
 import { CurrentWeek, WeekDays } from '../../services/ScheduleService'
@@ -24,7 +24,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin
   const [displayNewMenuPanel, setDisplayNewMenuPanel] = useAtom(DisplayNewMenuPanel)
   const [menuMap, setMenuMap] = useAtom(MenuMap)
   const [showDropdown, setShowDropdown] = useState(false)
-  const [currentMenuFilters] = useAtom(menusFiltersAtom)
+  const [currentMenuFilters] = useAtom(MenusFiltersAtom)
 	const [displayPanel, setDisplayPanel] = useAtom(DisplayMenuPanel)
   const [currentDay] = useAtom(CurrentDay)
   const toggleDropdown = () => setShowDropdown(true) 
@@ -158,7 +158,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin
           </div>
         </div>
         <div className="w-6 cursor-pointer" 
-          onClick={()=>setDisplayPanel(false)} >
+          onClick={()=>setDisplayNewMenuPanel(false)} >
           <CloseIcon/>
         </div>
       </div>

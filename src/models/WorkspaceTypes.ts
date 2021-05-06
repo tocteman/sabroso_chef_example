@@ -6,3 +6,10 @@ export interface IWorkspace {
   configurations: string;
 }
 
+export const initialWorkspace: IWorkspace = {
+	id: "",
+	ownerId: "",
+	benefits: "",
+	name: "",
+	configurations: ""
+}

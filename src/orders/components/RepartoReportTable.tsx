@@ -1,47 +1,71 @@
 import React from 'react'
 import type {IGroupAndQuantity} from '../../models/OrderTypes'
+import type {IMenu} from '../../models/MenuTypes'
+import {generateAutoTable, generateAutoTableBody, printGroups, printFoodRows} from "../../services/OrderReportService"
+import type {IParsedGroup} from '../../models/GroupTypes'
 
 const RepartoReportTable:React.FC<{
   menus: [tag:string, detail:string][], 
   quantities:{tag: string, quantities:number}[]
-  grouped: [string, IGroupAndQuantity[]][]
-  groupNamesHeader: string[]
-}> = ({menus, quantities, grouped, groupNamesHeader}) => {
+	parsedGroups: IParsedGroup[]
+	grouped: any
+}> = ({menus, quantities, parsedGroups, grouped}) => {
 
+	const mapped = new Map(grouped)
+  mapped.forEach((v, k)=> {  //@ts-ignore
+    mapped.set(k, v.reduce(
+      (rvalue, innerObj)=> rvalue.concat(Object.values(innerObj)) ,[])
+    )
+  })
+
+  const tableContent = generateAutoTable(mapped)
+	const table = printGroups(tableContent, parsedGroups)
+	const {head, body} = table
+
+	const trimTableTitle = title => title.length > 10 ? title.slice(0,7) + "..." : title
+	const trimMonitoreo = title => title.includes("Monitoreo ") ?
+						`Monit--${title.slice(-1)}` : title
+
+	console.log({head})
+	console.log({body})
   return (
     <div className="flex flex-col">
-      <table className="pr-8 mt-4 text-lg table-auto">
-        <thead className="pb-2 text-center">
-          <tr>
-            {groupNamesHeader.map((o: string, index: number) => (
-              <th className="pb-2 pr-4 text-center" key={o}>
-                {o}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {grouped.map(([tag, menuArray]) => (
-            <tr className="border-b border-mostaza-200" key={`${tag}`}>
-              <td className="pb-1 pr-4 font-bold text-center">
-                ~ {tag !== 'null' ? `${tag}` : ``} ~
-              </td>
-            {menuArray.map((groupDetails, index) => (
-              <td className="pr-4 text-center" key={`${index}`}>
-                {groupDetails.quantity === 0 ? '-' : groupDetails.quantity}
-              </td>
-            ))}
-          </tr>
-      ))}
-    </tbody>
-  </table>
-  <div className="mt-12 ml-4 text-lg">
+			<div className="overflow-x-scroll sm:overflow-x-hidden">
+				<table className="pr-8 mt-4 sm:text-lg ">
+					<thead className="pb-2 text-center">
+						<tr>
+							{head[0].map((groupName: string, index: number) => (
+								<th className="pb-2 pr-4 text-center" key={`head-${groupName}`}>
+									{trimMonitoreo(groupName)}
+								</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{body.map(row => (
+							<tr key={row[0]}
+								className="border-b border-mostaza-200"
+							>
+								{row.map((cell, index) => (
+									<td key={`${row[0]}--${cell}--${index}`}
+										className="pr-4 text-center"
+									>
+										{cell}
+									</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+	<div className="mt-12 ml-4 sm:text-lg">
     {menus.map(([key, value]) => (
-      <div key={`${key}-${value}`} className="flex mb-2">
+			<div key={`${key}-${value}`}>
+      <div className="flex mb-2 sm:mb-0">
         <div className="pr-2 font-bold">~ {key} ~</div>
-          <div className={`flex 
+        <div className={`flex flex-col sm:flex-row
                 ${value.split(', ').length > 2 
-                    ? ` divide-x divide-mostaza-200` : 
+                    ? ` divide-x-0 sm:divide-x divide-y sm:divide-y-0 divide-mostaza-200` :
                     ``}
                   `}>
                   {value.split(', ').map((k, i) => (
@@ -55,7 +79,9 @@ const RepartoReportTable:React.FC<{
                   :: {quantities.filter(qs => qs.tag === key)[0]?.quantities}
                 </div>
             </div>
-          ))}
+            <hr className="mb-2 border-2 border-crema-200"/>
+			</div>
+					))}
         </div>
       </div>
     )

@@ -28,7 +28,7 @@ const CronogramaSummaryItem = ({schedule}) => {
 	}
 
   return (
-    <div className="px-8 pt-6 pb-4 my-4 border-8 rounded-lg border-crema-200 bg-gradient-to-b from-crema-50 to-crema-100 hover:bg-white shadow-sm">
+    <div className="px-4 sm:px-8 pt-6 pb-4 my-4 border-8 rounded-lg border-crema-200 bg-gradient-to-b from-crema-50 to-crema-100 hover:bg-white shadow-sm">
 			<div className="flex justify-between">
 
 			<Link to={`${trimAddr(url)}/${schedule.id}`} key={`${schedule.id}`}>
