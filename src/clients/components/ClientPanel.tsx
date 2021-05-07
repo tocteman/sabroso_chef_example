@@ -13,17 +13,23 @@ const ClientPanel = ({ proposals}) => {
 	const printMenuTypeName = (code: string) =>
 		MenuTypes.find(m => m.code === code)?.name
 
+
 	const closePanel = () => {
 		setDisplayPanel(false)
 		setCurrentClient(initialWorkspace)
 	}
+
+
+	const printDemoName = (name:string) =>
+		name.includes("Britransformadores") ? "Segunda Empresa" :
+		name
 
 	return (
 		<div className="current-panel-bg">
 			 <div >
 				 <div className="flex items-center justify-between">
 					 <div className="mt-8 text-2xl font-bold">
-						 {currentClient.name}
+						 {printDemoName(currentClient.name)}
 					 </div>
 					 <div className="w-6 cursor-pointer"
 						 onClick={()=>closePanel()} >
@@ -70,7 +76,6 @@ const ClientPanel = ({ proposals}) => {
 								</div>
 							)) }
 						</div>
-						<div className="mt-32">( ... agregar kpis )</div>
 					</div>
 				))}
 		</div>

@@ -23,12 +23,19 @@ const ReportButton = ({wkId, date, orders, menus, groups, serviceType }) => {
   }
 
 
-	const menuType = MenuTypes.filter(m => m.code === currentMenuType)[0]
+	const menuType = () => {
+		if (currentMenuType === 'BREAKFAST' || currentMenuType === 'DINNER') {
+		return MenuTypes.filter(m => m.code === currentMenuType)[0]
+		} else {
+			return MenuTypes.filter(m => m.code === 'LUNCH')[0]
+		}
+	}
 
-	const isHourOk = (now) => now.GetHours() <= menuType().maxHourTime ?
+	const isHourOk = (now) => now.getHours() <= menuType().maxHourTime ?
 											false : true
 
 	const checkDownloadTime = () => {
+		console.log({date})
 		const selectedDate = new Date(date) // <-- el día
 		const now = new Date()
 		return now.getDate() < selectedDate.getDate() ? true :

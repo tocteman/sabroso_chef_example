@@ -11,6 +11,5 @@ export const DisplayClientPanel = atom<boolean>(false)
 export const CurrentClient = atom<IWorkspace>(initialWorkspace)
 
 export const printDemoName = (name:string) =>
-		name?.includes("Santa") ? "Primera Empresa" :
 		name.includes("Britransformadores") ? "Segunda Empresa" :
 		name

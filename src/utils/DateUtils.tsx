@@ -47,12 +47,9 @@ export const diasSemana: IDiaSemana[] = [
 ]
 
 export const todayOrFurther = (selectedDateString) => {
-
 	if (selectedDateString?.length < 1) { return false }
 	const selected = parse(selectedDateString, 'yyyy-MM-dd', new Date()).valueOf()
 	const today = new Date().valueOf() - 86000000
-	console.log({selected})
-	console.log({today})
 	return selected > today ? true: false
 }
 
@@ -63,3 +60,7 @@ export const TodayPicks = () => {
 export const parsed = (dateString: string, fmt ="yyyy-MM-dd")  =>
   parse(dateString, fmt, new Date())
 
+
+
+export const parseToNumber = (dateString: string, fmt ="yyyy-MM-dd") =>
+	parse(dateString, fmt, new Date()).valueOf()

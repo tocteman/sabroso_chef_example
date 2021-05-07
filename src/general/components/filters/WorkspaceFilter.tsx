@@ -21,7 +21,6 @@ const WorkspaceFilter = ({workspaces, className}) => {
 							{wk.name}
 						</option>
 					))}
-					<option value={"ALL"}>Todos</option>
 				</select>
 				<SelectChevron/>
 			</div>

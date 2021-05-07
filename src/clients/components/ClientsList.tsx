@@ -12,7 +12,6 @@ const ClientsList = ({workspaces, proposals}) => {
 	}
 
 	const printDemoName = (name:string) =>
-		name?.includes("Santa") ? "Primera Empresa" :
 		name.includes("Britransformadores") ? "Segunda Empresa" :
 		name
 

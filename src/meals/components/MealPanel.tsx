@@ -62,6 +62,8 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
       setCurrentMeal(initialMeal);
   }
 
+	const demoPublish = () => console.log("En mantenimiento")
+
   return (
     <div
       className={`min-h-screen p-4 sm:p-8 ml-8
@@ -120,8 +122,8 @@ const MealPanel: React.FC<{ menus: IMenu[] }> = ({ menus }) => {
 			</div>
 
 			<MealForm/>
-      <button onClick={() => validateAndPublishMeals()}
-        className="secondary-button">
+      <button onClick={() => demoPublish()}
+        className="secondary-button opacity-50 cursor-not-allowed">
         Publicar Cambios
       </button>
     </div>

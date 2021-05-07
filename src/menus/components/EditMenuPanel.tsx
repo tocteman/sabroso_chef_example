@@ -74,7 +74,8 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
         setToastState({status: "error", message: err})
       })
   }
- 
+
+	const demoPublish = () => console.log("En mantenimiento")
     
   return (
   <div className="p-4 border-2 rounded shadow-sm bg-crema-125 border-mostaza-200">
@@ -83,8 +84,8 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
         Editar Menú
       </div>
       <div className="flex">
-        <div className="w-6 cursor-pointer" 
-             onClick={()=> deleteCurrentMenu()} >
+        <div className="w-6 cursor-not-allowed opacity-50"
+             onClick={()=> demoPublish()} >
           <TrashIcon/>
         </div>
         <div className="w-6 cursor-pointer" 
@@ -117,8 +118,8 @@ const EditMenuPanel:React.FC<{menu: IMenu, meals:IMeal[]}> = ({menu, meals}) => 
         />
     </div>    
     }
-    <button onClick={() => validateAndPublishMenus()}
-    className="secondary-button">Publicar</button>
+    <button onClick={() => demoPublish()}
+    className="secondary-button cursor-not-allowed opacity-50">Publicar</button>
     </div>
   )
 }

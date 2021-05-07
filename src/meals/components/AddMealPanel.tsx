@@ -54,6 +54,8 @@ const AddMealPanel = () => {
 			})
 		.catch(err => setToastState({status: "error", message: err}))
 
+	const demoPublish = () => console.log("En Mantenimiento")
+
 	return (
     <div className={`min-h-screen p-8 ml-8 bg-crema-125 border-mostaza-200 border-l-2 shadow-sm`}>
       <div className="flex flex-col max-w-md px-8 mx-auto">
@@ -69,13 +71,15 @@ const AddMealPanel = () => {
 		{!displayExcelForm &&
 		 <div>
 			 <MealForm />
-			 <button className="secondary-button"
-				 onClick={() => validateAndPublishMeals()}>
+			 <button className="secondary-button cursor-not-allowed opacity-25"
+				 onClick={() => demoPublish()}>
 				 Publicar Comidas
 			 </button>
 			 <hr className="border mt-4 border-mostaza-200"/>
 			 <div className="my-2">
-				 <button className="main-button" onClick={() => setDisplayExcelForm(true)}>
+				 <button className="main-button cursor-not-allowed opacity-25"
+					 onClick={() => demoPublish()}
+				 >
 					 Importar desde Excel
 				 </button>
 			 </div>

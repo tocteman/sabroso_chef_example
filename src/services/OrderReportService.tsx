@@ -53,8 +53,8 @@ export const generatePdf = (
   doc.roundedRect(15, 150, 170, 70, 2, 2, 'FD')
   // // @ts-ignore
   doc.text("Recibido _____________________________", 15, 240)
-  /* doc.save(`ReporteSabroso_${theTypes(parsedGroups, currentMenus)}${format(currentDate + LocalHourFix, 'dd/MMM', {locale: esLocale})}.pdf`) */
-    return doc
+  doc.save(`ReporteSabroso_${theTypes(parsedGroups, currentMenus)}${format(currentDate + LocalHourFix, 'dd/MMM', {locale: esLocale})}.pdf`)
+  return doc
   }
 
     const retrieveGeneralTable = (docRef, mapData:Map<string, IGroupAndQuantity[]>, menus, parsedGroups) => {

@@ -48,7 +48,14 @@ const OrdersPage = () => {
   const [currentServiceType, setCurrentServiceType] = useAtom(CurrentServiceType)
   const [currentWorkspaceId, setCurrentWorkspaceId] = useAtom(CurrentWorkspaceId)
   
-  const setFirstWorkspace = () => setCurrentWorkspaceId(workspaces[0]?.id)
+  const setFirstWorkspace = () => {
+		const hardCoded = "c03e25dc-dc48-44a0-850d-32126416fb6d"
+		workspaces.map(w => w.id).includes(hardCoded) ?
+			setCurrentWorkspaceId(hardCoded) :
+			setCurrentWorkspaceId(workspaces[0]?.id)
+	}
+
+
 
   useEffect(() => {
     const dateStrings: string = InBetweenDays([today, today])
@@ -117,14 +124,15 @@ const OrdersPage = () => {
     return mapMenu
   }
 
-  const ServiceTypes = () => 
+
+const ServiceTypes = () =>
     Array.from(new Set(
       mappedGroups()
       .map(g => g.serviceType.name))
     )
+  
 
   const printDemoName = (name:string) => 
-    name?.includes("Santa") ? "Primera Empresa" : 
     name.includes("Britransformadores") ? "Segunda Empresa" :
     name
 
@@ -136,7 +144,7 @@ const OrdersPage = () => {
 					<RoughTitle title={"Órdenes"}/>
         </div>
         <div>
-					{menuCount(ordersByWk(currentWorkspaceId)) > 0 &&
+					{menuCount(ordersByWk(currentWorkspaceId)) > 0  &&
 						<ReportButton
 								wkId   = {currentWorkspaceId}
 								date   = {parsed(today).valueOf()}

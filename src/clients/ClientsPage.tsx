@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
 import useSWR from 'swr'
-
 import { useAtom } from 'jotai'
 import {FilteredFetcher, Fetcher} from '../services/Fetcher'
 import type {IWorkspace} from '../models/WorkspaceTypes'
@@ -41,8 +40,6 @@ const ClientsPage = () => {
 	if (!workspaces || workspacesFetchError) return <Loader />
 	if (!proposals) return <Loader />
 
-	const ref = () => React.createRef();
-
 	return (
 		<div className="flex">
 			<div className="w-full sm:w-1/2 p-8">
@@ -50,7 +47,9 @@ const ClientsPage = () => {
 					<RoughTitle title={"Clientes"}/>
 				</div>
 				<ClientsList workspaces={workspaces} proposals={proposals}/>
-				<div className="main-button w-64 md:w-48 mt-8 cursor-pointer">Añadir Cliente</div>
+				<div className="pt-8">
+					<div className="main-button w-64 md:w-48 mt-32 cursor-not-allowed opacity-50">Añadir Cliente</div>
+				</div>
 			</div>
 				 <Transition
           show={displayPanel === true}

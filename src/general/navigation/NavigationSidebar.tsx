@@ -2,11 +2,11 @@ import React from 'react'
 import {useAtom} from 'jotai'
 import { Link, useHistory } from 'react-router-dom'
 import Logo from '../../assets/images/sabroso_chica.png'
+import {SidebarState} from '../../services/UiService'
 interface INavOption {
   text: string;
   linkUrl: string
 }
-import {SidebarState} from '../../services/UiService'
 
 const NavigationSidebar = () => {
 
@@ -14,8 +14,8 @@ const NavigationSidebar = () => {
 	const history = useHistory()
 
 	const navigateTo = path => {
-		history.push(path)
 		window.innerWidth < 640 && setOpen(false)
+		history.push(path)
 	}
 
   const navOptions:INavOption[]  = [
@@ -23,7 +23,7 @@ const NavigationSidebar = () => {
     {text: 'Comidas', linkUrl: '/meals'},
     {text: 'Órdenes', linkUrl: '/orders'},
     {text: 'Clientes', linkUrl: '/clients'},
-    {text: 'Cronogramas', linkUrl: '/schedules'},
+    /* {text: 'Cronogramas', linkUrl: '/schedules'}, */
   ]
 
   return (

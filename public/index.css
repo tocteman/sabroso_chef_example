@@ -30,6 +30,10 @@
 	@apply flex flex-col max-w-md px-8 mx-auto
 }
 
+.calendar-day{
+ @apply border-crema-200 py-4 px-2 border-2 border-solid bg-white hover:bg-white border-transparent hover:border-mostaza-300 cursor-pointer rounded hover:shadow-sm
+}
+
 
 .column-striped-active {
 	background-color: #fffad6;

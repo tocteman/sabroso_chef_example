@@ -43,6 +43,10 @@ const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
 				Object.entries(sortByStr(menusPerDay, 'tag')).map(([k, v]) => v)
 				: []
 
+	const demoDisabled = () => {
+		console.log("deshabilitado por demo; setDisplayNewMenuPanel")
+	}
+
 	return (
 		<div className={`w-full ml-8 ${ displayPanel?.display === true && `h-full min-h-screen pr-8 bg-white border-l-2 border-mostaza-300`}  `} >
 			<div className="flex flex-col p-4 sm:p-8">
@@ -72,10 +76,10 @@ const MenuPanel: React.FC<{meals: IMeal[]}> = ({meals}) => {
 							</div>
 						)) }
 							</div>
-							<div className="mt-25">
+							<div className="mt-25 cursor-not-allowed">
 								{ !displayNewMenuPanel &&
-									<button className="main-button"
-										onClick={() => setDisplayNewMenuPanel(true)}>
+									<button className=" main-button cursor-not-allowed opacity-50"
+										onClick={() => demoDisabled()}>
 										Añadir Menús +
 									</button>
 								}

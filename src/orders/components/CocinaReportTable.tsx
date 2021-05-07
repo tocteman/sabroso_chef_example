@@ -11,7 +11,7 @@ const CocinaReportTable:React.FC<{
        .filter(m => m)
 
     return (
-      <div className="flex flex-col sm:flex-row my-4 sm:my-8 divide-x-0 sm:divide-x divide-y sm:divide-y divide-mostaza-200">
+      <div className="flex flex-col sm:flex-row my-4 sm:my-8 divide-x-0 sm:divide-x divide-y sm:divide-y-0 divide-mostaza-200 items-start">
         {filterByQty().map(([key, value]) => (
           <div key={`${key}`} className="mt-2 mb-1 sm:mt-0 sm:mb-0 flex flex-row sm:flex-col-reverse">
             <div className="text-lg sm:text-2xl font-bold text-center">

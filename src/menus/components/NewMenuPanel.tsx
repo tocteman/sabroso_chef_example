@@ -136,7 +136,7 @@ const NewMenuPanel: React.FC<{meals: IMeal[], origin: string}> = ({meals, origin
     <div className="p-4 border-2 rounded shadow-sm bg-crema-125 border-mostaza-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="text-lg">
+          <div className="text-lg cursor-not-allowed">
             Añadir Menús
           </div> 
           <div className="flex">
