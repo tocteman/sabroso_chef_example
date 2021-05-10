@@ -40,13 +40,20 @@ const ClientsPage = () => {
 	if (!workspaces || workspacesFetchError) return <Loader />
 	if (!proposals) return <Loader />
 
+	const filteredProposals = () => proposals.filter(p => p.chefId === cu.chefId)
+	const filteredWorkspaces = () => {
+		const proposedWks = filteredProposals().map(fp => fp.workspaceId)
+		return workspaces.filter(w => proposedWks.includes(w.id))
+	}
+
 	return (
 		<div className="flex">
 			<div className="w-full sm:w-1/2 p-8">
 				<div className="w-1/3">
 					<RoughTitle title={"Clientes"}/>
 				</div>
-				<ClientsList workspaces={workspaces} proposals={proposals}/>
+				<ClientsList workspaces={filteredWorkspaces()}
+				proposals={filteredProposals()}/>
 				<div className="pt-8">
 					<div className="main-button w-64 md:w-48 mt-32 cursor-not-allowed opacity-50">Añadir Cliente</div>
 				</div>

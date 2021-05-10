@@ -74,7 +74,7 @@ const MenuCalendar: React.FC<{menus:IMenu[]}> = ({menus}) => {
           {currentDays.map((day) => (
             <div
               key={day.valueOf()}
-              className={`calendar-day
+              className={` border-crema-200 py-4 px-2 border-2 border-solid bg-white hover:bg-white border-transparent hover:border-mostaza-300 cursor-pointer rounded hover:shadow-sm
               col-start-${`${(getDay(day) + 1)}` || `6`}
               ${mpd(day)?.length >= 3 ?
                   `bg-crema-200 border-mostaza-300 ` :

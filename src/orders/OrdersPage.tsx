@@ -43,30 +43,43 @@ const OrdersPage = () => {
     ['menus', FilterEncodeString(currentMenuFilters)],
     FilteredFetcher
   )
+	const { data: proposals} = useSWR(workspaces ? 'proposals' : null, Fetcher,
+	{onSuccess: (data, key) => {setFirstWorkspace(data)}})
 
   const [currentMenuType, setCurrentMenuType] = useAtom(CurrentMenuType)
   const [currentServiceType, setCurrentServiceType] = useAtom(CurrentServiceType)
   const [currentWorkspaceId, setCurrentWorkspaceId] = useAtom(CurrentWorkspaceId)
   
-  const setFirstWorkspace = () => {
+
+	const setFirstWorkspace = (proposed) => {
 		const hardCoded = "c03e25dc-dc48-44a0-850d-32126416fb6d"
-		workspaces.map(w => w.id).includes(hardCoded) ?
-			setCurrentWorkspaceId(hardCoded) :
-			setCurrentWorkspaceId(workspaces[0]?.id)
+		const filtered = filteredWorkspaces(proposed)
+		return filtered.map(w => w.id).includes(hardCoded) ?
+					setCurrentWorkspaceId(hardCoded) :
+					setCurrentWorkspaceId(filtered[0]?.id)
 	}
 
-
+	const filteredWorkspaces = (proposals) => {
+		const filteredProposals = () => proposals.filter(p => p.chefId === cu.chefId)
+		const proposedWks = filteredProposals().map(fp => fp.workspaceId)
+		return workspaces.filter(w => proposedWks.includes(w.id))
+	}
 
   useEffect(() => {
     const dateStrings: string = InBetweenDays([today, today])
     setCurrentMenuFilters([PicksFilter(cu.chefId, 'chefId', '=')])
-    setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
-    setTimeout(()=> {workspaces && setFirstWorkspace()}, 300 )
+    setCurrentOrderFilters([
+			PicksFilter(dateStrings, 'orderDate', 'BETWEEN')
+		])
   }, [])
 
   if (!workspaces) return <Loader/>
   if (!orders) return <Loader/>
   if (!groups) return <Loader/>
+	if (!proposals) return <Loader/>
+	if (!menus) return <Loader/>
+
+	console.log(filteredWorkspaces(proposals))
 
   const setDate = (dateString: string) => {
 		setToday(dateString)
@@ -130,7 +143,8 @@ const ServiceTypes = () =>
       mappedGroups()
       .map(g => g.serviceType.name))
     )
-  
+
+
 
   const printDemoName = (name:string) => 
     name.includes("Britransformadores") ? "Segunda Empresa" :
@@ -168,7 +182,7 @@ const ServiceTypes = () =>
 					<ServiceTypeFilter serviceTypes={ServiceTypes()} className="w-1/2 ml-8"/>
 				</div>
 				<div className="flex ml-0 mt-1 sm:mt-0 sm:ml-8">
-					<WorkspaceFilter workspaces={workspaces}/>
+					<WorkspaceFilter workspaces={filteredWorkspaces(proposals)}/>
 				</div>
       </div>
 			{window.innerWidth < 640 && (<hr className="border border-crema-200 mt-4"/>)}
