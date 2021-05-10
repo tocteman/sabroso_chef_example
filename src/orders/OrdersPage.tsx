@@ -31,7 +31,7 @@ const OrdersPage = () => {
   
   const [currentOrderFilters, setCurrentOrderFilters] = useAtom( OrderFiltersAtom)
   const [currentMenuFilters, setCurrentMenuFilters] = useAtom(MenusFiltersAtom)
-	const [today, setToday] = useAtom(SingleDayDate)
+	const [singleDay, setSingleDay] = useAtom(SingleDayDate)
 
   const { data: workspaces} = useSWR( ['workspaces'], Fetcher)
   const { data: orders} = useSWR(
@@ -66,7 +66,7 @@ const OrdersPage = () => {
 	}
 
   useEffect(() => {
-    const dateStrings: string = InBetweenDays([today, today])
+    const dateStrings: string = InBetweenDays([singleDay, singleDay])
     setCurrentMenuFilters([PicksFilter(cu.chefId, 'chefId', '=')])
     setCurrentOrderFilters([
 			PicksFilter(dateStrings, 'orderDate', 'BETWEEN')
@@ -82,11 +82,11 @@ const OrdersPage = () => {
 	console.log(filteredWorkspaces(proposals))
 
   const setDate = (dateString: string) => {
-		setToday(dateString)
+		setSingleDay(dateString)
     updateDates(dateString, dateString)
   }
 
-  const updateDates = (antes = today, despues = today) => {
+  const updateDates = (antes = singleDay, despues = singleDay) => {
     const dateStrings: string = InBetweenDays([antes, despues])
     setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
   }
@@ -130,7 +130,7 @@ const OrdersPage = () => {
     const mapMenu = new Map()
     menusToMap
       .filter((m: IMenu) =>
-          m.menuDate.slice(0, 10) == dateForFilter(today).slice(0, 10),
+          m.menuDate.slice(0, 10) == dateForFilter(singleDay).slice(0, 10),
       )
       .filter(m => currentMenuType === 'ALL' ?  true : m.type === currentMenuType) 
       .forEach((m: IMenu) => mapMenu.set(menuKey(m), m.tag))
@@ -161,7 +161,7 @@ const ServiceTypes = () =>
 					{menuCount(ordersByWk(currentWorkspaceId)) > 0  &&
 						<ReportButton
 								wkId   = {currentWorkspaceId}
-								date   = {parsed(today).valueOf()}
+								date   = {parsed(singleDay).valueOf()}
 								orders = {ordersByWk(currentWorkspaceId)}
 								groups = {parsedGroups()?.filter(g=>
 														g.workspaceId === currentWorkspaceId)}
@@ -208,7 +208,7 @@ const ServiceTypes = () =>
               parsedGroups={parsedGroups()?.filter(
                 (g: IParsedGroup) => g.workspaceId === currentWorkspaceId,
               )}
-              menus={menus.filter(m => m.menuDate.slice(0, 10) == dateForFilter(today).slice(0,10))}
+              menus={menus.filter(m => m.menuDate.slice(0, 10) == dateForFilter(singleDay).slice(0,10))}
               currentMenus={mapTheMenus(menus)} />
           </div>
         )}

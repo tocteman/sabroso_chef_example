@@ -2,10 +2,12 @@ import React from 'react'
 import { CurrentMenuType, MenuTypes } from '../../services/MenuService'
 import { generatePdf } from '../../services/OrderReportService'
 import { useAtom } from 'jotai'
+import { SingleDayDate } from '../../services/OrderService'
 
 const ReportButton = ({wkId, date, orders, menus, groups, serviceType }) => {
 
 	const [currentMenuType] = useAtom(CurrentMenuType)
+	const [singleDay] = useAtom(SingleDayDate)
 
 
   const pdfGen = () => {
@@ -35,12 +37,13 @@ const ReportButton = ({wkId, date, orders, menus, groups, serviceType }) => {
 											false : true
 
 	const checkDownloadTime = () => {
-		console.log({date})
-		const selectedDate = new Date(date) // <-- el día
+		const selectedDate = new Date(singleDay) // <-- el día
 		const now = new Date()
-		return now.getDate() < selectedDate.getDate() ? true :
-					 now.getDate() === selectedDate.getDate() ? isHourOk(now) :
-					 false
+		return now.getDate() < selectedDate.getDate() ?
+													 false :
+													 now.getDate() === selectedDate.getDate() ?
+													 isHourOk(now) :
+													 true
 		}
 
 

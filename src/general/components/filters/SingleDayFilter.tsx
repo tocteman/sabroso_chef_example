@@ -5,16 +5,16 @@ import { SingleDayDate } from '../../../services/OrderService'
 import { OrderFiltersAtom } from '../../../services/FilterService'
 
 const SingleDayFilter = ({className}) => {
-	const [today, setToday] = useAtom(SingleDayDate)
+	const [singleDay, setSingleDay] = useAtom(SingleDayDate)
   const [currentOrderFilters, setCurrentOrderFilters] = useAtom( OrderFiltersAtom)
 
-	const updateDates = (antes = today, despues = today) => {
+	const updateDates = (antes = singleDay, despues = singleDay) => {
     const dateStrings = InBetweenDays([antes, despues])
     setCurrentOrderFilters([PicksFilter(dateStrings, 'orderDate', 'BETWEEN')])
   }
 
 	const setDate = (dateString: string) => {
-		setToday(dateString)
+		setSingleDay(dateString)
     updateDates(dateString, dateString)
   }
 
@@ -24,7 +24,7 @@ const SingleDayFilter = ({className}) => {
 			<input
 				type="date"
 				className="std-input"
-				value={today}
+				value={singleDay}
 				onChange={e => setDate(e.target.value)}
 			/>
 		</div>
