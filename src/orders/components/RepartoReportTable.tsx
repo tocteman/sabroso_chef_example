@@ -26,8 +26,6 @@ const RepartoReportTable:React.FC<{
 	const trimMonitoreo = title => title.includes("Monitoreo ") ?
 						`Monit--${title.slice(-1)}` : title
 
-	console.log({head})
-	console.log({body})
   return (
     <div className="flex flex-col">
 			<div className="overflow-x-scroll sm:overflow-x-hidden">

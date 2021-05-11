@@ -79,8 +79,6 @@ const OrdersPage = () => {
 	if (!proposals) return <Loader/>
 	if (!menus) return <Loader/>
 
-	console.log(filteredWorkspaces(proposals))
-
   const setDate = (dateString: string) => {
 		setSingleDay(dateString)
     updateDates(dateString, dateString)
@@ -144,12 +142,9 @@ const ServiceTypes = () =>
       .map(g => g.serviceType.name))
     )
 
-
-
   const printDemoName = (name:string) => 
     name.includes("Britransformadores") ? "Segunda Empresa" :
     name
-
 
   return (
     <main className="p-8">
@@ -192,7 +187,7 @@ const ServiceTypes = () =>
             <h3 className="my-2 text-lg sm:text-2xl font-bold">
               {wks().filter(wk => wk.id === currentWorkspaceId)[0]?.name}
             </h3>
-          {orders && menuCount(ordersByWk(currentWorkspaceId)) > 0 ? (
+          {orders && ordersByWk(currentWorkspaceId) && menuCount(ordersByWk(currentWorkspaceId)) > 0 ? (
               <h5 className="mt-0 sm:mt-2 text-normal sm:text-lg font-normal">
                 <span className="font-bold">
                   {menuCount(ordersByWk(currentWorkspaceId))}
