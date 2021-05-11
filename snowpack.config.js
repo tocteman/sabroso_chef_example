@@ -6,7 +6,7 @@ module.exports = {
   plugins: [
     "@snowpack/plugin-babel",
     "@snowpack/plugin-dotenv",
-    "@snowpack/plugin-webpack",
+    // "@snowpack/plugin-webpack",
     // '@snowpack/plugin-typescript',
    ["@snowpack/plugin-build-script", { cmd: "postcss", input: [".css"], output: [".css"]  }],
   ]

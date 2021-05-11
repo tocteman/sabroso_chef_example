@@ -1,4 +1,5 @@
 {
+	"homepage": ".",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
@@ -38,7 +39,6 @@
     "@snowpack/app-scripts-react": "^1.12.6",
     "@snowpack/plugin-build-script": "^2.1.0",
     "@snowpack/plugin-dotenv": "^2.0.5",
-    "@snowpack/plugin-react-refresh": "^2.3.7",
     "@snowpack/plugin-typescript": "^1.1.0",
     "@snowpack/web-test-runner-plugin": "^0.1.4",
     "@testing-library/react": "^11.0.0",
