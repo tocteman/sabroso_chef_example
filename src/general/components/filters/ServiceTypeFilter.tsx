@@ -8,7 +8,7 @@ const ServiceTypeFilter = ({serviceTypes, className}) => {
 
 	return (
 		<div className={`flex flex-col ${className}`}>
-			<label className="text-sm uppercase">Tipo de Servicio</label>
+			<label className="text-sm uppercase">Tipo-Servicio</label>
 			<div className="inline-block relative std-input">
 				<select onChange={(e) => setCurrentServiceType(e.target.value)}
 					className="uppercase std-input-inner"

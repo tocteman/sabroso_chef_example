@@ -37,11 +37,26 @@ const MealsPage = () => {
       id: mealId
     }))
     setCurrentMeal(initialMeal)
-    return setAddMealPanel(true)}
+    return setAddMealPanel(true)
+	}
 
-  const mains = meals && meals.filter((m: IMeal) => m.type === 'MAIN')
-  const entrees = meals && meals.filter((m: IMeal) => m.type === 'ENTREE')
-  const desserts = meals && meals.filter((m: IMeal) => m.type === 'DESSERT')
+
+	const deduplicated = (meals) => {
+		let mealNameCache = []
+		let deduplicatedMeals = []
+		meals.forEach(m => {
+			if (!mealNameCache.includes(m.name)) {
+				mealNameCache.push(m.name)
+				deduplicatedMeals.push(m)
+		}} )
+		return deduplicatedMeals
+	}
+
+	const demeals = deduplicated(meals)
+
+  const mains = demeals && demeals.filter((m: IMeal) => m.type === 'MAIN')
+  const entrees = demeals && demeals.filter((m: IMeal) => m.type === 'ENTREE')
+  const desserts = demeals && demeals.filter((m: IMeal) => m.type === 'DESSERT')
 
   return (
     <div className="flex">

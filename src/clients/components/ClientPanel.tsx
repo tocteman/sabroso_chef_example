@@ -4,11 +4,17 @@ import { MenuTypes } from "../../services/MenuService"
 import CloseIcon from '../../svgs/CloseIcon'
 import {CurrentClient, DisplayClientPanel} from "../../services/WorkspaceService"
 import {initialWorkspace} from '../../models/WorkspaceTypes'
+import {useLocalStorage} from '../../utils/LocalStorageHook'
+import Loader from '../../general/components/Loader'
 
 const ClientPanel = ({ proposals}) => {
 
+	const [cu] = useLocalStorage('user', '')
 	const [currentClient, setCurrentClient] = useAtom(CurrentClient)
 	const [displayPanel, setDisplayPanel] = useAtom(DisplayClientPanel)
+
+	if (!cu) return <Loader/>
+
 
 	const printMenuTypeName = (code: string) =>
 		MenuTypes.find(m => m.code === code)?.name
@@ -38,7 +44,10 @@ const ClientPanel = ({ proposals}) => {
 				 </div>
 					<hr className="my-2 border border-crema-200"/>
 				</div>
-				{ proposals.filter(p => p.workspaceId === currentClient.id).map(p => (
+				{ proposals
+					.filter(p => p.workspaceId === currentClient.id)
+					.filter(p => p.chefId === cu.chefId)
+					.map(p => (
 					<div key={`panel-${p.id}`} className="mt-4">
 						<div className="text-xl font-bold leading-none text-mostaza-500">
 							precio base

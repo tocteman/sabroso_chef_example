@@ -9,7 +9,7 @@ const WorkspaceFilter = ({workspaces, className}) => {
 
 	return (
 		<div className={`flex flex-col ${className}`}>
-			<label className="text-sm uppercase">Clientes</label>
+			<label className="text-sm uppercase">Cliente</label>
 			<div className="inline-block relative std-input">
 				<select onChange={(e) => setCurrentWorkspaceId(e.target.value)}
 					className="uppercase std-input-inner"
